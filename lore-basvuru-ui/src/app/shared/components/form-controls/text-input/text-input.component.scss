@@ -1,0 +1,223 @@
+/* Modern Clean Text Input Component - Full Width */
+.text-input-container {
+    display: block;
+    width: 100%;
+    position: relative;
+
+    &.disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .form-field-wrapper {
+        width: 100%;
+        
+        // Label styling
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+            
+            .required-asterisk {
+                color: #ef4444;
+                margin-left: 2px;
+            }
+        }
+
+        // Input wrapper - clean and square design
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 4px; // More square appearance
+            transition: all 0.2s ease;
+            min-height: 44px;
+
+            &:hover {
+                border-color: #9ca3af;
+            }
+
+            &:focus-within {
+                border-color: rgb(var(--primary-500, 59, 130, 246));
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); // Subtle shadow
+            }
+
+            // When input has error
+            &.has-error {
+                border-color: #ef4444;
+                
+                &:focus-within {
+                    border-color: #ef4444;
+                    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+                }
+            }
+
+            // Prefix icon
+            .prefix-icon {
+                color: #6b7280;
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+                margin-left: 12px;
+                margin-right: 8px;
+                flex-shrink: 0;
+            }
+
+            // Prefix text
+            .prefix-text {
+                color: #6b7280;
+                font-size: 14px;
+                font-weight: 500;
+                padding-left: 12px;
+                flex-shrink: 0;
+                user-select: none;
+            }
+
+            // Clean input field - more square and minimal
+            .clean-input {
+                flex: 1;
+                border: none;
+                outline: none;
+                padding: 12px;
+                font-size: 14px;
+                color: #111827;
+                background: transparent;
+                border-radius: 4px; // Square corners
+                font-family: inherit;
+                resize: none; // Disable textarea resize
+                
+                &::placeholder {
+                    color: #9ca3af;
+                    font-weight: 400;
+                }
+
+                &:disabled {
+                    color: #9ca3af;
+                    cursor: not-allowed;
+                    background: #f9fafb;
+                }
+
+                &:focus {
+                    outline: none;
+                }
+
+                // Textarea specific styles
+                &[rows] {
+                    line-height: 1.5;
+                    min-height: auto;
+                    padding: 12px;
+                }
+
+                // Remove autocomplete styling
+                &:-webkit-autofill {
+                    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+                    -webkit-text-fill-color: #111827 !important;
+                }
+            }
+
+            // Suffix icon
+            .suffix-icon {
+                color: #6b7280;
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                margin-right: 12px;
+                margin-left: 8px;
+                cursor: help;
+                flex-shrink: 0;
+                
+                &:hover {
+                    color: rgb(var(--primary-500, 59, 130, 246));
+                }
+            }
+        }
+
+        // Error messages
+        .error-messages {
+            margin-top: 4px;
+            
+            .error-item {
+                display: flex;
+                align-items: center;
+                color: #ef4444;
+                font-size: 12px;
+                gap: 4px;
+                
+                .error-icon {
+                    font-size: 16px;
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+        }
+    }
+
+    // Disabled state
+    &.disabled .input-wrapper {
+        background: #f9fafb;
+        border-color: #e5e7eb;
+        cursor: not-allowed;
+        
+        .clean-input {
+            background: transparent;
+        }
+    }
+
+    // Dark mode support
+    @media (prefers-color-scheme: dark) {
+        .form-label {
+            color: #f3f4f6;
+        }
+
+        .input-wrapper {
+            background: #374151;
+            border-color: #4b5563;
+            
+            &:hover {
+                border-color: #6b7280;
+            }
+            
+            .clean-input {
+                color: #f3f4f6;
+                
+                &::placeholder {
+                    color: #9ca3af;
+                }
+                
+                &:disabled {
+                    color: #6b7280;
+                    background: #1f2937;
+                }
+            }
+        }
+
+        &.disabled .input-wrapper {
+            background: #1f2937;
+            border-color: #374151;
+        }
+    }
+
+    // Responsive design
+    @media (max-width: 768px) {
+        .input-wrapper {
+            min-height: 48px; // Better touch targets on mobile
+            
+            .clean-input {
+                font-size: 16px; // Prevent iOS zoom
+                padding: 14px 12px;
+            }
+        }
+    }
+}
+
+// Global improvements
+.clean-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}

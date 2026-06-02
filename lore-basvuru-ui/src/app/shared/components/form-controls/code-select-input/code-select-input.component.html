@@ -1,0 +1,148 @@
+<div [formGroup]="nameOfFormGroup" class="d-flex flex-column fv-row" style="min-width: 180px;">
+  <label class="d-flex fs-6 fw-bold mb-2">
+    <span *ngIf="!isRequired">{{title}}</span>
+    <span *ngIf="isRequired" class="required">{{title}}</span>
+    <i *ngIf="hasToltip" class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+      title="{{tooltipTitle}}"></i>
+  </label>
+  
+  <!-- Custom Select Component -->
+  <div class="position-relative custom-select">
+    <!-- Single Selection Display -->
+    <div *ngIf="!isMultiple" class="form-select form-select-solid"
+         [class.is-invalid]="nameOfFormGroup && formValidationService.isControlInvalid(nameOfFormGroup,controlName)"
+         [class.is-valid]="nameOfFormGroup && formValidationService.isControlValid(nameOfFormGroup,controlName)"
+         (click)="toggleDropdown()"
+         [class.show]="isDropdownOpen">
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <span *ngIf="!selectedItem" class="text-muted" style="flex: 1;">{{placeHolder}}</span>
+        <span *ngIf="selectedItem" style="flex: 1;">{{selectedItem.kod}}</span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+          <!-- Clear button for single selection -->
+          <i *ngIf="selectedItem" 
+             class="fas fa-times text-muted cursor-pointer" 
+             (click)="clearSelection($event)" 
+             title="Temizle"
+             style="font-size: 12px;"></i>
+          <i class="fas fa-chevron-down text-muted" 
+             [class.rotate-180]="isDropdownOpen"
+             style="font-size: 12px;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multiple Selection Display -->
+    <div *ngIf="isMultiple" class="selected-items-display"
+         [class.is-invalid]="nameOfFormGroup && formValidationService.isControlInvalid(nameOfFormGroup,controlName)"
+         [class.is-valid]="nameOfFormGroup && formValidationService.isControlValid(nameOfFormGroup,controlName)"
+         (click)="toggleDropdown()"
+         [class.show]="isDropdownOpen">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1;">
+          <span *ngIf="selectedItems.length === 0" class="placeholder-text">{{placeHolder}}</span>
+          <span *ngFor="let item of selectedItems; trackBy: trackByCode" class="selected-badge">
+            <span class="badge-text" [title]="item.kod">{{item.kod}}</span>
+            <button type="button" class="remove-btn" 
+                    (click)="removeSelectedItem(item, $event)" 
+                    title="Kaldır">
+              ×
+            </button>
+          </span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: 8px;">
+          <i *ngIf="selectedItems.length > 0" 
+             class="fas fa-times-circle text-muted cursor-pointer" 
+             (click)="clearSelection(); $event.stopPropagation()" 
+             title="Tümünü Temizle"
+             style="font-size: 12px;"></i>
+          <i class="fas fa-chevron-down text-muted" 
+             [class.rotate-180]="isDropdownOpen"
+             style="font-size: 12px;"></i>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Dropdown Menu -->
+    <div *ngIf="isDropdownOpen" class="dropdown-menu show w-100 position-absolute z-3 mt-1 shadow-lg">
+      <!-- Search Input -->
+      <div class="p-2 border-bottom">
+        <input 
+          type="text" 
+          class="form-control form-control-sm" 
+          placeholder="Ara..." 
+          [value]="searchTerm"
+          (input)="onSearch($event)"
+          [ngModelOptions]="{standalone: true}"
+          #searchInput>
+      </div>
+      
+      <!-- Options List -->
+      <div class="max-height-200 overflow-auto">
+        <div *ngFor="let codeDto of filteredCodeList$ | async; trackBy: trackByCode" 
+             class="dropdown-item cursor-pointer py-2 px-3 d-flex justify-content-between align-items-center"
+             [class.selected]="isItemSelected(codeDto)"
+             (click)="selectItem(codeDto)">
+          <span>{{codeDto.kod}}</span>
+          <i *ngIf="isMultiple && isItemSelected(codeDto)" class="fas fa-check text-primary"></i>
+        </div>
+        
+        <!-- No Results -->
+        <div *ngIf="(filteredCodeList$ | async)?.length === 0" class="dropdown-item-text py-2 px-3 text-muted">
+          Sonuç bulunamadı
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="d-flex invalid-feedback"
+    *ngIf="nameOfFormGroup && formValidationService.controlHasError(nameOfFormGroup,'required', controlName)">
+    {{title}} boş olamaz
+  </div>
+</div>
+<!-- <div *ngIf="!isFormElement"  class="d-flex flex-column mb-8 fv-row">
+  <label class="d-flex fs-6 fw-bold mb-2">
+    <span>{{title}}</span>
+    <span *ngIf="isRequired" class="required">{{title}}</span>
+    <i *ngIf="hasToltip" class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+      title="{{tooltipTitle}}"></i>
+  </label>
+  <ng-select class="text-start   form-control-solid" [dropdownPosition]="'auto'" formControlName="{{controlName}}"
+    placeholder="{{placeHolder}}"  autocomplete="off">
+    <ng-option *ngFor="let itemDto of itemListDto$|async" [value]="itemDto[value]">{{itemDto[key]}}</ng-option>
+  </ng-select>
+</div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+<div [formGroup]="nameOfFormGroup"class="d-flex flex-column mb-8 fv-row">
+  <label class="d-flex align-items-center fs-6 fw-bold mb-2">
+    <span *ngIf="!isRequired">{{title}}</span>
+    <span *ngIf="isRequired" class="required">{{title}}</span>
+    <i *ngIf="hasToltip" class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+      title="{{tooltipTitle}}"></i>
+  </label>
+  <input name="{{controlName}}" class="form-control form-control-lg form-control-solid" formControlName="{{controlName}}"
+    placeholder="{{placeHolder}}" autocomplete="off"
+    [class.is-invalid]="formValidationService.isControlInvalid(nameOfFormGroup,controlName)"
+    [class.is-valid]="formValidationService.isControlValid(nameOfFormGroup,controlName)" />
+  <div class="d-flex invalid-feedback"
+    *ngIf="formValidationService.controlHasError(nameOfFormGroup,'required', controlName)">
+    {{title}} boş olamaz
+  </div>
+</div> -->

@@ -1,0 +1,117 @@
+<div class="form-view-page h-full w-full max-w-full px-3 py-4 md:px-5 md:py-6">
+        <div class="form-view-theme question-theme form-view-workspace w-full max-w-full overflow-hidden rounded-2xl border border-default bg-card shadow-sm"
+            [class.form-view-workspace--compact]="isCompactModeActive">
+        @if (effectiveLoading) {
+            <div class="form-view-status-layout px-4 py-6 md:px-6 md:py-8">
+                <div class="form-view-status-panel">
+                    <div class="form-view-status-icon form-view-status-icon--success">
+                        <mat-spinner diameter="36"></mat-spinner>
+                    </div>
+                    <h2>Önizleme hazırlanıyor</h2>
+                    <p>Form yapısı ve yanıtlar yükleniyor. Lütfen kısa bir süre bekleyin.</p>
+                </div>
+            </div>
+        } @else if (invalidConfigMessage) {
+            <div class="form-view-status-layout px-4 py-6 md:px-6 md:py-8">
+                <div class="form-view-status-panel">
+                    <div class="form-view-status-icon form-view-status-icon--success">
+                        <mat-icon>inbox</mat-icon>
+                    </div>
+                    <h2>{{ emptyStateTitle }}</h2>
+                    <p>{{ emptyStateMessage }}</p>
+                </div>
+            </div>
+        } @else if (loadErrorMessage || !previewModel) {
+            <div class="form-view-status-layout px-4 py-6 md:px-6 md:py-8">
+                <div class="form-view-status-panel">
+                    <div class="form-view-status-icon form-view-status-icon--error">
+                        <mat-icon>priority_high</mat-icon>
+                    </div>
+                    <h2>Önizleme yüklenemedi</h2>
+                    <p>{{ loadErrorMessage || 'İstenen önizleme verisi şu anda getirilemiyor.' }}</p>
+                </div>
+            </div>
+        } @else {
+            <section class="form-view-top-shell">
+                <div class="form-view-header-frame flex w-full items-start justify-between gap-3 px-3 py-4 md:px-6 md:py-5"
+                     [class.form-view-header--compact]="!showHeader">
+                    @if (showHeader) {
+                        <div class="flex min-w-0 flex-1 items-start gap-4">
+                            <div class="form-view-brand-mark">
+                                {{ (previewModel.title || 'F').slice(0, 1).toUpperCase() }}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="form-view-eyebrow">{{ previewHeading }}</div>
+                                <h1 class="form-view-title truncate md:whitespace-normal">{{ previewModel.title }}</h1>
+                                @if (previewModel.description) {
+                                    <p class="form-view-description">{{ previewModel.description }}</p>
+                                }
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="min-w-0 flex-1">
+                            <h2 class="form-view-title form-view-title--compact">{{ previewHeading }}</h2>
+                        </div>
+                    }
+
+                    <div class="form-view-preview-header-actions">
+                        @if (showPdfButton) {
+                            <button
+                                type="button"
+                                class="rounded-md border border-default px-3 py-1.5 text-sm font-medium text-secondary transition hover:bg-gray-100 inline-flex items-center gap-1.5"
+                                [disabled]="pdfDownloading"
+                                (click)="onPdfDownloadClick()">
+                                <mat-icon class="icon-size-4">picture_as_pdf</mat-icon>
+                                {{ pdfDownloading ? 'İndiriliyor...' : 'PDF İndir' }}
+                            </button>
+                        }
+                        @if (showBackButton) {
+                            <button
+                                type="button"
+                                class="rounded-md border border-default px-3 py-1.5 text-sm font-medium text-secondary transition hover:bg-gray-100"
+                                (click)="onBackButtonClick()">
+                                {{ backButtonLabel }}
+                            </button>
+                        }
+                        <button type="button"
+                            class="form-view-preview-icon-button form-view-preview-icon-button--desktop"
+                                [class.form-view-preview-icon-button--active]="isTwoColumnModeActive"
+                                [attr.aria-pressed]="isTwoColumnModeActive"
+                                [attr.aria-label]="isTwoColumnModeActive ? 'Çift sütun görünümünü kapat' : 'Çift sütun görünümünü aç'"
+                                (click)="toggleTwoColumnMode()">
+                            <mat-icon>{{ isTwoColumnModeActive ? 'view_column' : 'width_full' }}</mat-icon>
+                        </button>
+                        <button type="button"
+                                class="form-view-preview-icon-button"
+                                [class.form-view-preview-icon-button--active]="isCompactModeActive"
+                                [attr.aria-pressed]="isCompactModeActive"
+                                [attr.aria-label]="isCompactModeActive ? 'Sabit panel modunu kapat' : 'Sabit panel modunu aç'"
+                                (click)="toggleCompactMode()">
+                            <mat-icon>{{ isCompactModeActive ? 'unfold_more' : 'unfold_less' }}</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <main class="form-view-main-shell flex-1 px-3 py-5 md:px-6 md:py-8"
+                  [class.form-view-main-shell--scrollable]="isCompactModeActive">
+                <div class="form-view-page-frame flex flex-col gap-12">
+                    @if (previewModel.source === 'draft-preview') {
+                        @for (page of previewModel.pages; track page.eid) {
+                            <app-preview-question-page [page]="page" [initialAnswers]="initialAnswers"></app-preview-question-page>
+                        }
+                    } @else {
+                        @for (page of previewModel.pages; track page.eid) {
+                            <app-preview-answer-summary-host
+                                [page]="page"
+                                [initialAnswers]="initialAnswers"
+                                [groupInstances]="groupInstances"
+                                [twoColumnModeEnabled]="isTwoColumnModeActive">
+                            </app-preview-answer-summary-host>
+                        }
+                    }
+                </div>
+            </main>
+        }
+    </div>
+</div>

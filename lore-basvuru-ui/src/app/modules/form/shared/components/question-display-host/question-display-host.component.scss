@@ -1,0 +1,21 @@
+:host {
+    display: block;
+}
+
+.editor-canvas__widget-preview {
+    --question-surface: #ffffff;
+    --question-surface-low: #f8fafc;
+    --question-surface-muted: #e2e8f0;
+    --question-primary: #b45309;
+    --question-primary-soft: #ffedd5;
+    --question-primary-tint: #fff7ed;
+    --question-primary-rgb: 180, 83, 9;
+    --question-gradient: linear-gradient(135deg, #b45309 0%, #d97706 100%);
+    --question-text: #0f172a;
+    --question-text-muted: #475569;
+    --question-text-soft: #78716c;
+    --question-shadow-soft: none;
+    margin-top: 0.85rem;
+    pointer-events: none;
+    opacity: 0.86;
+}

@@ -1,0 +1,234 @@
+// Remove container max-width for full screen
+// .container {
+//     max-width: 1200px;
+// }
+
+.example-tabs {
+    ::ng-deep .mat-mdc-tab-body-wrapper {
+        padding: 0;
+    }
+}
+
+.tab-content {
+    min-height: 400px;
+}
+
+.example-card {
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    ::ng-deep .mat-mdc-card-header {
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+    }
+
+    ::ng-deep .mat-mdc-card-content {
+        padding: 0 1.5rem;
+    }
+
+    ::ng-deep .mat-mdc-card-actions {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    ::ng-deep .mat-mdc-card-footer {
+        border-top: 1px solid #e5e7eb;
+    }
+}
+
+.example-section {
+    padding: 1rem 0;
+
+    h3 {
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #374151;
+    }
+}
+
+// Utility classes for layout
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem;
+}
+
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1.5rem;
+}
+
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.p-2 {
+    padding: 0.5rem;
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.p-6 {
+    padding: 1.5rem;
+}
+
+.pt-4 {
+    padding-top: 1rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.border {
+    border: 1px solid #e5e7eb;
+}
+
+.border-t {
+    border-top: 1px solid #e5e7eb;
+}
+
+.rounded {
+    border-radius: 0.25rem;
+}
+
+.bg-white {
+    background-color: #ffffff;
+}
+
+.bg-gray-50 {
+    background-color: #f9fafb;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.text-gray-600 {
+    color: #4b5563;
+}
+
+.text-gray-700 {
+    color: #374151;
+}
+
+.text-gray-800 {
+    color: #1f2937;
+}
+
+.text-gray-900 {
+    color: #111827;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
+
+// Responsive breakpoints
+@media (min-width: 768px) {
+    .md\\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+// Material component overrides
+::ng-deep .mat-mdc-stroked-button {
+    border-color: #d1d5db;
+    color: #374151;
+    
+    &:hover {
+        background-color: #f9fafb;
+        border-color: #9ca3af;
+    }
+}
+
+::ng-deep .mat-mdc-raised-button.mat-primary {
+    background-color: #3b82f6;
+    color: white;
+    
+    &:hover {
+        background-color: #2563eb;
+    }
+}
+
+::ng-deep .mat-mdc-tab-group {
+    .mat-mdc-tab-header {
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .mat-mdc-tab {
+        min-width: 120px;
+        
+        &.mdc-tab--active {
+            .mdc-tab__text-label {
+                color: #3b82f6;
+            }
+        }
+    }
+}
+
+::ng-deep .mat-mdc-card {
+    border: 1px solid #e5e7eb;
+}
+
+::ng-deep .mat-divider {
+    border-top-color: #e5e7eb;
+    margin: 1rem 0;
+}
+
+// Form status display
+pre {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    max-height: 150px;
+    overflow-y: auto;
+}

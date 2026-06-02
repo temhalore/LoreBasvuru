@@ -1,0 +1,117 @@
+:host {
+    display: block;
+}
+
+.question-group-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.question-group-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.75rem 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--question-surface-low);
+    text-align: center;
+}
+
+.question-group-empty p {
+    margin: 0;
+    color: var(--question-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.question-group-instance {
+    position: relative;
+    border-radius: 0.75rem;
+    background: var(--question-surface-low);
+    border-left: 4px solid var(--question-primary);
+}
+
+.question-group-instance-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(var(--question-primary-rgb), 0.12);
+}
+
+.question-group-instance-order {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    background: var(--question-primary-soft);
+    color: var(--question-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.question-group-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--question-text-soft);
+    cursor: pointer;
+    transition: opacity 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.question-group-delete-btn:hover {
+    background: #fee4e2;
+    color: #b42318;
+}
+
+.question-group-instance-body {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.question-group-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--question-primary);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 160ms ease;
+}
+
+.question-group-add-btn:hover:not(:disabled) {
+    background: var(--question-primary-soft);
+}
+
+.question-group-add-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+@media (min-width: 868px) {
+    .question-group-instance-body {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .question-group-instance-body {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

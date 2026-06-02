@@ -1,0 +1,511 @@
+.hierarchical-tree-container {
+  width: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 0.5rem; // Dış padding daha da azaltıldı
+
+  .tree-header {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem; // Padding daha da azaltıldı
+    margin-bottom: 0.5rem; // Margin daha da azaltıldı
+
+    .search-container {
+      position: relative;
+      
+      input {
+        transition: all 0.2s;
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem; // Sol tarafta icon için boşluk
+        border: 2px solid #e5e7eb;
+        border-radius: 0.75rem; // Daha yuvarlak köşeler
+        font-size: 0.875rem;
+        background-color: #f9fafb;
+        
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+          border-color: #3b82f6;
+          background-color: white;
+        }
+        
+        &::placeholder {
+          color: #9ca3af;
+          font-style: italic;
+        }
+      }
+
+      .fa-search {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+
+      .fa-times {
+        position: absolute;
+        right: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        transition: color 0.2s;
+        color: #9ca3af;
+        font-size: 0.875rem;
+        
+        &:hover {
+          color: #ef4444;
+        }
+      }
+      
+      // Arama sonuç sayısı
+      .search-results {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        
+        .fa-info-circle {
+          color: #3b82f6;
+        }
+      }
+    }
+  }
+
+  .loading-container {
+    text-align: center;
+    
+    mat-spinner {
+      margin: 0 auto;
+    }
+  }
+
+  .tree-content {
+    padding-bottom: 0; // Alt padding kaldırıldı, son parent node'un margin'i yeterli
+
+    .no-data {
+      text-align: center;
+      padding: 1.5rem 0;
+      
+      .fa-search {
+        color: #d1d5db;
+      }
+    }
+
+    .parent-nodes {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .parent-node-container {
+        border-radius: 0.75rem; // Border radius artırıldı
+        border: 1px solid #e5e7eb;
+        margin-bottom: 0.75rem; // Component'ler arası boşluk azaltıldı
+        overflow: hidden;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+        // Son parent node için header ile aynı boşluk (üst-alt eşitlik)
+        &:last-child {
+          margin-bottom: 0.5rem; // Header'daki margin-bottom ile aynı
+        }
+
+        .parent-header {
+          padding: 0.5rem; // Padding daha da azaltıldı
+          cursor: pointer;
+          transition: all 0.2s;
+          min-height: 48px; // Minimum yükseklik azaltıldı
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); // Gradient background
+
+          &:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+          }
+
+          .parent-checkbox {
+            margin-right: 0.75rem; // Sağ margin eklendi
+            
+            ::ng-deep .mat-mdc-checkbox {
+              .mdc-checkbox {
+                width: 1.25rem; // Checkbox boyutu artırıldı
+                height: 1.25rem;
+                
+                .mdc-checkbox__native-control {
+                  width: 1.25rem;
+                  height: 1.25rem;
+                }
+              }
+              
+              .mdc-form-field {
+                font-size: 0.875rem;
+              }
+            }
+          }
+
+          .parent-icon {
+            width: 1.5rem; // Icon boyutu artırıldı
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem; // Sağ margin eklendi
+            background-color: #22c55e; // Yeşil background
+            border-radius: 0.5rem;
+            
+            i {
+              font-size: 1rem; // Icon boyutu artırıldı
+              color: white;
+            }
+          }
+
+          .parent-info {
+            flex: 1;
+            min-width: 0;
+            
+            h4 {
+              font-weight: 600; // Font weight artırıldı
+              font-size: 1rem; // Font size artırıldı
+              color: #111827;
+              line-height: 1.5;
+              margin: 0;
+            }
+          }
+
+          .expand-icon {
+            width: 1.5rem; // Icon container boyutu artırıldı
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.7); // Hafif beyaz background
+            border-radius: 0.375rem;
+            
+            i {
+              font-size: 0.875rem; // Icon boyutu artırıldı
+              color: #374151;
+              transition: transform 0.2s;
+            }
+          }
+        }
+
+        .children-container {
+          margin-top: 0.25rem; // Margin azaltıldı
+          margin-left: 0; // Sol margin kaldırıldı
+          padding-left: 1rem; // Padding azaltıldı
+          padding-bottom: 0.25rem; // Alt padding azaltıldı
+          display: flex;
+          flex-direction: column;
+          gap: 0.375rem; // Child'lar arası boşluk azaltıldı
+          // Sol border kaldırıldı
+
+          .child-item {
+            padding: 0.5rem; // Padding daha da azaltıldı
+            border-radius: 0.5rem; // Border radius artırıldı
+            border: 1px solid #e5e7eb; // Border rengi değiştirildi
+            background-color: #f8fafc; // Hafif gri background
+            transition: all 0.2s;
+            min-height: 40px; // Minimum yükseklik daha da azaltıldı
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); // Hafif gölge eklendi
+
+            // Son child item için margin kaldırıldı - container padding yeterli
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            &:hover {
+              box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+              background-color: #f1f5f9;
+              transform: translateY(-1px); // Hafif yukarı hareket
+            }
+
+            .child-checkbox {
+              margin-right: 0.75rem; // Sağ margin artırıldı
+              
+              ::ng-deep .mat-mdc-checkbox {
+                .mdc-checkbox {
+                  width: 1.125rem; // Checkbox boyutu artırıldı
+                  height: 1.125rem;
+                  
+                  .mdc-checkbox__native-control {
+                    width: 1.125rem;
+                    height: 1.125rem;
+                  }
+                }
+                
+                .mdc-form-field {
+                  font-size: 0.875rem;
+                }
+              }
+            }
+
+            .child-icon {
+              width: 1.25rem; // Icon boyutu artırıldı
+              height: 1.25rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-right: 0.75rem; // Sağ margin artırıldı
+              background-color: #e0e7ff; // Icon background eklendi
+              border-radius: 0.375rem;
+              
+              i {
+                font-size: 0.875rem; // Icon boyutu artırıldı
+                color: #6366f1; // Icon rengi
+              }
+            }
+
+            .child-info {
+              flex: 1;
+              min-width: 0;
+              
+              span {
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: #1f2937; // Daha koyu text rengi
+                line-height: 1.5;
+              }
+            }
+
+            .permission-status {
+              margin-left: 0.75rem; // Sol margin artırıldı
+              
+              .status-badge {
+                padding: 0.25rem 0.75rem; // Padding artırıldı
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600; // Font weight artırıldı
+                white-space: nowrap;
+                
+                &.bg-green-100 {
+                  background-color: #dcfce7;
+                  color: #166534;
+                  border: 1px solid #bbf7d0;
+                }
+                
+                &.bg-gray-100 {
+                  background-color: #f3f4f6;
+                  color: #374151;
+                  border: 1px solid #d1d5db;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Dark mode improvements
+  &.dark {
+    background-color: #111827;
+    border-color: #374151;
+    
+    .tree-header {
+      border-bottom-color: #374151;
+    }
+
+    .search-container input {
+      background-color: #1f2937;
+      border-color: #4b5563;
+      color: white;
+      
+      &:focus {
+        border-color: #3b82f6;
+        background-color: #374151;
+      }
+      
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+
+    .parent-node-container {
+      border-color: #374151;
+      
+      .parent-header {
+        background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+        
+        &:hover {
+          background: linear-gradient(135deg, #047857 0%, #064e3b 100%);
+        }
+        
+        .parent-info h4 {
+          color: white;
+        }
+        
+        .parent-icon {
+          background-color: #059669;
+        }
+        
+        .expand-icon {
+          background-color: rgba(255, 255, 255, 0.1);
+          
+          i {
+            color: #d1d5db;
+          }
+        }
+      }
+    }
+
+    .child-item {
+      background-color: #1f2937;
+      border-color: #374151;
+      
+      &:hover {
+        background-color: #374151;
+        transform: translateY(-1px);
+      }
+      
+      .child-info span {
+        color: #f3f4f6;
+      }
+      
+      .child-icon {
+        background-color: #4338ca;
+        
+        i {
+          color: #a5b4fc;
+        }
+      }
+      
+      .permission-status .status-badge {
+        &.bg-green-100 {
+          background-color: #064e3b;
+          color: #bbf7d0;
+          border-color: #059669;
+        }
+        
+        &.bg-gray-100 {
+          background-color: #374151;
+          color: #d1d5db;
+          border-color: #4b5563;
+        }
+      }
+    }
+    
+    .search-results {
+      color: #9ca3af;
+      
+      .fa-info-circle {
+        color: #60a5fa;
+      }
+    }
+  }
+
+  // Mobile responsiveness
+  @media (max-width: 640px) {
+    padding: 0.375rem; // Mobilde padding daha da azaltıldı
+    
+    .tree-header {
+      padding-bottom: 0.375rem;
+      margin-bottom: 0.375rem;
+      
+      .search-container input {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem 0.5rem 2.25rem; // Padding azaltıldı
+      }
+    }
+
+    .parent-header {
+      padding: 0.5rem; // Mobilde padding azaltıldı
+      min-height: 40px; // Yükseklik azaltıldı
+      
+      .parent-info h4 {
+        font-size: 0.875rem;
+      }
+      
+      .parent-icon {
+        width: 1rem;
+        height: 1rem;
+        
+        i {
+          font-size: 0.75rem;
+        }
+      }
+    }
+
+    .children-container {
+      padding-left: 0.75rem; // Padding azaltıldı
+      padding-bottom: 0.25rem; // Mobilde alt padding
+      gap: 0.25rem; // Gap azaltıldı
+      
+      .child-item {
+        padding: 0.375rem; // Mobilde padding daha da azaltıldı
+        min-height: 36px; // Yükseklik azaltıldı
+        
+        // Mobilde son child için margin kaldırıldı
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        .child-info span {
+          font-size: 0.8125rem;
+        }
+        
+        .child-icon {
+          width: 0.875rem;
+          height: 0.875rem;
+          
+          i {
+            font-size: 0.6875rem;
+          }
+        }
+        
+        .permission-status .status-badge {
+          padding: 0.125rem 0.375rem; // Padding azaltıldı
+          font-size: 0.6875rem;
+        }
+      }
+    }
+  }
+
+  // Custom Material Design checkbox sizing
+  ::ng-deep .mat-mdc-checkbox {
+    &.scale-90 {
+      transform: scale(0.9);
+    }
+    
+    .mdc-checkbox {
+      width: 1.25rem;
+      height: 1.25rem;
+      
+      .mdc-checkbox__native-control {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+      
+      .mdc-checkbox__background {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+    
+    .mdc-form-field {
+      font-size: 0.875rem;
+      line-height: 1.25;
+    }
+  }
+
+  // Animation for expanding/collapsing
+  .children-container {
+    animation: slideDown 0.2s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

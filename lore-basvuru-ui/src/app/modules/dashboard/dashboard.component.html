@@ -1,0 +1,27 @@
+<div class="flex flex-col flex-auto min-w-0 p-6 md:p-10">
+
+  <!-- Karşılama -->
+  <div class="mb-8">
+    <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+      Hoşgeldiniz 👋
+    </h1>
+    <p class="mt-1 text-lg text-secondary">{{ kullaniciAdi }}</p>
+  </div>
+
+  <!-- Kart Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <a *ngFor="let kart of kartlar"
+      [routerLink]="kart.link"
+      class="flex items-center gap-5 bg-card rounded-2xl shadow p-6 cursor-pointer
+             hover:shadow-lg transition-shadow duration-200 no-underline">
+      <div class="flex items-center justify-center w-14 h-14 rounded-xl {{ kart.renk }}">
+        <mat-icon class="text-white text-3xl">{{ kart.ikon }}</mat-icon>
+      </div>
+      <div>
+        <div class="text-lg font-semibold text-gray-800 dark:text-white">{{ kart.baslik }}</div>
+        <div class="text-sm text-secondary mt-0.5">{{ kart.aciklama }}</div>
+      </div>
+    </a>
+  </div>
+
+</div>

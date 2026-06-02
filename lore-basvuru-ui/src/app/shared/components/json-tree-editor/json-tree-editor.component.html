@@ -1,0 +1,32 @@
+<div class="json-tree-editor border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
+    <!-- Header -->
+    <div class="bg-gray-50 dark:bg-gray-900 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <div class="text-sm font-medium text-gray-700 dark:text-gray-300">JSON Editor</div>
+        <div class="flex items-center space-x-2">
+            <span *ngIf="!isValid" class="text-xs text-red-500 flex items-center">
+                <mat-icon class="icon-size-4 mr-1">error</mat-icon>
+                Invalid JSON
+            </span>
+            <button type="button" mat-icon-button color="primary" (click)="addRootItem()" matTooltip="Add Root Item">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="p-4 overflow-x-auto">
+        <div *ngIf="!isValid" class="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded text-sm font-mono">
+            {{ errorMessage }}
+        </div>
+
+        <div *ngIf="isValid">
+            <app-json-node 
+                [key]="'root'" 
+                [value]="data" 
+                [parentType]="'object'" 
+                [level]="0"
+                (valueChange)="onDataChange($event)">
+            </app-json-node>
+        </div>
+    </div>
+</div>

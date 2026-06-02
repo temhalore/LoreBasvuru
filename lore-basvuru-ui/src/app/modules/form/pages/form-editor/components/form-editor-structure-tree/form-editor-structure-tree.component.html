@@ -1,0 +1,101 @@
+<div class="editor-panel__body">
+    <div class="struct-stats" *ngIf="form">
+        <span class="struct-stats__item">
+            <mat-icon class="struct-stats__icon">layers</mat-icon>
+            {{ pageCount }} sayfa
+        </span>
+        <span class="struct-stats__sep" aria-hidden="true"></span>
+        <span class="struct-stats__item">
+            <mat-icon class="struct-stats__icon">quiz</mat-icon>
+            {{ totalQuestionCount }} soru
+        </span>
+    </div>
+
+    <div class="editor-panel__scroll" #scrollContainer>
+        <ng-container *ngIf="form as f; else emptyForm">
+            <div class="struct-tree">
+                <div class="struct-item" *ngFor="let page of f.sayfalar; let pi = index; trackBy: trackByEid">
+                    <button
+                        class="struct-card struct-card--page"
+                        type="button"
+                        [class.struct-card--selected]="selectedNodeEid === page.eid"
+                        [class.struct-card--active-page]="activePageEid === page.eid && selectedNodeEid !== page.eid"
+                        [attr.data-tree-eid]="page.eid"
+                        (click)="selectNode(page.eid); togglePage(page.eid)">
+                        <div class="struct-card__top">
+                            <span
+                                class="struct-card__fold"
+                                [class.struct-card__fold--hidden]="(page.sorular?.length || 0) === 0"
+                                (click)="$event.stopPropagation(); togglePage(page.eid)"
+                                aria-hidden="true">
+                                <mat-icon>{{ isPageCollapsed(page.eid) ? 'chevron_right' : 'expand_more' }}</mat-icon>
+                            </span>
+                            <mat-icon class="struct-card__type-icon">description</mat-icon>
+                            <span class="struct-card__badge">Sayfa {{ pi + 1 }}</span>
+                            <span class="struct-card__meta">{{ countForPage(page.eid) }} soru</span>
+                        </div>
+
+                        <div class="struct-card__label">{{ page.sayfaBaslik || ('Sayfa ' + page.sayfaNo) }}</div>
+                    </button>
+
+                    <ng-container *ngIf="!isPageCollapsed(page.eid) && (page.sorular?.length || 0) > 0">
+                        <ng-container
+                            *ngTemplateOutlet="questionTree; context: {
+                                questions: page.sorular ?? [],
+                                depth: 0
+                            }">
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #questionTree let-questions="questions" let-depth="depth">
+            <div class="struct-item__children" [class.struct-item__children--nested]="depth > 0">
+                <ng-container *ngFor="let question of questions; let qi = index; trackBy: trackByEid">
+                    <div class="struct-item">
+                        <button
+                            class="struct-card struct-card--question"
+                            type="button"
+                            [class.struct-card--selected]="selectedNodeEid === question.eid"
+                            [attr.data-tree-eid]="question.eid"
+                            (click)="selectNode(question.eid); questionHasChildren(question) ? toggleQuestion(question.eid) : null">
+                            <div class="struct-card__top">
+                                <span
+                                    class="struct-card__fold"
+                                    [class.struct-card__fold--hidden]="!questionHasChildren(question)"
+                                    (click)="$event.stopPropagation(); toggleQuestion(question.eid)"
+                                    aria-hidden="true">
+                                    <mat-icon>{{ isQuestionCollapsed(question.eid) ? 'chevron_right' : 'expand_more' }}</mat-icon>
+                                </span>
+                                <mat-icon class="struct-card__type-icon">{{ depth === 0 ? 'quiz' : 'help_outline' }}</mat-icon>
+                                <span class="struct-card__badge">{{ qi + 1 }}</span>
+                                <span class="struct-card__meta">{{ question.soruTipKodDto?.kod || '-' }}</span>
+                            </div>
+
+                            <div class="struct-card__label">
+                                {{ questionLabel(question, depth === 0 ? 'Adsiz soru' : 'Alt soru') }}
+                            </div>
+                        </button>
+
+                        <ng-container *ngIf="questionHasChildren(question) && !isQuestionCollapsed(question.eid)">
+                            <ng-container
+                                *ngTemplateOutlet="questionTree; context: {
+                                    questions: question.altSorular ?? [],
+                                    depth: depth + 1
+                                }">
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-template>
+
+        <ng-template #emptyForm>
+            <div class="struct-empty">
+                <mat-icon>layers</mat-icon>
+                <span>Form henuz yuklenmedi.</span>
+            </div>
+        </ng-template>
+    </div>
+</div>

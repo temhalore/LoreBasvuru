@@ -1,0 +1,417 @@
+<section class="validation-editor" *ngIf="question; else missingQuestion">
+    <header class="validation-editor__header">
+        <div>
+            <p class="validation-editor__eyebrow">Soru Validasyonları</p>
+            <h3 class="validation-editor__title">{{ questionTitle }}</h3>
+        </div>
+    </header>
+
+    <div class="validation-editor__workspace">
+        <div class="validation-editor__empty-state validation-editor__empty-state--loading" *ngIf="showLoadingState">
+            <mat-spinner [diameter]="30" [strokeWidth]="4"></mat-spinner>
+            <p class="validation-editor__empty-state-title">Editor hazırlanıyor</p>
+            <p class="validation-editor__empty-state-text">
+                Validasyon kuralları ve soru tipi ayarları yükleniyor.
+            </p>
+        </div>
+
+        <div class="validation-editor__empty-state validation-editor__empty-state--unsupported" *ngIf="showUnsupportedState">
+            <mat-icon aria-hidden="true">block</mat-icon>
+            <p class="validation-editor__empty-state-title">Bu soru tipi için validasyon desteklenmiyor</p>
+            <p class="validation-editor__empty-state-text">
+                {{ unsupportedMessage }}
+            </p>
+        </div>
+
+        <section class="validation-editor__rule-stack" *ngIf="showRuleListState">
+            <div class="validation-editor__rule-stack-header">
+                <div>
+                    <p class="validation-editor__conditions-title">Kural listesi</p>
+                    <p class="validation-editor__conditions-text">Her kuralı kompakt görünümde inceleyip ihtiyacınız olan kartı genişleterek düzenleyin.</p>
+                </div>
+                <span class="validation-editor__rule-stack-count">{{ visibleRules.length }}</span>
+            </div>
+
+            <p class="validation-editor__empty validation-editor__empty--stack" *ngIf="showRuleListEmptyHint">
+                {{ emptyRuleListText }}
+            </p>
+
+            <div class="validation-editor__rule-list">
+                <article
+                    class="validation-editor__rule-row"
+                    *ngFor="let rule of visibleRules; let index = index; trackBy: trackByRule"
+                    [class.validation-editor__rule-row--expanded]="isRuleExpanded(rule)"
+                    [class.validation-editor__rule-row--pasif]="!rule.rule.isAktif">
+                    <button
+                        type="button"
+                        class="validation-editor__rule-compact"
+                        [attr.aria-expanded]="isRuleExpanded(rule)"
+                        (click)="toggleRule(rule)">
+                        <div class="validation-editor__rule-compact-main">
+                            <div class="validation-editor__rule-compact-heading">
+                                <span class="validation-editor__rule-card-title">Kural {{ index + 1 }}</span>
+                                <div class="validation-editor__rule-compact-badges">
+                                    <span class="validation-editor__rule-card-badge">{{ getRuleConditionCount(rule) }} koşul</span>
+                                    <span class="validation-editor__rule-card-badge" *ngIf="!rule.rule.isAktif">Pasif</span>
+                                </div>
+                            </div>
+                            <span class="validation-editor__rule-card-subtitle">{{ getRuleMessage(rule) }}</span>
+                        </div>
+
+                        <span
+                            class="validation-editor__rule-compact-icon"
+                            [class.validation-editor__rule-compact-icon--open]="isRuleExpanded(rule)"
+                            aria-hidden="true">
+                            <mat-icon>{{ isRuleExpanded(rule) ? 'expand_more' : 'chevron_right' }}</mat-icon>
+                        </span>
+                    </button>
+
+                    <div
+                        class="validation-editor__rule-edit-wrap"
+                        [class.validation-editor__rule-edit-wrap--open]="isRuleExpanded(rule)">
+                        <div class="validation-editor__rule-edit-inner">
+                            <div class="validation-editor__rule-edit-panel" *ngIf="isRuleExpanded(rule)">
+                                <ng-container [ngTemplateOutlet]="ruleFormTemplate"></ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article
+                    class="validation-editor__rule-row validation-editor__rule-row--create"
+                    [class.validation-editor__rule-row--expanded]="isCreateRuleExpanded()">
+                    <button
+                        type="button"
+                        class="validation-editor__rule-compact validation-editor__rule-compact--add"
+                        [attr.aria-expanded]="isCreateRuleExpanded()"
+                        (click)="toggleCreateRule()">
+                        <span class="validation-editor__rule-card-add-icon">
+                            <mat-icon aria-hidden="true">add</mat-icon>
+                        </span>
+
+                        <div class="validation-editor__rule-compact-main">
+                            <div class="validation-editor__rule-compact-heading">
+                                <span class="validation-editor__rule-card-title">Yeni kural</span>
+                            </div>
+                            <span class="validation-editor__rule-card-subtitle">Yeni validasyon kuralı oluştur</span>
+                        </div>
+
+                        <span
+                            class="validation-editor__rule-compact-icon"
+                            [class.validation-editor__rule-compact-icon--open]="isCreateRuleExpanded()"
+                            aria-hidden="true">
+                            <mat-icon>{{ isCreateRuleExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
+                        </span>
+                    </button>
+
+                    <div
+                        class="validation-editor__rule-edit-wrap"
+                        [class.validation-editor__rule-edit-wrap--open]="isCreateRuleExpanded()">
+                        <div class="validation-editor__rule-edit-inner">
+                            <div class="validation-editor__rule-edit-panel" *ngIf="isCreateRuleExpanded()">
+                                <ng-container [ngTemplateOutlet]="ruleFormTemplate"></ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+    </div>
+</section>
+
+<ng-template #ruleFormTemplate>
+    <form class="validation-editor__form" [formGroup]="formGroup" (ngSubmit)="saveRule()">
+        <div class="validation-editor__status validation-editor__status--error" *ngIf="visibleError">
+            <mat-icon aria-hidden="true">error_outline</mat-icon>
+            <span>{{ visibleError }}</span>
+        </div>
+
+        <section class="validation-editor__conditions">
+            <div class="validation-editor__conditions-header">
+                <div>
+                    <p class="validation-editor__conditions-title">Koşullar</p>
+                    <p class="validation-editor__conditions-text">Bu sorunun cevabını doğrulayacak koşulları tanımlayın.</p>
+                </div>
+            </div>
+
+            <div class="validation-editor__condition-list" formArrayName="kosullar">
+                <p class="validation-editor__empty" *ngIf="kosullarArray.length === 0">
+                    Henüz koşul eklenmedi. Devam etmek için önce aşağıdaki "Koşul ekle" butonunu kullanın.
+                </p>
+
+                <div
+                    class="validation-editor__condition-shell"
+                    *ngFor="let kosul of kosullarArray.controls; let i = index; trackBy: trackByKosul"
+                    [class.validation-editor__condition-shell--open]="isConditionRevealed(i)">
+                    <div class="validation-editor__condition-shell-inner">
+                        <article class="validation-editor__condition-card" [formGroupName]="i">
+                            <div class="validation-editor__condition-topline">
+                                <span>Koşul {{ i + 1 }}</span>
+                                <button type="button" class="validation-editor__condition-remove" (click)="kosulKaldir(i)">
+                                    <mat-icon aria-hidden="true">delete_outline</mat-icon>
+                                    <span>Kaldır</span>
+                                </button>
+                            </div>
+
+                            <div *ngIf="kosulCases[i]?.showKuralDesteklenmezUyarisi" class="validation-editor__warning">
+                                <mat-icon aria-hidden="true">warning_amber</mat-icon>
+                                <span>{{ kosulCases[i]?.kuralDesteklenmezMesaj }}</span>
+                            </div>
+
+                            <app-code-select-input
+                                *ngIf="!kosulCases[i]?.showKuralDesteklenmezUyarisi"
+                                [nameOfFormGroup]="kosul"
+                                controlName="kosulTipKodDto"
+                                title="Koşul Tipi"
+                                placeHolder="Koşul tipi seçiniz..."
+                                [code]="KOSUL_TIPI_KOD_ID"
+                                [isMultiple]="false"
+                                [includeIds]="kosulCases[i]?.izinVerilenKosulTipIdleri || []"
+                                (selectChangeEvent)="onKosulConfigSelectionChange()">
+                            </app-code-select-input>
+
+                            <div *ngIf="kosulCases[i]?.showMatrisNotu" class="validation-editor__info">
+                                <mat-icon aria-hidden="true">info</mat-icon>
+                                <span>Matris soru tipleri için seçenek bazlı validasyon sonraki fazda satır ve sütun alanlarıyla zenginleştirilecek.</span>
+                            </div>
+
+                            <app-api-select-input
+                                *ngIf="kosulCases[i]?.showSecenek"
+                                [nameOfFormGroup]="kosul"
+                                controlName="secenekEIdDto"
+                                title="Seçenek"
+                                placeHolder="Seçenek seçiniz..."
+                                apiUrl="FormBuild/Secenek/GetSecenekListBySoruKokId"
+                                displayField="secenekMetni"
+                                [apiParam]="questionApiParam"
+                                [isRequired]="false">
+                            </app-api-select-input>
+
+                            <div *ngIf="kosulCases[i]?.showMatris" class="validation-editor__grid validation-editor__grid--double">
+                                <app-api-select-input
+                                    [nameOfFormGroup]="kosul"
+                                    controlName="matrisSatirEIdDto"
+                                    title="Matris Satırı"
+                                    placeHolder="Satır seçiniz..."
+                                    apiUrl="FormBuild/Soru/GetMatrisBySoruKokId"
+                                    displayField="baslik"
+                                    [apiParam]="questionApiParam"
+                                    [isRequired]="false">
+                                </app-api-select-input>
+
+                                <app-api-select-input
+                                    [nameOfFormGroup]="kosul"
+                                    controlName="matrisSutunEIdDto"
+                                    title="Matris Sütunu"
+                                    placeHolder="Sütun seçiniz..."
+                                    apiUrl="FormBuild/Soru/GetMatrisBySoruKokId"
+                                    displayField="baslik"
+                                    [apiParam]="questionApiParam"
+                                    [isRequired]="false">
+                                </app-api-select-input>
+                            </div>
+
+                            <div *ngIf="kosulCases[i]?.showDosyaKisitAlanlari" class="validation-editor__grid validation-editor__grid--triple">
+                                <mat-form-field appearance="outline" class="w-full">
+                                    <mat-label>Max Boyut (MB)</mat-label>
+                                    <input matInput type="number" formControlName="maxDosyaBoyutuMB" placeholder="Orn: 5">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-full">
+                                    <mat-label>Min Dosya Sayısı</mat-label>
+                                    <input matInput type="number" formControlName="minDosyaSayisi" placeholder="Orn: 1">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-full">
+                                    <mat-label>Max Dosya Sayısı</mat-label>
+                                    <input matInput type="number" formControlName="maxDosyaSayisi" placeholder="Orn: 5">
+                                </mat-form-field>
+                            </div>
+
+                            <app-code-select-input
+                                *ngIf="kosulCases[i]?.showDosyaKisitAlanlari"
+                                [nameOfFormGroup]="kosul"
+                                controlName="izinVerilenDosyaTipleri"
+                                title="İzin Verilen Dosya Uzantıları"
+                                placeHolder="Uzantı seçiniz..."
+                                [code]="DOSYA_UZANTI_TIPI_KOD_ID"
+                                [isMultiple]="true"
+                                [isRequired]="false">
+                            </app-code-select-input>
+
+                            <div class="validation-editor__grid validation-editor__grid--double">
+                                <app-code-select-input
+                                    *ngIf="kosulCases[i]?.showOperator !== false"
+                                    [nameOfFormGroup]="kosul"
+                                    controlName="operatorKodDto"
+                                    title="Operatör"
+                                    placeHolder="Operatör seçiniz..."
+                                    [code]="OPERATOR_KOD_ID"
+                                    [isMultiple]="false"
+                                    [includeIds]="kosulCases[i]?.izinVerilenOperatorIdleri || []"
+                                    [isRequired]="false"
+                                    (selectChangeEvent)="onKosulConfigSelectionChange()">
+                                </app-code-select-input>
+
+                                <app-code-select-input
+                                    *ngIf="kosulCases[i]?.showDegerTipi !== false"
+                                    [nameOfFormGroup]="kosul"
+                                    controlName="degerTipiKodDto"
+                                    title="Değer Tipi"
+                                    placeHolder="Değer tipi seçiniz..."
+                                    [code]="DEGER_TIPI_KOD_ID"
+                                    [isMultiple]="false"
+                                    [includeIds]="kosulCases[i]?.izinVerilenDegerTipiIdleri || []"
+                                    [isRequired]="false"
+                                    (selectChangeEvent)="onKosulConfigSelectionChange()">
+                                </app-code-select-input>
+                            </div>
+
+                            <ng-container *ngIf="kosulCases[i]?.showDeger">
+                                <mat-form-field *ngIf="kosulCases[i]?.degerInputTip === 'sayi'" appearance="outline" class="w-full">
+                                    <mat-label>{{ kosulCases[i]?.degerLabel || 'Değer' }}</mat-label>
+                                    <input matInput type="number" formControlName="deger" [placeholder]="kosulCases[i]?.degerLabel || 'Sayısal değer'">
+                                </mat-form-field>
+
+                                <app-datepicker-input
+                                    *ngIf="kosulCases[i]?.degerInputTip === 'tarih'"
+                                    [formGroup]="kosulAsFormGroup(i)"
+                                    controlName="deger"
+                                    [label]="kosulCases[i]?.degerLabel || 'Tarih'"
+                                    dateType="date">
+                                </app-datepicker-input>
+
+                                <mat-form-field *ngIf="kosulCases[i]?.degerInputTip === 'metin' || !kosulCases[i]?.degerInputTip" appearance="outline" class="w-full">
+                                    <mat-label>{{ kosulCases[i]?.degerLabel || 'Değer' }}</mat-label>
+                                    <input matInput type="text" formControlName="deger" [placeholder]="kosulCases[i]?.degerLabel || 'Karşılaştırma değeri'">
+                                </mat-form-field>
+                            </ng-container>
+
+                            <ng-container *ngIf="kosulCases[i]?.showDeger2">
+                                <mat-form-field *ngIf="kosulCases[i]?.degerInputTip === 'sayi'" appearance="outline" class="w-full">
+                                    <mat-label>{{ kosulCases[i]?.deger2Label || 'Değer 2' }}</mat-label>
+                                    <input matInput type="number" formControlName="deger2" [placeholder]="kosulCases[i]?.deger2Label || 'İkinci sayısal değer'">
+                                </mat-form-field>
+
+                                <app-datepicker-input
+                                    *ngIf="kosulCases[i]?.degerInputTip === 'tarih'"
+                                    [formGroup]="kosulAsFormGroup(i)"
+                                    controlName="deger2"
+                                    [label]="kosulCases[i]?.deger2Label || 'Bitiş Tarihi'"
+                                    dateType="date">
+                                </app-datepicker-input>
+
+                                <mat-form-field *ngIf="kosulCases[i]?.degerInputTip === 'metin' || !kosulCases[i]?.degerInputTip" appearance="outline" class="w-full">
+                                    <mat-label>{{ kosulCases[i]?.deger2Label || 'Değer 2' }}</mat-label>
+                                    <input matInput type="text" formControlName="deger2" [placeholder]="kosulCases[i]?.deger2Label || 'İkinci değer'">
+                                </mat-form-field>
+                            </ng-container>
+
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Koşul Hata Mesajı</mat-label>
+                                <input matInput formControlName="hataMesaji" placeholder="Bu koşul ihlalinde gösterilecek ek mesaj">
+                            </mat-form-field>
+
+                            <app-code-select-input
+                                [nameOfFormGroup]="kosul"
+                                controlName="joinKodDto"
+                                title="Bağlantı (VE / VEYA)"
+                                placeHolder="Sonraki koşula bağlantı..."
+                                [code]="JOIN_KOD_ID"
+                                [isMultiple]="false"
+                                [isRequired]="false">
+                            </app-code-select-input>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="validation-editor__condition-add">
+                    <app-action-button
+                        label="Koşul ekle"
+                        icon="plus"
+                        variant="secondary"
+                        [outline]="true"
+                        [disabled]="isSaving || !isQuestionValidationSupported"
+                        (onClick)="kosulEkle()">
+                    </app-action-button>
+                </div>
+            </div>
+        </section>
+
+        <section class="validation-editor__settings">
+            <div>
+                <p class="validation-editor__conditions-title">Kural ayarları</p>
+                <p class="validation-editor__conditions-text">Koşullar sağlandığında kullanılacak mesaj ve davranışı buradan yönetin.</p>
+            </div>
+
+            <div class="validation-editor__grid">
+                <mat-form-field appearance="outline" class="w-full validation-editor__field validation-editor__field--wide">
+                    <mat-label>Hata Mesajı</mat-label>
+                    <input matInput formControlName="hataMesaji" placeholder="Kural ihlali durumunda gösterilecek mesaj">
+                </mat-form-field>
+
+                <div class="validation-editor__toggle-row">
+                    <mat-slide-toggle formControlName="isZorunlu" color="primary">
+                        <span class="validation-editor__toggle-label">Zorunlu kural</span>
+                    </mat-slide-toggle>
+
+                    <mat-slide-toggle formControlName="isAktif" color="primary">
+                        <span class="validation-editor__toggle-label">Kural aktif</span>
+                    </mat-slide-toggle>
+                </div>
+            </div>
+        </section>
+
+        <div class="validation-editor__form-footer">
+            <app-action-button
+                *ngIf="!isCreatingNew"
+                label="Sil"
+                icon="trash"
+                variant="danger"
+                [outline]="true"
+                [disabled]="!activeRuleEid"
+                (onClick)="deleteActiveRule()">
+            </app-action-button>
+
+            <div class="validation-editor__form-footer-actions">
+                <app-action-button
+                    [label]="isCreatingNew ? 'Kurali Ekle' : 'Kurali Uygula'"
+                    icon="save"
+                    variant="primary"
+                    [disabled]="formGroup.invalid || kosullarArray.length === 0"
+                    (onClick)="saveRule()">
+                </app-action-button>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<section class="validation-editor__footer" *ngIf="showSharedFooter">
+    <div class="validation-editor__footer-actions">
+        <app-action-button
+            label="Iptal"
+            icon="times"
+            variant="secondary"
+            [outline]="true"
+            [disabled]="isSaving"
+            (onClick)="closeEditor()">
+        </app-action-button>
+        <app-action-button
+            label="Degisiklikleri Kaydet"
+            icon="save"
+            variant="primary"
+            [loading]="isSaving"
+            [disabled]="!hasUnsavedChanges"
+            loadingText="Kaydediliyor..."
+            (onClick)="commitSession()">
+        </app-action-button>
+    </div>
+</section>
+
+<ng-template #missingQuestion>
+    <div class="validation-editor__status validation-editor__status--error">
+        <mat-icon aria-hidden="true">error_outline</mat-icon>
+        <span>Soru bağlamı bulunamadı.</span>
+    </div>
+</ng-template>

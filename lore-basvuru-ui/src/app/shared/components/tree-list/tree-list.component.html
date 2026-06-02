@@ -1,0 +1,277 @@
+<div class="tree-list-container">
+  <!-- Header -->
+  <div class="tree-list-header" *ngIf="config?.title || config?.subtitle">
+    <div class="tree-list-title-section">
+      <h2 class="tree-list-title" *ngIf="config?.title">{{ config.title }}</h2>
+      <p class="tree-list-subtitle" *ngIf="config?.subtitle">{{ config.subtitle }}</p>
+    </div>
+    
+    <!-- Custom Buttons -->
+    <div class="tree-list-custom-buttons" *ngIf="config?.customButtons && config.customButtons.length > 0">
+      <ng-container *ngFor="let button of config.customButtons; trackBy: trackByButton">
+        <!-- Flat Button (default) -->
+        <button *ngIf="!button.variant || button.variant === 'flat'"
+                mat-button
+                [color]="button.color || 'primary'"
+                [disabled]="button.disabled"
+                [matTooltip]="button.tooltip || ''"
+                class="modern-custom-button px-4 py-2 rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all duration-200"
+                (click)="button.action()">
+          <mat-icon *ngIf="button.icon" [svgIcon]="button.icon" class="mr-2"></mat-icon>
+          <span>{{ button.label }}</span>
+        </button>
+        
+        <!-- Raised Button -->
+        <button *ngIf="button.variant === 'raised'"
+                mat-raised-button
+                [color]="button.color || 'primary'"
+                [disabled]="button.disabled"
+                [matTooltip]="button.tooltip || ''"
+                class="modern-custom-button px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
+                (click)="button.action()">
+          <mat-icon *ngIf="button.icon" [svgIcon]="button.icon" class="mr-2"></mat-icon>
+          <span>{{ button.label }}</span>
+        </button>
+        
+        <!-- Stroked Button -->
+        <button *ngIf="button.variant === 'stroked'"
+                mat-stroked-button
+                [color]="button.color || 'primary'"
+                [disabled]="button.disabled"
+                [matTooltip]="button.tooltip || ''"
+                class="modern-custom-button px-4 py-2 rounded-lg hover:shadow-md transition-all duration-200"
+                (click)="button.action()">
+          <mat-icon *ngIf="button.icon" [svgIcon]="button.icon" class="mr-2"></mat-icon>
+          <span>{{ button.label }}</span>
+        </button>
+        
+        <!-- Basic Button -->
+        <button *ngIf="button.variant === 'basic'"
+                mat-button
+                [color]="button.color || 'primary'"
+                [disabled]="button.disabled"
+                [matTooltip]="button.tooltip || ''"
+                class="modern-custom-button px-4 py-2 rounded-lg hover:bg-gray-100 transition-all duration-200"
+                (click)="button.action()">
+          <mat-icon *ngIf="button.icon" [svgIcon]="button.icon" class="mr-2"></mat-icon>
+          <span>{{ button.label }}</span>
+        </button>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="tree-list-toolbar">
+    <!-- Search -->
+    <div class="tree-list-search" *ngIf="config?.searchable">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Menü ara...</mat-label>
+        <input matInput 
+               (input)="onSearchChange($event.target?.value || '')"
+               placeholder="Menü başlığı, yolu veya ikon ara...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Filters -->
+    <div class="tree-list-filters" *ngIf="config?.filters && config.filters.length > 0">
+      <ng-container *ngFor="let filter of config.filters; trackBy: trackByField">
+        <!-- Text Filter -->
+        <mat-form-field *ngIf="filter.type === 'text'" appearance="outline" class="filter-field">
+          <mat-label>{{ filter.label }}</mat-label>
+          <input matInput 
+                 (input)="onFilterChange(filter.key, $event.target?.value)"
+                 [placeholder]="filter.placeholder || filter.label">
+        </mat-form-field>
+        <!-- Select Filter -->
+        <mat-form-field *ngIf="filter.type === 'select'" appearance="outline" class="filter-field">
+          <mat-label>{{ filter.label }}</mat-label>
+          <mat-select (selectionChange)="onFilterChange(filter.key, $event.value)">
+            <mat-option [value]="null">Tümü</mat-option>
+            <mat-option *ngFor="let option of filter.options" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+    </div>
+
+    <!-- Actions -->
+    <div class="tree-list-actions">
+      <button mat-icon-button 
+              (click)="onExpandAll()"
+              matTooltip="Tümünü Aç"
+              class="action-button">
+        <mat-icon>unfold_more</mat-icon>
+      </button>
+      
+      <button mat-icon-button 
+              (click)="onCollapseAll()"
+              matTooltip="Tümünü Kapa"
+              class="action-button">
+        <mat-icon>unfold_less</mat-icon>
+      </button>
+      
+      <button mat-icon-button 
+              (click)="onRefresh()"
+              matTooltip="Yenile"
+              class="action-button">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="tree-list-loading" *ngIf="loading$ | async">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Yükleniyor...</span>
+  </div>
+
+  <!-- Tree Content -->
+  <div class="tree-list-content" *ngIf="!(loading$ | async)">
+    <!-- Headers -->
+    <div class="tree-list-headers" *ngIf="config?.displayFields">
+      <div class="tree-node-row header-row">
+        <div class="tree-node-toggle"></div>
+        <div class="tree-node-fields">
+          <div *ngFor="let field of config.displayFields; trackBy: trackByField"
+               class="tree-field-header"
+               [style.width]="field.width || 'auto'">
+            {{ field.label }}
+          </div>
+        </div>
+        <div class="tree-node-actions" *ngIf="config?.actions && config.actions.length > 0">
+          İşlemler
+        </div>
+      </div>
+    </div>
+
+    <!-- Tree Nodes -->
+    <div class="tree-list-nodes">
+      <ng-container *ngFor="let node of data$ | async; trackBy: trackByNode">
+        <ng-container [ngTemplateOutlet]="treeNodeTemplate" 
+                      [ngTemplateOutletContext]="{ node: node, level: 0 }">
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <!-- Empty State -->
+    <div class="tree-list-empty" *ngIf="(data$ | async)?.length === 0">
+      <mat-icon>account_tree</mat-icon>
+      <h3>Veri bulunamadı</h3>
+      <p>Arama kriterlerinizi değiştirmeyi deneyin</p>
+    </div>
+  </div>
+</div>
+
+<!-- Tree Node Template -->
+<ng-template #treeNodeTemplate let-node="node" let-level="level">
+  <div class="tree-node" 
+       [class.expanded]="isExpanded(node)"
+       [class.selected]="isSelected(node)"
+       [class.has-children]="hasChildren(node)"
+       [style.padding-left.px]="level * 16">
+    
+    <div class="tree-node-row" (click)="onNodeSelect(node)">
+      <!-- Checkbox -->
+      <div class="tree-node-checkbox" *ngIf="config?.checkboxes">
+        <mat-checkbox 
+          [checked]="isNodeChecked(node)"
+          [indeterminate]="isNodePartiallySelected(node)"
+          (change)="onNodeCheck(node, $event.checked); $event.stopPropagation()"
+          (click)="$event.stopPropagation()">
+        </mat-checkbox>
+      </div>
+
+      <!-- Toggle Button -->
+      <div class="tree-node-toggle">
+        <button *ngIf="hasChildren(node)" 
+                mat-icon-button 
+                (click)="onNodeToggle(node); $event.stopPropagation()"
+                class="toggle-button"
+                [class.expanded]="isExpanded(node)">
+          <mat-icon>{{ isExpanded(node) ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
+      </div>
+
+      <!-- Node Fields -->
+      <div class="tree-node-fields">
+        <div *ngFor="let field of config?.displayFields; trackBy: trackByField"
+             class="tree-field-value"
+             [style.width]="field.width || 'auto'">
+          
+          <!-- Text Field -->
+          <span *ngIf="!field.type || field.type === 'text'" 
+                class="field-text">
+            {{ getFieldValue(node, field) }}
+          </span>
+
+          <!-- Icon Field -->
+          <mat-icon *ngIf="field.type === 'icon'" 
+                    class="field-icon">
+            {{ getFieldValue(node, field) }}
+          </mat-icon>
+
+          <!-- Boolean Field -->
+          <span *ngIf="field.type === 'boolean'" 
+                class="field-boolean">
+            <mat-icon>{{ getFieldValue(node, field) ? 'check' : 'close' }}</mat-icon>
+          </span>
+
+          <!-- Link Field -->
+          <a *ngIf="field.type === 'link'" 
+             [href]="getFieldValue(node, field)"
+             class="field-link"
+             target="_blank">
+            {{ getFieldValue(node, field) }}
+          </a>
+
+          <!-- Badge Field -->
+          <ng-container *ngIf="field.type === 'badge'">
+            <ng-container *ngIf="getFieldValue(node, field) as badgeValue">
+              <ng-container *ngIf="isArray(badgeValue); else singleBadge">
+                <span *ngFor="let badge of badgeValue" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-700 mr-1">
+                  {{ badge }}
+                </span>
+              </ng-container>
+              <ng-template #singleBadge>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-700">
+                  {{ badgeValue }}
+                </span>
+              </ng-template>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Node Actions -->
+      <div class="tree-node-actions" *ngIf="config?.actions && config.actions.length > 0">
+        <button mat-icon-button 
+                [matMenuTriggerFor]="actionMenu"
+                class="action-menu-trigger"
+                (click)="$event.stopPropagation()">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        
+        <mat-menu #actionMenu="matMenu">
+          <button *ngFor="let action of getVisibleActions(node); trackBy: trackByAction"
+                  mat-menu-item 
+                  (click)="onNodeAction(action, node)"
+                  [class]="'action-' + (action.color || 'primary')">
+            <mat-icon [svgIcon]="action.icon"></mat-icon>
+            <span>{{ action.label }}</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <!-- Child Nodes -->
+    <div class="tree-node-children" *ngIf="hasChildren(node) && isExpanded(node)">
+      <ng-container *ngFor="let childNode of node.children; trackBy: trackByNode">
+        <ng-container [ngTemplateOutlet]="treeNodeTemplate" 
+                      [ngTemplateOutletContext]="{ node: childNode, level: level + 1 }">
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>

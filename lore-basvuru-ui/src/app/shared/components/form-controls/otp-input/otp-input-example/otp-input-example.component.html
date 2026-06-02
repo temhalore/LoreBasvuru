@@ -1,0 +1,505 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <!-- Page Header -->
+    <div class="mb-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">OTP Input Components</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">
+            One-Time Password (OTP) input kontrolleri örnekleri
+        </p>
+    </div>
+
+    <!-- OTP Input Examples -->
+    <div class="mb-12 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+            <!-- Header -->
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    🔐 OTP Input Examples
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Angular OTP Input kontrolleri kullanım örnekleri
+                </p>
+            </div>
+
+            <mat-tab-group class="example-tabs">
+                <!-- Basic Examples -->
+                <mat-tab label="Basic OTP">
+                    <div class="tab-content p-6">
+                        <mat-card class="example-card">
+                            <mat-card-header>
+                                <mat-card-title>Basic OTP Examples</mat-card-title>
+                                <mat-card-subtitle>Temel OTP input kullanımları</mat-card-subtitle>
+                            </mat-card-header>
+                            
+                            <mat-card-content>
+                                <form [formGroup]="basicForm" (ngSubmit)="onBasicFormSubmit()" class="space-y-4">
+                                    <!-- Simple OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Simple 6-Digit OTP</h3>
+                                        <app-otp-input
+                                            [formGroup]="basicForm"
+                                            controlName="simpleOtp"
+                                            label="Verification Code"
+                                            description="Enter the 6-digit code sent to your device"
+                                            (otpComplete)="onOtpComplete($event, 'Simple OTP')"
+                                            (otpChange)="onOtpChange($event, 'Simple OTP')"
+                                            (resendOtp)="onResendOtp('Simple OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Auto Submit OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Auto Submit OTP</h3>
+                                        <app-otp-input
+                                            [formGroup]="basicForm"
+                                            controlName="autoSubmitOtp"
+                                            label="Quick Verification"
+                                            description="Automatically submits when all digits are entered"
+                                            [autoSubmit]="true"
+                                            (otpComplete)="onOtpComplete($event, 'Auto Submit OTP')"
+                                            (resendOtp)="onResendOtp('Auto Submit OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Masked OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Masked OTP (Secure)</h3>
+                                        <app-otp-input
+                                            [formGroup]="basicForm"
+                                            controlName="maskedOtp"
+                                            label="Secure Code"
+                                            description="OTP digits are masked for security"
+                                            [maskInput]="true"
+                                            (otpComplete)="onOtpComplete($event, 'Masked OTP')"
+                                            (resendOtp)="onResendOtp('Masked OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Custom Digits OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">4-Digit OTP</h3>
+                                        <app-otp-input
+                                            [formGroup]="basicForm"
+                                            controlName="customDigitsOtp"
+                                            label="Short Code"
+                                            description="Custom 4-digit verification code"
+                                            [digits]="4"
+                                            (otpComplete)="onOtpComplete($event, 'Custom Digits OTP')"
+                                            (resendOtp)="onResendOtp('Custom Digits OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Numbers Only -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Numbers Only OTP</h3>
+                                        <app-otp-input
+                                            [formGroup]="basicForm"
+                                            controlName="numbersOnlyOtp"
+                                            label="Numeric Code"
+                                            description="Only numeric characters allowed"
+                                            [allowNumbersOnly]="true"
+                                            [timerDuration]="30"
+                                            (otpComplete)="onOtpComplete($event, 'Numbers Only OTP')"
+                                            (resendOtp)="onResendOtp('Numbers Only OTP')">
+                                        </app-otp-input>
+                                    </div>
+                                </form>
+                            </mat-card-content>
+                            
+                            <mat-card-actions class="flex gap-2 p-4">
+                                <button mat-raised-button color="primary" (click)="onBasicFormSubmit()">
+                                    <mat-icon class="mr-2">check</mat-icon>
+                                    Submit All
+                                </button>
+                                <button mat-stroked-button (click)="resetBasicForm()">
+                                    <mat-icon class="mr-2">refresh</mat-icon>
+                                    Reset Form
+                                </button>
+                                <button mat-stroked-button (click)="exportOtpData(basicForm)">
+                                    <mat-icon class="mr-2">download</mat-icon>
+                                    Export Data
+                                </button>
+                            </mat-card-actions>
+
+                            <!-- Form Status Display -->
+                            <mat-card-footer class="p-4 bg-gray-50">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Form Status:</h4>
+                                        <p class="text-sm text-gray-600">{{ getFormStatus(basicForm) }}</p>
+                                        <div class="mt-2">
+                                            <span class="text-sm text-gray-600">OTP Stats: {{ getOtpStats(basicForm).complete }}/{{ getOtpStats(basicForm).total }} Complete</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Form Values:</h4>
+                                        <pre class="text-xs bg-white p-2 rounded border overflow-auto max-h-32">{{ getFormValues(basicForm) }}</pre>
+                                    </div>
+                                </div>
+                            </mat-card-footer>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Advanced Examples -->
+                <mat-tab label="Advanced">
+                    <div class="tab-content p-6">
+                        <mat-card class="example-card">
+                            <mat-card-header>
+                                <mat-card-title>Advanced OTP Examples</mat-card-title>
+                                <mat-card-subtitle>Gerçek dünya senaryoları</mat-card-subtitle>
+                            </mat-card-header>
+                            
+                            <mat-card-content>
+                                <form [formGroup]="advancedForm" (ngSubmit)="onAdvancedFormSubmit()" class="space-y-4">
+                                    <!-- Login OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Login Verification</h3>
+                                        <app-otp-input
+                                            [formGroup]="advancedForm"
+                                            controlName="loginOtp"
+                                            label="Login Verification Code"
+                                            description="Enter the code sent to your registered mobile number"
+                                            tooltip="This code expires in 5 minutes"
+                                            [timerDuration]="300"
+                                            [autoSubmit]="true"
+                                            (otpComplete)="onOtpComplete($event, 'Login')"
+                                            (resendOtp)="onResendOtp('Login')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Transaction OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Transaction Authorization</h3>
+                                        <app-otp-input
+                                            [formGroup]="advancedForm"
+                                            controlName="transactionOtp"
+                                            label="Transaction OTP"
+                                            description="Secure your transaction with OTP verification"
+                                            [maskInput]="true"
+                                            [timerDuration]="180"
+                                            (otpComplete)="onOtpComplete($event, 'Transaction')"
+                                            (resendOtp)="onResendOtp('Transaction')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Password Reset OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Password Reset</h3>
+                                        <app-otp-input
+                                            [formGroup]="advancedForm"
+                                            controlName="resetPasswordOtp"
+                                            label="Password Reset Code"
+                                            description="Enter the code sent to your email address"
+                                            [digits]="8"
+                                            [allowNumbersOnly]="false"
+                                            [timerDuration]="600"
+                                            (otpComplete)="onOtpComplete($event, 'Password Reset')"
+                                            (resendOtp)="onResendOtp('Password Reset')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Two Factor Authentication -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Two-Factor Authentication</h3>
+                                        <app-otp-input
+                                            [formGroup]="advancedForm"
+                                            controlName="twoFactorOtp"
+                                            label="2FA Code"
+                                            description="Enter the code from your authenticator app"
+                                            [resendEnabled]="false"
+                                            [timerDuration]="30"
+                                            (otpComplete)="onOtpComplete($event, '2FA')"
+                                            (resendOtp)="onResendOtp('2FA')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Account Verification -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Account Verification</h3>
+                                        <app-otp-input
+                                            [formGroup]="advancedForm"
+                                            controlName="verificationOtp"
+                                            label="Account Verification"
+                                            description="Verify your account with the SMS code"
+                                            [allowPaste]="true"
+                                            [autoSubmit]="false"
+                                            (otpComplete)="onOtpComplete($event, 'Account Verification')"
+                                            (resendOtp)="onResendOtp('Account Verification')">
+                                        </app-otp-input>
+                                    </div>
+                                </form>
+                            </mat-card-content>
+                            
+                            <mat-card-actions class="flex gap-2 p-4">
+                                <button mat-raised-button color="primary" (click)="onAdvancedFormSubmit()">
+                                    <mat-icon class="mr-2">verified_user</mat-icon>
+                                    Verify All
+                                </button>
+                                <button mat-stroked-button (click)="resetAdvancedForm()">
+                                    <mat-icon class="mr-2">refresh</mat-icon>
+                                    Reset All
+                                </button>
+                            </mat-card-actions>
+
+                            <!-- Form Status Display -->
+                            <mat-card-footer class="p-4 bg-gray-50">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Security Status:</h4>
+                                        <p class="text-sm text-gray-600">{{ getFormStatus(advancedForm) }}</p>
+                                        <div class="mt-2">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs" 
+                                                  [class]="getOtpStats(advancedForm).completion > 80 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'">
+                                                <mat-icon class="text-xs mr-1">{{ getOtpStats(advancedForm).completion > 80 ? 'security' : 'warning' }}</mat-icon>
+                                                {{ getOtpStats(advancedForm).completion }}% Complete
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Verification Data:</h4>
+                                        <pre class="text-xs bg-white p-2 rounded border overflow-auto max-h-32">{{ getFormValues(advancedForm) }}</pre>
+                                    </div>
+                                </div>
+                            </mat-card-footer>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Validation Examples -->
+                <mat-tab label="Validation">
+                    <div class="tab-content p-6">
+                        <mat-card class="example-card">
+                            <mat-card-header>
+                                <mat-card-title>Validation Examples</mat-card-title>
+                                <mat-card-subtitle>OTP doğrulama örnekleri</mat-card-subtitle>
+                            </mat-card-header>
+                            
+                            <mat-card-content>
+                                <form [formGroup]="validationForm" (ngSubmit)="onValidationFormSubmit()" class="space-y-4">
+                                    <!-- Required OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Required OTP</h3>
+                                        <app-otp-input
+                                            [formGroup]="validationForm"
+                                            controlName="requiredOtp"
+                                            label="Required Verification"
+                                            description="This field is required"
+                                            [isRequired]="true"
+                                            (otpComplete)="onOtpComplete($event, 'Required OTP')"
+                                            (resendOtp)="onResendOtp('Required OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Minimum Length OTP -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Minimum Length Validation</h3>
+                                        <app-otp-input
+                                            [formGroup]="validationForm"
+                                            controlName="minLengthOtp"
+                                            label="Minimum 6 Digits"
+                                            description="Must contain at least 6 digits"
+                                            (otpComplete)="onOtpComplete($event, 'Min Length OTP')"
+                                            (resendOtp)="onResendOtp('Min Length OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Pattern Validation -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Pattern Validation</h3>
+                                        <app-otp-input
+                                            [formGroup]="validationForm"
+                                            controlName="patternOtp"
+                                            label="Numeric Pattern"
+                                            description="Must be exactly 6 numeric digits"
+                                            (otpComplete)="onOtpComplete($event, 'Pattern OTP')"
+                                            (resendOtp)="onResendOtp('Pattern OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Custom Validation -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-2">Custom Validation</h3>
+                                        <app-otp-input
+                                            [formGroup]="validationForm"
+                                            controlName="customValidationOtp"
+                                            label="Advanced Validation"
+                                            description="Custom rules: No sequential or repeated numbers"
+                                            tooltip="Cannot use 123456, 000000, 111111, etc."
+                                            (otpComplete)="onOtpComplete($event, 'Custom Validation OTP')"
+                                            (resendOtp)="onResendOtp('Custom Validation OTP')">
+                                        </app-otp-input>
+                                    </div>
+                                </form>
+
+                                <!-- Test Buttons -->
+                                <div class="flex flex-wrap gap-2 mt-6 pt-4 border-t">
+                                    <button mat-stroked-button (click)="validationForm.markAllAsTouched()">
+                                        <mat-icon class="mr-2">visibility</mat-icon>
+                                        Show All Errors
+                                    </button>
+                                    <button mat-stroked-button (click)="testRandomOtp('requiredOtp', validationForm)">
+                                        <mat-icon class="mr-2">casino</mat-icon>
+                                        Test Random OTP
+                                    </button>
+                                    <button mat-stroked-button (click)="testInvalidOtp('customValidationOtp', validationForm)">
+                                        <mat-icon class="mr-2">error</mat-icon>
+                                        Test Invalid OTP
+                                    </button>
+                                </div>
+                            </mat-card-content>
+                            
+                            <mat-card-actions class="flex gap-2 p-4">
+                                <button mat-raised-button color="primary" (click)="onValidationFormSubmit()">
+                                    <mat-icon class="mr-2">check</mat-icon>
+                                    Validate & Submit
+                                </button>
+                                <button mat-stroked-button (click)="resetValidationForm()">
+                                    <mat-icon class="mr-2">refresh</mat-icon>
+                                    Reset Form
+                                </button>
+                            </mat-card-actions>
+
+                            <!-- Form Status Display -->
+                            <mat-card-footer class="p-4 bg-gray-50">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Validation Status:</h4>
+                                        <p class="text-sm text-gray-600">{{ getFormStatus(validationForm) }}</p>
+                                        <div class="mt-2">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs" 
+                                                  [class]="validationForm.valid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+                                                <mat-icon class="text-xs mr-1">{{ validationForm.valid ? 'check_circle' : 'error' }}</mat-icon>
+                                                {{ validationForm.valid ? 'All Valid' : 'Has Errors' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Form Values:</h4>
+                                        <pre class="text-xs bg-white p-2 rounded border overflow-auto max-h-32">{{ getFormValues(validationForm) }}</pre>
+                                    </div>
+                                </div>
+                            </mat-card-footer>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Size Examples -->
+                <mat-tab label="Sizes">
+                    <div class="tab-content p-6">
+                        <mat-card class="example-card">
+                            <mat-card-header>
+                                <mat-card-title>Size Examples</mat-card-title>
+                                <mat-card-subtitle>Farklı boyutlarda OTP input'lar</mat-card-subtitle>
+                            </mat-card-header>
+                            
+                            <mat-card-content>
+                                <form [formGroup]="sizeForm" (ngSubmit)="onSizeFormSubmit()" class="space-y-6">
+                                    <!-- Small Size -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-4">Small Size OTP</h3>
+                                        <app-otp-input
+                                            [formGroup]="sizeForm"
+                                            controlName="smallOtp"
+                                            label="Compact Verification"
+                                            description="Small size for compact layouts"
+                                            size="small"
+                                            [digits]="4"
+                                            (otpComplete)="onOtpComplete($event, 'Small OTP')"
+                                            (resendOtp)="onResendOtp('Small OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Medium Size -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-4">Medium Size OTP (Default)</h3>
+                                        <app-otp-input
+                                            [formGroup]="sizeForm"
+                                            controlName="mediumOtp"
+                                            label="Standard Verification"
+                                            description="Default medium size for most use cases"
+                                            size="medium"
+                                            (otpComplete)="onOtpComplete($event, 'Medium OTP')"
+                                            (resendOtp)="onResendOtp('Medium OTP')">
+                                        </app-otp-input>
+                                    </div>
+
+                                    <mat-divider></mat-divider>
+
+                                    <!-- Large Size -->
+                                    <div class="example-section">
+                                        <h3 class="font-medium text-gray-800 mb-4">Large Size OTP</h3>
+                                        <app-otp-input
+                                            [formGroup]="sizeForm"
+                                            controlName="largeOtp"
+                                            label="Prominent Verification"
+                                            description="Large size for better visibility and accessibility"
+                                            size="large"
+                                            [digits]="8"
+                                            [autoSubmit]="true"
+                                            (otpComplete)="onOtpComplete($event, 'Large OTP')"
+                                            (resendOtp)="onResendOtp('Large OTP')">
+                                        </app-otp-input>
+                                    </div>
+                                </form>
+                            </mat-card-content>
+                            
+                            <mat-card-actions class="flex gap-2 p-4">
+                                <button mat-raised-button color="primary" (click)="onSizeFormSubmit()">
+                                    <mat-icon class="mr-2">check</mat-icon>
+                                    Submit All Sizes
+                                </button>
+                                <button mat-stroked-button (click)="resetSizeForm()">
+                                    <mat-icon class="mr-2">refresh</mat-icon>
+                                    Reset Form
+                                </button>
+                            </mat-card-actions>
+
+                            <!-- Form Status Display -->
+                            <mat-card-footer class="p-4 bg-gray-50">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Form Status:</h4>
+                                        <p class="text-sm text-gray-600">{{ getFormStatus(sizeForm) }}</p>
+                                        <div class="mt-2">
+                                            <span class="text-sm text-gray-600">
+                                                Completion: {{ getOtpStats(sizeForm).completion }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Form Values:</h4>
+                                        <pre class="text-xs bg-white p-2 rounded border overflow-auto max-h-32">{{ getFormValues(sizeForm) }}</pre>
+                                    </div>
+                                </div>
+                            </mat-card-footer>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

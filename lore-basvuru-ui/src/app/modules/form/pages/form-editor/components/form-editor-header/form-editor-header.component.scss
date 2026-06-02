@@ -1,0 +1,348 @@
+:host {
+    display: block;
+    height: 100%;
+    min-height: 0;
+}
+
+.editor-header {
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    padding: 0 0.85rem;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    background: transparent;
+}
+
+.editor-header__section,
+.editor-header__meta {
+    display: flex;
+    align-items: center;
+}
+
+.editor-header__section {
+    min-width: 0;
+}
+
+.editor-header__section--start {
+    justify-content: flex-start;
+    gap: 0.75rem;
+}
+
+.editor-header__section--center {
+    justify-content: center;
+}
+
+.editor-header__section--end {
+    justify-content: flex-end;
+}
+
+.editor-header__title-wrap {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.12rem;
+}
+
+.editor-header__title-input {
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: #0f172a;
+    font-size: 0.98rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+}
+
+.editor-header__title-input:focus {
+    outline: 0;
+}
+
+.editor-header__meta {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.editor-header__status,
+.editor-header__autosave {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    padding: 0 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.editor-header__status {
+    background: rgba(37, 99, 235, 0.08);
+    color: #2563eb;
+}
+
+.editor-header__autosave {
+    background: rgba(15, 23, 42, 0.05);
+    color: #475569;
+}
+
+.editor-header__autosave--neutral {
+    background: rgba(15, 23, 42, 0.05);
+    color: #475569;
+}
+
+.editor-header__autosave--info {
+    background: rgba(37, 99, 235, 0.1);
+    color: #1d4ed8;
+}
+
+.editor-header__autosave--success {
+    background: rgba(22, 163, 74, 0.12);
+    color: #15803d;
+}
+
+.editor-header__autosave--warning {
+    background: rgba(245, 158, 11, 0.16);
+    color: #b45309;
+}
+
+.editor-header__autosave--danger {
+    background: rgba(220, 38, 38, 0.12);
+    color: #b91c1c;
+}
+
+.editor-header__autosave--detail {
+    background: rgba(15, 23, 42, 0.05);
+    color: #64748b;
+    font-weight: 600;
+}
+
+.editor-header__feedback {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    padding: 0 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.editor-header__feedback--info {
+    background: rgba(15, 23, 42, 0.05);
+    color: #475569;
+}
+
+.editor-header__feedback--warning {
+    background: rgba(245, 158, 11, 0.16);
+    color: #b45309;
+}
+
+.editor-header__feedback--danger {
+    background: rgba(220, 38, 38, 0.12);
+    color: #b91c1c;
+}
+
+.editor-header__icon-button {
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 999px;
+    background: #fff;
+    color: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.editor-header__icon-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.editor-header__nav,
+.editor-header__actions {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.editor-header__nav {
+    gap: 0.3rem;
+}
+
+.editor-header__actions {
+    gap: 0.55rem;
+}
+
+.editor-header__nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #0f172a;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.editor-header__nav-button:hover:not([disabled]) {
+    background: rgba(15, 23, 42, 0.06);
+    color: #020617;
+    transform: translateY(-1px);
+}
+
+.editor-header__nav-button[disabled] {
+    color: rgba(100, 116, 139, 0.45);
+    cursor: not-allowed;
+}
+
+.editor-header__nav-button mat-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    font-size: 1.2rem;
+}
+
+.editor-header__nav-label {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0 0.85rem;
+    color: #0f172a;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.editor-header__nav-prefix,
+.editor-header__nav-value {
+    display: inline-flex;
+    align-items: center;
+}
+
+@media (max-width: 1280px) {
+    .editor-header {
+        gap: 0.7rem;
+        padding: 0 0.65rem;
+    }
+
+    .editor-header__meta {
+        gap: 0.35rem;
+    }
+
+    .editor-header__nav-prefix {
+        display: none;
+    }
+
+    .editor-header__title-input {
+        font-size: 0.94rem;
+    }
+
+    :host ::ng-deep .editor-header__actions app-action-button .ek-action-btn span {
+        display: none;
+    }
+
+    :host ::ng-deep .editor-header__actions app-action-button .ek-action-btn i {
+        margin-right: 0 !important;
+    }
+
+    :host ::ng-deep .editor-header__actions app-action-button .ek-action-btn {
+        width: 2.35rem;
+        min-width: 2.35rem;
+        height: 2.35rem;
+        padding-inline: 0 !important;
+    }
+}
+
+@media (max-width: 1080px) {
+    .editor-header {
+        gap: 0.5rem;
+        padding: 0 0.6rem;
+    }
+
+    .editor-header__meta {
+        gap: 0.3rem;
+    }
+
+    .editor-header__autosave {
+        display: none;
+    }
+}
+
+@media (max-width: 760px) {
+    .editor-header {
+        gap: 0.35rem;
+        padding: 0 0.5rem;
+    }
+
+    .editor-header__status,
+    .editor-header__autosave,
+    .editor-header__nav-prefix {
+        display: none;
+    }
+
+    .editor-header__icon-button,
+    .editor-header__nav-button {
+        width: 2.1rem;
+        height: 2.1rem;
+    }
+
+    .editor-header__title-input {
+        font-size: 0.84rem;
+    }
+
+    .editor-header__nav-label {
+        padding-inline: 0.25rem;
+        font-size: 0.73rem;
+    }
+
+    :host ::ng-deep .editor-header__actions app-action-button .ek-action-btn {
+        width: 2.1rem;
+        min-width: 2.1rem;
+        height: 2.1rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .editor-header {
+        gap: 0.2rem;
+        padding: 0 0.35rem;
+    }
+
+    .editor-header__section--start {
+        gap: 0.35rem;
+    }
+
+    .editor-header__title-wrap {
+        display: none;
+    }
+
+    .editor-header__icon-button,
+    .editor-header__nav-button {
+        width: 1.95rem;
+        height: 1.95rem;
+    }
+
+    .editor-header__nav-label {
+        font-size: 0.69rem;
+        padding-inline: 0.1rem;
+    }
+
+    :host ::ng-deep .editor-header__actions app-action-button .ek-action-btn {
+        width: 1.95rem;
+        min-width: 1.95rem;
+        height: 1.95rem;
+    }
+}

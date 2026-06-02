@@ -1,0 +1,127 @@
+:host {
+    display: block;
+    height: 100%;
+    min-height: 0;
+    background: #fff;
+}
+
+.editor-panel {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.editor-panel__header {
+    display: flex;
+    align-items: center;
+    height: 3rem;
+    min-height: 3rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.24);
+    background: #fff;
+    padding: 0 0.375rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    gap: 0;
+}
+
+.editor-panel__header::-webkit-scrollbar {
+    display: none;
+}
+
+.editor-panel__close-btn,
+.editor-panel__header-action {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 0.375rem;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
+}
+
+.editor-panel__close-btn:hover,
+.editor-panel__header-action:hover {
+    border-color: rgba(100, 116, 139, 0.44);
+    background: rgba(15, 23, 42, 0.04);
+    color: #0f172a;
+}
+
+.editor-panel__close-btn mat-icon,
+.editor-panel__header-action mat-icon {
+    font-size: 1.1rem;
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.editor-panel__header-sep {
+    width: 1px;
+    height: 1.5rem;
+    flex-shrink: 0;
+    background: rgba(148, 163, 184, 0.3);
+    margin: 0 0.5rem;
+}
+
+.editor-panel__tab-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.editor-panel__tab-btn {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
+}
+
+.editor-panel__tab-btn:hover {
+    background: rgba(15, 23, 42, 0.05);
+    color: #334155;
+}
+
+.editor-panel__tab-btn--active {
+    border-color: rgba(37, 99, 235, 0.22);
+    background: rgba(37, 99, 235, 0.08);
+    color: #2563eb;
+}
+
+.editor-panel__tab-btn mat-icon {
+    font-size: 1.15rem;
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.editor-panel__tab-sep {
+    width: 1px;
+    height: 1.25rem;
+    flex-shrink: 0;
+    background: rgba(148, 163, 184, 0.26);
+    margin: 0 0.25rem;
+}
+
+.editor-panel__body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}

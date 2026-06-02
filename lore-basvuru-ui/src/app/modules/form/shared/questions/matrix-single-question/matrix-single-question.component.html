@@ -1,0 +1,47 @@
+<ng-container *ngIf="!isAnswerOnly; else answerOnlyTemplate">
+    <div class="question-matrix">
+        <div class="question-matrix__row" *ngFor="let row of schema.matrixRows; trackBy: trackByEid">
+            <div class="question-matrix__row-label">
+                <app-rich-text-view
+                    [html]="row.label"
+                    [compact]="true">
+                </app-rich-text-view>
+            </div>
+
+            <label class="question-choice-row" *ngFor="let column of schema.matrixColumns; trackBy: trackByEid">
+                <input
+                    type="radio"
+                    [name]="schema.eid + '-' + row.eid"
+                    [disabled]="isInputDisabled || isInputReadonly"
+                    [checked]="isSelected(row.eid, column.eid)"
+                    (change)="selectValue(row.eid, column.eid)">
+                <div>
+                    <app-rich-text-view
+                        [html]="column.label"
+                        [compact]="true">
+                    </app-rich-text-view>
+                </div>
+            </label>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #answerOnlyTemplate>
+    <div class="question-matrix-summary-list">
+        <div class="question-matrix-summary-item" *ngFor="let row of schema.matrixRows; trackBy: trackByEid">
+            <div class="question-matrix-summary-label">
+                <app-rich-text-view
+                    [html]="row.label"
+                    [compact]="true">
+                </app-rich-text-view>
+            </div>
+            <div class="question-matrix-summary-value" [class.question-matrix-summary-value--hint]="isSelectedLabelMissing(row.eid)">
+                <app-rich-text-view
+                    [html]="getSelectedLabel(row.eid)"
+                    fallback="Yanit verilmedi"
+                    [compact]="true">
+                </app-rich-text-view>
+            </div>
+        </div>
+    </div>
+</ng-template>

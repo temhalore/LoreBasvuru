@@ -1,0 +1,115 @@
+<div [formGroup]="nameOfFormGroup" class="d-flex flex-column fv-row w-100"
+     style="width: 100% !important; max-width: 100% !important; min-width: 0 !important;">
+  <label class="d-flex fs-6 fw-bold mb-2">
+    <span *ngIf="!isRequired">{{title}}</span>
+    <span *ngIf="isRequired" class="required">{{title}}</span>
+    <i *ngIf="hasToltip" class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+      title="{{tooltipTitle}}"></i>
+  </label>
+  
+  <!-- Custom Select Component -->
+  <div class="position-relative custom-select" style="width: 100% !important; max-width: 100% !important;">
+    <!-- Single Selection Display -->
+    <div *ngIf="!isMultiple" class="form-select form-select-solid"
+         style="width: 100% !important; max-width: 100% !important;"
+         [class.is-invalid]="nameOfFormGroup && formValidationService.isControlInvalid(nameOfFormGroup,controlName)"
+         [class.is-valid]="nameOfFormGroup && formValidationService.isControlValid(nameOfFormGroup,controlName)"
+         (click)="toggleDropdown()"
+         [class.show]="isDropdownOpen">
+      <div class="d-flex align-items-center" style="pointer-events: none; width: 100%;">
+        <div class="flex-grow-1" style="min-width: 0; overflow: hidden;">
+          <span *ngIf="!selectedItem" class="text-muted">{{placeHolder}}</span>
+          <span *ngIf="selectedItem" class="text-truncate d-block">{{getDisplayValue(selectedItem)}}</span>
+        </div>
+        <div class="d-flex align-items-center gap-1" style="flex-shrink: 0; margin-left: auto;">
+          <i *ngIf="isLoading" class="spinner-border spinner-border-sm text-muted"></i>
+          <!-- Clear button for single selection -->
+          <span *ngIf="selectedItem && !isLoading" 
+                class="clear-btn-simple"
+                style="pointer-events: auto;"
+                (click)="clearSelection($event)" 
+                title="Temizle">×</span>
+          <span class="dropdown-arrow" [class.rotate-180]="isDropdownOpen">▼</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multiple Selection Display -->
+    <div *ngIf="isMultiple" class="selected-items-display"
+         [class.is-invalid]="nameOfFormGroup && formValidationService.isControlInvalid(nameOfFormGroup,controlName)"
+         [class.is-valid]="nameOfFormGroup && formValidationService.isControlValid(nameOfFormGroup,controlName)"
+         (click)="toggleDropdown()"
+         [class.show]="isDropdownOpen">
+      <div class="d-flex align-items-center w-100">
+        <div class="d-flex flex-wrap gap-2" style="flex: 1; min-width: 0;">
+          <span *ngIf="selectedItems.length === 0" class="placeholder-text">{{placeHolder}}</span>
+          <span *ngFor="let item of selectedItems; trackBy: trackByValue" class="selected-badge">
+            <span class="badge-text" [title]="getDisplayValue(item)">{{getDisplayValue(item)}}</span>
+            <button type="button" class="remove-btn" 
+                    (click)="removeSelectedItem(item, $event)" 
+                    title="Kaldır">
+              ×
+            </button>
+          </span>
+        </div>
+        <div class="d-flex align-items-center gap-1" style="flex-shrink: 0; margin-left: auto;">
+          <i *ngIf="isLoading" class="spinner-border spinner-border-sm text-muted"></i>
+          <span *ngIf="selectedItems.length > 0 && !isLoading" 
+                class="clear-btn-simple"
+                style="pointer-events: auto;"
+                (click)="clearSelection($event)" 
+                title="Tümünü Temizle">×</span>
+          <span class="dropdown-arrow" [class.rotate-180]="isDropdownOpen">▼</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown Menu -->
+    <div *ngIf="isDropdownOpen" class="dropdown-menu show w-100 position-absolute z-3 mt-1 shadow-lg">
+      <!-- Search Input -->
+      <div class="p-2 border-bottom">
+        <input
+          #searchInput
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Ara..."
+          [(ngModel)]="searchTerm"
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onSearchChange()"
+          (click)="$event.stopPropagation()">
+      </div>
+      
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="text-center py-3">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span class="ms-2">Yükleniyor...</span>
+      </div>
+      
+      <!-- Options List -->
+      <div *ngIf="!isLoading" class="max-height-200 overflow-auto">
+        <button
+          *ngFor="let item of filteredItems; trackBy: trackByValue"
+          type="button"
+          class="dropdown-item d-flex justify-content-between align-items-center"
+          (click)="selectItem(item)">
+          <span>{{getDisplayValue(item)}}</span>
+          <i *ngIf="isItemSelected(item)" class="fas fa-check text-success"></i>
+        </button>
+
+        <!-- No Results -->
+        <div *ngIf="filteredItems.length === 0" class="dropdown-item-text text-center">
+          <i class="fas fa-search me-2"></i>
+          Sonuç bulunamadı
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Validation Error Messages -->
+  <div *ngIf="nameOfFormGroup && formValidationService.isControlInvalid(nameOfFormGroup,controlName)"
+       class="fv-plugins-message-container">
+    <div class="fv-help-block">
+      <span role="alert">{{ title || 'Bu alan' }} zorunludur</span>
+    </div>
+  </div>
+</div>

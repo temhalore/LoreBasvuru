@@ -1,0 +1,49 @@
+<div class="respondent-entry-state">
+    <section class="respondent-entry-state__panel">
+        <div class="respondent-entry-state__intro">
+            <h2>{{ resolvedTitle }}</h2>
+            <p>{{ resolvedDescription }}</p>
+
+            @if (showMeta) {
+                <p class="respondent-entry-state__meta">{{ metaText }}</p>
+            }
+        </div>
+
+        <div class="respondent-entry-state__actions">
+            <div
+                class="respondent-entry-state__progress-slot"
+                [class.respondent-entry-state__progress-slot--visible]="showProgress">
+                @if (showProgress) {
+                    <div class="respondent-entry-state__progress">
+                        <p class="respondent-entry-state__progress-label">{{ progressLabel }}</p>
+                        <p class="respondent-entry-state__progress-detail">{{ progressDetail }}</p>
+
+                        <div class="respondent-entry-state__progress-track form-view-progress-track">
+                            <div
+                                class="respondent-entry-state__progress-bar form-view-progress-bar"
+                                [style.width.%]="progress?.yuzdeOrani ?? 0">
+                            </div>
+                        </div>
+
+                        <div class="respondent-entry-state__divider" aria-hidden="true"></div>
+                    </div>
+                }
+            </div>
+
+            <button
+                type="button"
+                mat-flat-button
+                color="primary"
+                class="respondent-entry-state__start-button"
+                [disabled]="!startEnabled"
+                (click)="start.emit()">
+                <span class="respondent-entry-state__button-content">
+                    <mat-spinner *ngIf="loading" diameter="18"></mat-spinner>
+                    <span>{{ actionLabel }}</span>
+                </span>
+            </button>
+
+            <p class="respondent-entry-state__hint">{{ actionHint }}</p>
+        </div>
+    </section>
+</div>

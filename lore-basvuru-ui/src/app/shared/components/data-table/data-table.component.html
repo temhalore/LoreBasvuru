@@ -1,0 +1,578 @@
+<div class="data-table-container">
+
+    <!-- Header -->
+    <!-- <div class="data-table-header" *ngIf="config.title || config.searchable || config.filters?.length">
+        <h2 *ngIf="config.title">{{ config.title }}</h2>
+        <div class="header-actions">
+        </div>
+    </div> -->
+
+    <!-- Filters -->
+    <div class="data-table-container">
+
+    <!-- Title Section -->
+    <div class="table-title" *ngIf="config.showTitle && config.title || config.customButtons?.length">
+        <div class="title-content" *ngIf="config.showTitle && config.title">
+            <h2>{{ config.title }}</h2>
+            <p *ngIf="config.subtitle">{{ config.subtitle }}</p>
+        </div>
+
+        <!-- Custom Buttons -->
+        <div class="custom-buttons flex gap-3 ml-auto" *ngIf="config.customButtons?.length">
+            <ng-container *ngFor="let button of config.customButtons; trackBy: trackByButtonLabel">
+                <!-- Flat Button (default) -->
+                <button *ngIf="!button.variant || button.variant === 'flat'"
+                        mat-button
+                        [color]="button.color || 'primary'"
+                        [disabled]="button.disabled"
+                        [matTooltip]="button.tooltip || ''"
+                        class="modern-custom-button px-4 py-2 rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all duration-200"
+                        (click)="button.action()">
+                    <mat-icon *ngIf="button.icon" [svgIcon]="button.icon" class="mr-2"></mat-icon>
+                    <span>{{ button.label }}</span>
+                </button>
+
+                <!-- Raised Button -->
+                <button *ngIf="button.variant === 'raised'"
+                        mat-raised-button
+                        [color]="button.color || 'primary'"
+                        [disabled]="button.disabled"
+                        [matTooltip]="button.tooltip || ''"
+                        class="modern-custom-button px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
+                        (click)="button.action()">
+                    <mat-icon *ngIf="button.icon" [svgIcon]="button.icon" class="mr-2"></mat-icon>
+                    <span>{{ button.label }}</span>
+                </button>
+
+                <!-- Stroked Button -->
+                <button *ngIf="button.variant === 'stroked'"
+                        mat-stroked-button
+                        [color]="button.color || 'primary'"
+                        [disabled]="button.disabled"
+                        [matTooltip]="button.tooltip || ''"
+                        class="modern-custom-button px-4 py-2 rounded-lg border-2 hover:shadow-md transition-all duration-200"
+                        (click)="button.action()">
+                    <mat-icon *ngIf="button.icon" [svgIcon]="button.icon" class="mr-2"></mat-icon>
+                    <span>{{ button.label }}</span>
+                </button>
+
+                <!-- FAB Button -->
+                <button *ngIf="button.variant === 'fab'"
+                        mat-fab
+                        [color]="button.color || 'primary'"
+                        [disabled]="button.disabled"
+                        [matTooltip]="button.tooltip || button.label"
+                        class="modern-custom-button shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                        (click)="button.action()">
+                    <mat-icon *ngIf="button.icon" [svgIcon]="button.icon"></mat-icon>
+                </button>
+
+                <!-- Mini FAB Button -->
+                <button *ngIf="button.variant === 'mini-fab'"
+                        mat-mini-fab
+                        [color]="button.color || 'primary'"
+                        [disabled]="button.disabled"
+                        [matTooltip]="button.tooltip || button.label"
+                        class="modern-custom-button shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                        (click)="button.action()">
+                    <mat-icon *ngIf="button.icon" [svgIcon]="button.icon"></mat-icon>
+                </button>
+
+                <!-- Icon Button -->
+                <button *ngIf="button.variant === 'icon'"
+                        mat-icon-button
+                        [color]="button.color || 'primary'"
+                        [disabled]="button.disabled"
+                        [matTooltip]="button.tooltip || button.label"
+                        class="modern-custom-button hover:bg-gray-100 rounded-full transition-all duration-200"
+                        (click)="button.action()">
+                    <mat-icon *ngIf="button.icon" [svgIcon]="button.icon"></mat-icon>
+                </button>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-container flex flex-wrap" *ngIf="filtersForm && config.filters?.length">
+        <ng-container *ngFor="let filter of config.filters; trackBy: trackByFilterKey">
+
+            <!-- Text Filter -->
+            <div class="filter-group {{ filter.colSize || 'md:w-1/4' }}" *ngIf="filter.type === 'text'">
+                <mat-form-field class="fuse-mat-dense" [subscriptSizing]="'dynamic'">
+                    <mat-label>{{ filter.label }}</mat-label>
+                    <input matInput [formControl]="getFilterControl('filter_' + filter.key)" [name]="'filter_' + filter.key"
+                        [placeholder]="filter.placeholder || filter.label">
+                </mat-form-field>
+            </div>
+
+            <!-- Select Filter -->
+            <div class="filter-group {{ filter.colSize || 'md:w-1/4' }}" *ngIf="filter.type === 'select'">
+                <mat-form-field class="fuse-mat-dense" [subscriptSizing]="'dynamic'">
+                    <mat-label>{{ filter.label }}</mat-label>
+                    <mat-select [formControl]="getFilterControl('filter_' + filter.key)" [name]="'filter_' + filter.key">
+                        <mat-option [value]="null">Tümü</mat-option>
+                        <mat-option *ngFor="let option of filter.options; trackBy: trackByOptionKey" [value]="option.value">
+                            {{ option.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <!-- Date Filter -->
+            <div class="filter-group {{ filter.colSize || 'md:w-1/4' }}" *ngIf="filter.type === 'date'">
+                <mat-form-field class="fuse-mat-dense" [subscriptSizing]="'dynamic'">
+                    <mat-label>{{ filter.label }}</mat-label>
+                    <input matInput [matDatepicker]="datePicker" [formControl]="getFilterControl('filter_' + filter.key)" [name]="'filter_' + filter.key">
+                    <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #datePicker></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <!-- Date Range Filter -->
+            <div class="filter-group {{ filter.colSize || 'md:w-1/4' }}" *ngIf="filter.type === 'daterange'">
+                <mat-form-field class="fuse-mat-dense" [subscriptSizing]="'dynamic'">
+                    <mat-label>{{ filter.label }}</mat-label>
+                    <mat-date-range-input [rangePicker]="rangePicker">
+                        <input matStartDate [formControl]="getFilterControl(filter.key + 'Start')" placeholder="Başlangıç">
+                        <input matEndDate [formControl]="getFilterControl(filter.key + 'End')" placeholder="Bitiş">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #rangePicker></mat-date-range-picker>
+                </mat-form-field>
+            </div>
+
+            <!-- Code Select Filter -->
+            <div class="filter-group {{ filter.colSize || 'md:w-1/4' }}" *ngIf="filter.type === 'code-select'">
+                <app-code-select-input
+                    [nameOfFormGroup]="filtersForm"
+                    [controlName]="'filter_' + filter.key"
+                    [title]="filter.label"
+                    [placeHolder]="filter.placeholder || 'Seçiniz...'"
+                    [code]="filter.codeId || 0"
+                    [isRequired]="false"
+                    [multiple]="filter.multiple || false">
+                </app-code-select-input>
+            </div>
+
+            <!-- API Select Filter -->
+            <div class="filter-group {{ filter.colSize || 'md:w-1/4' }}"
+                 *ngIf="filter.type === 'api-select'">
+                <app-api-select-input
+                    [nameOfFormGroup]="filtersForm"
+                    [controlName]="'filter_' + filter.key"
+                    [title]="filter.label"
+                    [placeHolder]="filter.placeholder || 'Seçiniz...'"
+                    [apiUrl]="filter.apiUrl || ''"
+                    [displayField]="filter.displayField || 'name'"
+                    [displayFields]="filter.displayFields || []"
+                    [displaySeparator]="filter.displaySeparator || ' '"
+                    [searchFields]="filter.searchFields || []"
+                    [isRequired]="false"
+                    [multiple]="filter.multiple || false">
+                </app-api-select-input>
+            </div>
+
+        </ng-container>
+
+        <!-- Filter Action Buttons -->
+        <div class="filter-group flex items-end gap-2 md:w-auto ml-auto">
+            <!-- Search Button -->
+            <button mat-raised-button
+                    color="primary"
+                    (click)="applyFilters()"
+                    class="search-btn">
+                <mat-icon [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+                <span>Ara</span>
+            </button>
+
+            <!-- Clear Filters Button -->
+            <button mat-stroked-button
+                    color="warn"
+                    (click)="clearFilters()"
+                    class="clear-filters-btn">
+                <mat-icon [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
+                <span>Temizle</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section" *ngIf="config.searchable">
+        <div class="search-container">
+            <mat-form-field class="fuse-mat-dense" [subscriptSizing]="'dynamic'">
+                <mat-label>Arama</mat-label>
+                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                <input matInput [formControl]="searchControl" name="search" [placeholder]="'Arama yapın...'" [autocomplete]="'off'" />
+                <button *ngIf="searchControl.value" mat-icon-button matSuffix (click)="clearSearch()"
+                    [attr.aria-label]="'Aramayı temizle'">
+                    <mat-icon [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle ">
+            <button mat-icon-button
+                    [matTooltip]="viewMode === 'table' ? 'Kart Görünümü' : 'Tablo Görünümü'"
+                    (click)="toggleViewMode()">
+                <mat-icon [svgIcon]="viewMode === 'table' ? 'heroicons_outline:squares-2x2' : 'heroicons_outline:table-cells'"></mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container" [class.loading]="loading" *ngIf="viewMode === 'table'">
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" *ngIf="loading">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <!-- Table Wrapper -->
+        <div class="data-table-wrapper">
+
+            <!-- Material Table -->
+            <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSortChange($event)" class="w-full">
+
+                <!-- Selection Column -->
+                <ng-container matColumnDef="select" *ngIf="config.selection?.enabled">
+                    <th mat-header-cell *matHeaderCellDef class="checkbox-column">
+                        <mat-checkbox *ngIf="config.selection?.multiple" [checked]="isAllSelected()"
+                            [indeterminate]="isPartiallySelected()" (change)="toggleAllSelection($event)"
+                            name="selectAll">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let row; let i = index" class="checkbox-column">
+                        <mat-checkbox [checked]="isRowSelected(row)" (change)="toggleRowSelection(row)"
+                            [name]="'selectRow_' + i">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Dynamic Columns -->
+                <ng-container *ngFor="let column of config.columns; trackBy: trackByColumnKey"
+                    [matColumnDef]="column.key">
+
+                    <!-- Header -->
+                    <th mat-header-cell *matHeaderCellDef [mat-sort-header]="column.sortable ? column.key : ''"
+                        [disabled]="!column.sortable" [style.width]="column.width" [class]="getColumnClasses(column)"
+                        [sticky]="column.sticky === 'start' || isDefaultStickyStart(column)"
+                        [stickyEnd]="column.sticky === 'end'">
+                        {{ column.label }}
+                    </th>
+
+                    <!-- Cell -->
+                    <td mat-cell *matCellDef="let row; let i = index" [style.width]="column.width"
+                        [style.max-width]="column.width" [style.overflow]="column.width ? 'hidden' : null"
+                        [class]="getColumnClasses(column)"
+                        [sticky]="column.sticky === 'start' || isDefaultStickyStart(column)"
+                        [stickyEnd]="column.sticky === 'end'">
+
+                        <!-- Text -->
+                        <span *ngIf="(!column.type || column.type === 'text') && !column.template">
+                            {{ getCellValue(row, column) }}
+                        </span>
+
+                        <!-- Html -->
+                        <div *ngIf="column.type === 'html'" [innerHTML]="getCellHtmlValue(row, column)"></div>
+
+                        <!-- Number -->
+                        <span *ngIf="column.type === 'number'" class="font-mono">
+                            {{ getCellValue(row, column) | number }}
+                        </span>
+
+                        <!-- Currency -->
+                        <span *ngIf="column.type === 'currency'" class="font-mono">
+                            {{ getCellValue(row, column) | currency:'TRY':'symbol-narrow':'1.2-2' }}
+                        </span>
+
+                        <!-- Date -->
+                        <span *ngIf="column.type === 'date'">
+                            {{ getCellValue(row, column) | date:(column.format || 'mediumDate') }}
+                        </span>
+
+                        <!-- Boolean -->
+                        <div *ngIf="column.type === 'boolean'" class="flex items-center justify-center">
+                            <span class="boolean-chip" [class.true]="getCellValue(row, column)"
+                                [class.false]="!getCellValue(row, column)">
+                                <mat-icon class="mr-1" style="font-size: 14px; width: 14px; height: 14px;"
+                                    *ngIf="getCellValue(row, column); else falseIcon"
+                                    [svgIcon]="'heroicons_solid:check'">
+                                </mat-icon>
+                                <ng-template #falseIcon>
+                                    <mat-icon class="mr-1" style="font-size: 14px; width: 14px; height: 14px;"
+                                        [svgIcon]="'heroicons_solid:x-mark'">
+                                    </mat-icon>
+                                </ng-template>
+                                {{ column.key === 'isActive' ? (getCellValue(row, column) ? 'Aktif' : 'Pasif') :
+                                   (getCellValue(row, column) ? 'Evet' : 'Hayır') }}
+                            </span>
+                        </div>
+
+                        <!-- Image -->
+                        <div *ngIf="column.type === 'image'" class="flex items-center">
+                            <img [src]="getCellValue(row, column)" [alt]="column.label"
+                                class="w-10 h-10 rounded-lg object-cover"
+                                *ngIf="getCellValue(row, column); else noImage">
+                            <ng-template #noImage>
+                                <div
+                                    class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">
+                                    NO IMG
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <!-- Badge -->
+                        <ng-container *ngIf="column.type === 'badge'">
+                            <ng-container *ngIf="getCellValue(row, column) as badgeValue">
+                                <ng-container *ngIf="isArray(badgeValue); else singleBadge">
+                                    <span *ngFor="let badge of badgeValue" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mr-1"
+                                        [ngClass]="getBadgeClasses(badge)">
+                                        {{ badge }}
+                                    </span>
+                                </ng-container>
+                                <ng-template #singleBadge>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                        [ngClass]="getBadgeClasses(badgeValue)">
+                                        {{ badgeValue }}
+                                    </span>
+                                </ng-template>
+                            </ng-container>
+                        </ng-container>
+
+                        <!-- Actions -->
+                        <div *ngIf="column.type === 'actions'" class="action-buttons">
+                            <ng-container *ngFor="let action of config.actions; trackBy: trackByActionKey">
+                                <button *ngIf="!action.visible || action.visible(row)" mat-icon-button
+                                    [color]="action.color || 'primary'"
+                                    [disabled]="action.disabled && action.disabled(row)" [matTooltip]="action.label"
+                                    (click)="onAction(action, row)">
+                                    <mat-icon
+                                        [svgIcon]="action.icon || 'heroicons_outline:ellipsis-horizontal'"></mat-icon>
+                                </button>
+                            </ng-container>
+                        </div>
+
+                        <!-- Dropdown Actions -->
+                        <div *ngIf="column.type === 'dropdown-actions'" class="dropdown-actions">
+                            <button mat-icon-button [matMenuTriggerFor]="actionsMenu">
+                                <mat-icon svgIcon="heroicons_outline:ellipsis-vertical"></mat-icon>
+                            </button>
+                            <mat-menu #actionsMenu="matMenu">
+                                <ng-container *ngFor="let action of config.actions; trackBy: trackByActionKey">
+                                    <button *ngIf="!action.visible || action.visible(row)"
+                                            mat-menu-item
+                                            [disabled]="action.disabled && action.disabled(row)"
+                                            [class]="action.color ? 'action-' + action.color : ''"
+                                            (click)="onAction(action, row)">
+                                        <mat-icon [svgIcon]="action.icon || 'heroicons_outline:cog'"
+                                                  [class]="action.color ? 'text-' + action.color : ''"></mat-icon>
+                                        <span [class]="action.color ? 'text-' + action.color : ''">{{ action.label }}</span>
+                                    </button>
+                                </ng-container>
+                            </mat-menu>
+                        </div>
+
+                        <!-- Custom Template -->
+                        <ng-container *ngIf="column.template" [ngTemplateOutlet]="column.template"
+                            [ngTemplateOutletContext]="{ $implicit: row, column: column, index: i }">
+                        </ng-container>
+
+                    </td>
+                </ng-container>
+
+                <!-- Header Row -->
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+                <!-- Data Rows -->
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"
+                    [ngClass]="getRowClasses(row)"
+                    (click)="onRowClick(row)">
+                </tr>
+
+                <!-- No Data Row -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell text-center py-12 text-gray-500" [attr.colspan]="displayedColumns.length">
+                        <div class="flex flex-col items-center">
+                            <mat-icon class="icon-size-12 text-gray-300 mb-4"
+                                [svgIcon]="'heroicons_outline:inbox'"></mat-icon>
+                            <span class="text-lg font-medium">No data found</span>
+                            <span class="text-sm">Try adjusting your search or filters</span>
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- Card Container -->
+    <div class="card-container" [class.loading]="loading" *ngIf="viewMode === 'card'">
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" *ngIf="loading">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <!-- Cards Wrapper -->
+        <div class="cards-wrapper">
+              <div class="card-item border-primary"
+                  [ngClass]="config.rowClass ? config.rowClass(row) : ''"
+                 *ngFor="let row of dataSource.data; trackBy: trackByFn; let i = index"
+                 (click)="onRowClick(row)">
+
+                <!-- Card Header -->
+                <div class="card-header">
+                    <div class="card-title">
+                        <!-- Empty title area - just for spacing -->
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="card-actions">
+                        <ng-container *ngFor="let column of config.columns">
+                            <!-- Regular Actions -->
+                            <div *ngIf="column.type === 'actions'" class="action-buttons">
+                                <ng-container *ngFor="let action of config.actions; trackBy: trackByActionKey">
+                                    <button *ngIf="!action.visible || action.visible(row)" mat-icon-button
+                                        [color]="action.color || 'primary'"
+                                        [disabled]="action.disabled && action.disabled(row)" [matTooltip]="action.label"
+                                        (click)="onAction(action, row)">
+                                        <mat-icon
+                                            [svgIcon]="action.icon || 'heroicons_outline:ellipsis-horizontal'"></mat-icon>
+                                    </button>
+                                </ng-container>
+                            </div>
+
+                            <!-- Dropdown Actions -->
+                            <div *ngIf="column.type === 'dropdown-actions'" class="dropdown-actions">
+                                <button mat-icon-button [matMenuTriggerFor]="cardActionsMenu">
+                                    <mat-icon svgIcon="heroicons_outline:ellipsis-vertical"></mat-icon>
+                                </button>
+                                <mat-menu #cardActionsMenu="matMenu">
+                                    <ng-container *ngFor="let action of config.actions; trackBy: trackByActionKey">
+                                        <button *ngIf="!action.visible || action.visible(row)"
+                                                mat-menu-item
+                                                [disabled]="action.disabled && action.disabled(row)"
+                                                [class]="action.color ? 'action-' + action.color : ''"
+                                                (click)="onAction(action, row)">
+                                            <mat-icon [svgIcon]="action.icon || 'heroicons_outline:cog'"
+                                                      [class]="action.color ? 'text-' + action.color : ''"></mat-icon>
+                                            <span [class]="action.color ? 'text-' + action.color : ''">{{ action.label }}</span>
+                                        </button>
+                                    </ng-container>
+                                </mat-menu>
+                            </div>
+
+                            <!-- Custom Template -->
+                            <ng-container *ngIf="column.type === 'template' && column.template"
+                                [ngTemplateOutlet]="column.template"
+                                [ngTemplateOutletContext]="{ $implicit: row, column: column, index: i }">
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <!-- Card Content -->
+                <div class="card-content">
+                    <ng-container *ngFor="let column of config.columns; let i = index">
+                        <div class="card-field" *ngIf="column.type !== 'actions' && column.type !== 'dropdown-actions' && column.type !== 'template'">
+                            <div class="field-label">{{ column.label }}</div>
+                            <div class="field-value">
+                                <!-- Text -->
+                                <span *ngIf="(!column.type || column.type === 'text') && !column.template">
+                                    {{ getCellValue(row, column) }}
+                                </span>
+
+                                <!-- Number -->
+                                <span *ngIf="column.type === 'number'">
+                                    {{ getCellValue(row, column) | number }}
+                                </span>
+
+                                <!-- Currency -->
+                                <span *ngIf="column.type === 'currency'">
+                                    {{ getCellValue(row, column) | currency:'TRY':'symbol-narrow':'1.2-2' }}
+                                </span>
+
+                                <!-- Date -->
+                                <span *ngIf="column.type === 'date'">
+                                    {{ getCellValue(row, column) | date:'dd/MM/yyyy' }}
+                                </span>
+
+                                <!-- DateTime -->
+                                <span *ngIf="column.type === 'datetime'">
+                                    {{ getCellValue(row, column) | date:'dd/MM/yyyy HH:mm' }}
+                                </span>
+
+                                <!-- Boolean -->
+                                <span *ngIf="column.type === 'boolean'"
+                                    class="boolean-chip"
+                                    [ngClass]="getCellValue(row, column) ? 'boolean-true' : 'boolean-false'">
+                                    {{ getCellValue(row, column) ? 'Evet' : 'Hayır' }}
+                                </span>
+
+                                <!-- Progress -->
+                                <div *ngIf="column.type === 'progress'" class="progress-container">
+                                    <mat-progress-bar mode="determinate" [value]="getCellValue(row, column)">
+                                    </mat-progress-bar>
+                                    <span class="progress-text">{{ getCellValue(row, column) }}%</span>
+                                </div>
+
+                                <!-- Image -->
+                                <div *ngIf="column.type === 'image'" class="image-container">
+                                    <img *ngIf="getCellValue(row, column)" [src]="getCellValue(row, column)" [alt]="column.label"
+                                        class="w-10 h-10 object-cover rounded-lg">
+                                    <div *ngIf="!getCellValue(row, column)"
+                                        class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">
+                                        NO IMG
+                                    </div>
+                                </div>
+
+                                <!-- Badge -->
+                                <ng-container *ngIf="column.type === 'badge'">
+                                    <ng-container *ngIf="getCellValue(row, column) as badgeValue">
+                                        <ng-container *ngIf="isArray(badgeValue); else singleBadgeCard">
+                                            <span *ngFor="let badge of badgeValue" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mr-1"
+                                                [ngClass]="getBadgeClasses(badge)">
+                                                {{ badge }}
+                                            </span>
+                                        </ng-container>
+                                        <ng-template #singleBadgeCard>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                                [ngClass]="getBadgeClasses(badgeValue)">
+                                                {{ badgeValue }}
+                                            </span>
+                                        </ng-template>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="config.pagination?.enabled">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+            <!-- Selection Info -->
+            <div class="text-sm text-gray-600 dark:text-gray-400" *ngIf="config.selection?.enabled">
+                <span *ngIf="selectedRows.length > 0">
+                    {{ selectedRows.length }} of {{ total }} selected
+                </span>
+            </div>
+
+            <!-- Pagination -->
+            <mat-paginator [length]="total" [pageSize]="state.pageSize" [pageIndex]="state.page"
+                [pageSizeOptions]="config.pagination?.pageSizeOptions || [5, 10, 25, 50]" [showFirstLastButtons]="true"
+                [disabled]="loading" (page)="onPageChange($event)">
+            </mat-paginator>
+
+        </div>
+    </div>
+
+</div>

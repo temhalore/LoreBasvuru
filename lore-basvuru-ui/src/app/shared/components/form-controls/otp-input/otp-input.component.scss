@@ -1,0 +1,335 @@
+/* OTP Input Component Styles */
+.otp-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* OTP Input Fields */
+.otp-input-field {
+    text-align: center;
+    border: 2px solid #d1d5db;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    background-color: white;
+    color: #111827;
+    font-weight: 500;
+    font-family: inherit;
+    
+    &:hover:not(:disabled) {
+        border-color: #9ca3af;
+    }
+    
+    &:disabled {
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
+        color: #9ca3af;
+        cursor: not-allowed;
+    }
+    
+    &:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        transform: scale(1.05);
+    }
+    
+    /* Size variants */
+    &.size-small {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.125rem;
+        line-height: 1;
+    }
+    
+    &.size-medium {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.25rem;
+        line-height: 1;
+    }
+    
+    &.size-large {
+        width: 3.5rem;
+        height: 3.5rem;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+}
+
+/* Dark mode */
+:host-context(.dark) .otp-input-field {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: white;
+    
+    &:hover:not(:disabled) {
+        border-color: #6b7280;
+    }
+    
+    &:disabled {
+        background-color: #374151;
+        border-color: #4b5563;
+        color: #6b7280;
+    }
+    
+    &:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+}
+
+/* OTP Input Grid */
+.otp-inputs-grid {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+    .otp-inputs-grid {
+        gap: 0.75rem;
+    }
+}
+
+/* Input field animations */
+.otp-input-field {
+    transition: all 0.2s ease-in-out;
+    
+    &:focus {
+        transform: scale(1.05);
+    }
+    
+    &.filled {
+        background-color: #eff6ff;
+        border-color: #3b82f6;
+    }
+    
+    &.error {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+    }
+}
+
+:host-context(.dark) .otp-input-field {
+    &.filled {
+        background-color: #1e3a8a;
+        border-color: #60a5fa;
+    }
+    
+    &.error {
+        background-color: #7f1d1d;
+        border-color: #f87171;
+    }
+}
+
+/* Progress Indicator */
+.otp-progress {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.progress-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    
+    &.filled {
+        background-color: #3b82f6;
+    }
+    
+    &.empty {
+        background-color: #d1d5db;
+    }
+}
+
+:host-context(.dark) .progress-dot {
+    &.empty {
+        background-color: #4b5563;
+    }
+}
+
+/* Timer Display */
+.otp-timer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.timer-text {
+    color: #6b7280;
+    font-family: monospace;
+}
+
+.timer-active {
+    color: #f59e0b;
+}
+
+:host-context(.dark) .timer-text {
+    color: #9ca3af;
+}
+
+:host-context(.dark) .timer-active {
+    color: #fbbf24;
+}
+
+/* Action Buttons */
+.otp-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .otp-actions {
+        flex-direction: row;
+    }
+}
+
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Status Display */
+.otp-status {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    
+    &.complete {
+        color: #059669;
+    }
+    
+    &.incomplete {
+        color: #6b7280;
+    }
+}
+
+:host-context(.dark) .status-item {
+    &.complete {
+        color: #10b981;
+    }
+    
+    &.incomplete {
+        color: #9ca3af;
+    }
+}
+
+/* Help Text */
+.help-text {
+    text-align: center;
+}
+
+.help-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+:host-context(.dark) .help-list {
+    color: #9ca3af;
+}
+
+/* Validation Error */
+.validation-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: #ef4444;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+:host-context(.dark) .validation-error {
+    background-color: #7f1d1d;
+    border-color: #dc2626;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .otp-inputs-grid {
+        gap: 0.25rem;
+    }
+    
+    .otp-input-field {
+        &.size-small {
+            width: 2rem;
+            height: 2rem;
+            font-size: 1rem;
+        }
+        
+        &.size-medium {
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1.125rem;
+        }
+        
+        &.size-large {
+            width: 3rem;
+            height: 3rem;
+            font-size: 1.25rem;
+        }
+    }
+    
+    .otp-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .action-group {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animation classes */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.scale-in {
+    animation: scaleIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

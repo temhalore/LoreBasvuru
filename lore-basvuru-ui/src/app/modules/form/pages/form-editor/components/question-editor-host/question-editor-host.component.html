@@ -1,0 +1,141 @@
+<article
+    class="question-editor-host"
+    [class.question-editor-host--selected]="isSelected"
+    [class.question-editor-host--contains-selection]="containsSelectedNode"
+    [class.question-editor-host--editing]="isEditing"
+    [class.question-editor-host--draggable]="showDragHandle && !isEditing"
+    [attr.data-editor-node-eid]="schema.eid"
+    (click)="onSelect(schema.eid)">
+    <div class="question-editor-host__frame" aria-hidden="true"></div>
+
+    <div class="question-editor-host__toolbar" aria-label="Soru aksiyonlari">
+        <button
+            *ngIf="showDragHandle"
+            type="button"
+            mat-icon-button
+            class="question-editor-host__drag-handle"
+            cdkDragHandle
+            aria-label="Soruyu surukle"
+            (click)="$event.stopPropagation()">
+            <mat-icon aria-hidden="true">drag_indicator</mat-icon>
+        </button>
+
+        <app-form-editor-action-toolbar
+            [actions]="actions"
+            (action)="onToolbarAction($event)">
+        </app-form-editor-action-toolbar>
+    </div>
+
+    @defer (when isEditing) {
+        @if (isEditing) {
+            <div
+                class="question-editor-host__edit-surface"
+                aria-label="Soru duzenleme gorunumu"
+                (click)="$event.stopPropagation()">
+                @switch (activeSurfaceId) {
+                    @case ('content') {
+                        <app-question-editor-outlet
+                            [draft]="editingQuestionDraft"
+                            [isSaving]="isQuestionDraftSaving"
+                            [error]="questionDraftError"
+                            (save)="saveDraft.emit($event)"
+                            (dirtyChange)="onQuestionDraftDirtyChange($event)"
+                            (cancel)="surfaceClose.emit($event)">
+                        </app-question-editor-outlet>
+                    }
+                    @case ('validation') {
+                        <app-question-validation-editor-outlet
+                            [question]="question"
+                            [session]="validationSession"
+                            [editorConfig]="validationEditorConfig"
+                            [isLoading]="isValidationLoading"
+                            [isSaving]="isValidationSaving"
+                            [error]="validationError"
+                            (save)="saveValidation.emit($event)"
+                            (close)="surfaceClose.emit($event)">
+                        </app-question-validation-editor-outlet>
+                    }
+                }
+            </div>
+        } @else {
+            <div class="question-editor-host__widget-preview question-theme" cdkDragHandle>
+                <app-question-type-renderer
+                    [schema]="schema"
+                    [state]="renderState">
+                </app-question-type-renderer>
+            </div>
+        }
+    } @placeholder {
+        @if (isEditing) {
+            <div
+                class="question-editor-host__edit-surface"
+                aria-label="Soru duzenleyici hazirlaniyor"
+                (click)="$event.stopPropagation()">
+                <div class="question-editor-host__defer-state" role="status" aria-live="polite">
+                    <div class="question-editor-host__defer-state-body">
+                        <p class="question-editor-host__defer-state-title">Editor hazirlaniyor</p>
+                        <p class="question-editor-host__defer-state-text">Duzenleme alanlari hazirlaniyor.</p>
+                    </div>
+                </div>
+            </div>
+        } @else {
+            <div class="question-editor-host__widget-preview question-theme" cdkDragHandle>
+                <app-question-type-renderer
+                    [schema]="schema"
+                    [state]="renderState">
+                </app-question-type-renderer>
+            </div>
+        }
+    } @loading (after 120ms; minimum 250ms) {
+        @if (isEditing) {
+            <div
+                class="question-editor-host__edit-surface"
+                aria-label="Soru duzenleyici yukleniyor"
+                (click)="$event.stopPropagation()">
+                <div class="question-editor-host__defer-state" role="status" aria-live="polite">
+                    <div class="question-editor-host__defer-state-body">
+                        <mat-spinner class="question-editor-host__defer-state-spinner" [diameter]="28" [strokeWidth]="4"></mat-spinner>
+                        <p class="question-editor-host__defer-state-title">Editor yukleniyor</p>
+                        <p class="question-editor-host__defer-state-text">Duzenleme bilesenleri birazdan hazir olacak.</p>
+                    </div>
+                </div>
+            </div>
+        } @else {
+            <div class="question-editor-host__widget-preview question-theme" cdkDragHandle>
+                <app-question-type-renderer
+                    [schema]="schema"
+                    [state]="renderState">
+                </app-question-type-renderer>
+            </div>
+        }
+    } @error {
+        @if (isEditing) {
+            <div
+                class="question-editor-host__edit-surface"
+                aria-label="Soru duzenleyici yuklenemedi"
+                (click)="$event.stopPropagation()">
+                <div class="question-editor-host__defer-state question-editor-host__defer-state--error" role="alert">
+                    <div class="question-editor-host__defer-state-body">
+                        <mat-icon class="question-editor-host__defer-state-icon" aria-hidden="true">error_outline</mat-icon>
+                        <p class="question-editor-host__defer-state-title">Editor acilamadi</p>
+                        <p class="question-editor-host__defer-state-text">Bu soruyu kapatip tekrar deneyin.</p>
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            class="question-editor-host__defer-state-action"
+                            (click)="onSurfaceClose($event)">
+                            Kapat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        } @else {
+            <div class="question-editor-host__widget-preview question-theme" cdkDragHandle>
+                <app-question-type-renderer
+                    [schema]="schema"
+                    [state]="renderState">
+                </app-question-type-renderer>
+            </div>
+        }
+    }
+</article>

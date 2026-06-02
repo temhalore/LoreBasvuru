@@ -1,0 +1,290 @@
+/* OTP Input Example Component Styles */
+
+.example-card {
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    
+    .mat-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin: -24px -24px 24px -24px;
+        padding: 24px;
+        
+        .mat-card-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .mat-card-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+    }
+}
+
+.example-section {
+    padding: 1.5rem 0;
+    
+    h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        
+        &::before {
+            content: "🔢";
+            font-size: 1rem;
+        }
+    }
+}
+
+.space-y-4 > * + * {
+    margin-top: 1rem;
+}
+
+.space-y-6 > * + * {
+    margin-top: 1.5rem;
+}
+
+.tab-content {
+    min-height: 600px;
+    
+    .mat-tab-group {
+        .mat-tab-label {
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        
+        .mat-tab-label-active {
+            opacity: 1;
+            font-weight: 600;
+        }
+    }
+}
+
+/* Form Status Styles */
+.mat-card-footer {
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    
+    h4 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+    
+    pre {
+        background-color: white;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        font-family: monospace;
+        overflow: auto;
+        max-height: 8rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+}
+
+/* Button Styles */
+.mat-card-actions {
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    
+    .mat-raised-button {
+        font-weight: 500;
+        text-transform: none;
+        letter-spacing: 0.025em;
+    }
+    
+    .mat-stroked-button {
+        font-weight: 500;
+        text-transform: none;
+        letter-spacing: 0.025em;
+    }
+}
+
+/* Status Badge Styles */
+.inline-flex {
+    display: inline-flex;
+    align-items: center;
+    
+    &.bg-green-100 {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+    
+    &.bg-red-100 {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+    
+    &.bg-yellow-100 {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+    
+    .mat-icon {
+        font-size: 0.75rem;
+        width: 0.75rem;
+        height: 0.75rem;
+        margin-right: 0.25rem;
+    }
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    
+    &.grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    
+    &.gap-4 {
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .grid.md\\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Dark Mode Support */
+:host-context(.dark) {
+    .example-card {
+        background-color: #1f2937;
+        border: 1px solid #374151;
+        
+        .mat-card-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+    }
+    
+    .example-section h3 {
+        color: #e5e7eb;
+    }
+    
+    .mat-card-footer {
+        background-color: #111827;
+        border-top-color: #374151;
+        
+        h4 {
+            color: #e5e7eb;
+        }
+        
+        pre {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+        
+        p {
+            color: #9ca3af;
+        }
+    }
+    
+    .mat-card-actions {
+        background-color: #111827;
+        border-top-color: #374151;
+    }
+}
+
+/* Animation and Transitions */
+.example-card {
+    transition: all 0.3s ease-in-out;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+}
+
+.mat-tab-group {
+    .mat-tab-label {
+        transition: all 0.2s ease-in-out;
+        
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .example-card {
+        margin: 0 -1rem 2rem -1rem;
+        border-radius: 0;
+        
+        .mat-card-header {
+            margin: -16px -16px 16px -16px;
+            padding: 16px;
+        }
+    }
+    
+    .tab-content {
+        padding: 1rem;
+    }
+    
+    .mat-card-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+        
+        .mat-button, .mat-raised-button, .mat-stroked-button {
+            width: 100%;
+        }
+    }
+    
+    .grid {
+        &.md\\:grid-cols-2 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+    }
+}
+
+/* Print Styles */
+@media print {
+    .example-card {
+        box-shadow: none;
+        border: 1px solid #000;
+        break-inside: avoid;
+        
+        .mat-card-actions {
+            display: none;
+        }
+        
+        .mat-card-header {
+            background: #f5f5f5 !important;
+            color: #000 !important;
+            
+            .mat-card-title,
+            .mat-card-subtitle {
+                color: #000 !important;
+            }
+        }
+    }
+}
+
+/* Snackbar Styles */
+.snackbar-success {
+    background-color: #10b981 !important;
+    color: white !important;
+}
+
+.snackbar-error {
+    background-color: #ef4444 !important;
+    color: white !important;
+}
+
+.snackbar-info {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}

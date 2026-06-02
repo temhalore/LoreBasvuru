@@ -1,0 +1,54 @@
+<div class="editor-panel">
+    <div class="editor-panel__header">
+        <button
+            type="button"
+            class="editor-panel__close-btn"
+            (click)="closePanel.emit()"
+            aria-label="Paneli kapat">
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <span class="editor-panel__header-sep" aria-hidden="true"></span>
+
+        <div class="editor-panel__tab-bar" role="tablist">
+            <ng-container *ngFor="let tab of tabs; let index = index; trackBy: trackByTab">
+                <span class="editor-panel__tab-sep" aria-hidden="true" *ngIf="shouldShowSeparator(index)"></span>
+
+                <button
+                    type="button"
+                    role="tab"
+                    class="editor-panel__tab-btn"
+                    [class.editor-panel__tab-btn--active]="isTabActive(tab.id)"
+                    [attr.aria-selected]="isTabActive(tab.id)"
+                    [disabled]="!tab.enabled"
+                    [title]="tab.label"
+                    [attr.aria-label]="tab.label"
+                    (click)="selectTab(tab.id)">
+                    <mat-icon>{{ tab.icon }}</mat-icon>
+                </button>
+            </ng-container>
+        </div>
+
+        <ng-container *ngIf="headerActionsTemplate">
+            <span class="editor-panel__header-sep" aria-hidden="true"></span>
+            <ng-container
+                *ngTemplateOutlet="headerActionsTemplate; context: {
+                    $implicit: activeTab,
+                    tab: activeTab,
+                    side: side
+                }">
+            </ng-container>
+        </ng-container>
+    </div>
+
+    <div class="editor-panel__body">
+        <ng-container *ngIf="isOpen && activeTab && contentTemplate">
+            <ng-container
+                *ngTemplateOutlet="contentTemplate; context: {
+                    $implicit: activeTab,
+                    tab: activeTab
+                }">
+            </ng-container>
+        </ng-container>
+    </div>
+</div>

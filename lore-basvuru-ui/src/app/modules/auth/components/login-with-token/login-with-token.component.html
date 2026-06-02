@@ -1,0 +1,148 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+  <div class="max-w-md w-full space-y-8 p-8">
+    <div class="text-center">
+      <div class="flex justify-center">
+        <!-- Loading State -->
+        <div *ngIf="isLoading$ | async" class="flex flex-col items-center space-y-4">
+          <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
+          <p class="text-lg font-medium text-gray-600 dark:text-gray-300">
+            Giriş yapılıyor, lütfen bekleyin...
+          </p>
+        </div>
+
+        <!-- Success State -->
+        <div *ngIf="((loginData | async)?.kisiTokenDto?.isLogin === true) && !isVerificationRequired && !(isLoading$ | async)"
+             class="flex flex-col items-center space-y-6">
+
+          <!-- Success Icon -->
+          <div class="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+            <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+
+          <!-- Welcome Message -->
+          <div class="text-center">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Hoş Geldiniz
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400">
+              Giriş işlemi başarılı, ana sayfaya yönlendiriliyorsunuz...
+            </p>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+            <div class="bg-green-600 h-2 rounded-full animate-pulse" style="width: 75%"></div>
+          </div>
+        </div>
+
+        <!-- Verification Required State -->
+        <div *ngIf="isVerificationRequired && !(isLoading$ | async)"
+             class="flex flex-col items-center space-y-6">
+
+          <!-- Warning Icon -->
+          <div class="w-20 h-20 bg-amber-100 dark:bg-amber-900 rounded-full flex items-center justify-center">
+            <svg class="w-10 h-10 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+
+          <!-- Verification Message -->
+          <div class="text-center">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Dogrulama Gerekli
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              Sistemi kullanabilmek icin e-posta ve cep telefonu dogrulamaniz zorunludur.
+            </p>
+
+            <!-- Verification Status List -->
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center justify-center gap-3">
+                <svg *ngIf="isEmailVerified" class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <svg *ngIf="!isEmailVerified" class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span class="text-gray-700 dark:text-gray-300">E-posta Dogrulamasi</span>
+                <span [class]="isEmailVerified ? 'text-green-600 font-medium' : 'text-red-600 font-medium'">
+                  {{ isEmailVerified ? 'Tamamlandi' : 'Dogrulanmadi' }}
+                </span>
+              </div>
+              <div class="flex items-center justify-center gap-3">
+                <svg *ngIf="isPhoneVerified" class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <svg *ngIf="!isPhoneVerified" class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span class="text-gray-700 dark:text-gray-300">Cep Telefonu Dogrulamasi</span>
+                <span [class]="isPhoneVerified ? 'text-green-600 font-medium' : 'text-red-600 font-medium'">
+                  {{ isPhoneVerified ? 'Tamamlandi' : 'Dogrulanmadi' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Countdown -->
+            <p class="text-gray-500 dark:text-gray-400 mb-4">
+              {{ redirectCountdown }} saniye icinde dogrulama sayfasina yonlendirileceksiniz...
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-4">
+            <button
+              (click)="goToVerification()"
+              class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Hemen Dogrula
+            </button>
+            <button
+              (click)="goToLogin()"
+              class="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+              Giris Sayfasina Don
+            </button>
+          </div>
+        </div>
+
+        <!-- Error/Failed State -->
+        <div *ngIf="((loginData | async)?.kisiTokenDto?.isLogin === false) && !(isLoading$ | async)" 
+             class="flex flex-col items-center space-y-6">
+          
+          <!-- Error Icon -->
+          <div class="w-20 h-20 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+            <svg class="w-10 h-10 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </div>
+
+          <!-- Error Message -->
+          <div class="text-center">
+            <h3 class="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
+              Giriş Başarısız
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              Oturumunuz sonlanmış veya geçersiz. <br>
+              Giriş sayfasına yönlendiriliyorsunuz...
+            </p>
+          </div>
+
+          <!-- Manual Login Button -->
+          <button 
+            (click)="goToLogin()"
+            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+            </svg>
+            Giriş Sayfasına Git
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<ng-container *ngIf="!isAnswerOnly; else answerOnlyTemplate">
+    <div class="question-matrix">
+        <div class="question-matrix__row" *ngFor="let row of schema.matrixRows; trackBy: trackByEid">
+            <div class="question-matrix__row-label">
+                <app-rich-text-view
+                    [html]="row.label"
+                    [compact]="true">
+                </app-rich-text-view>
+            </div>
+
+            <label class="question-choice-row" *ngFor="let column of schema.matrixColumns; trackBy: trackByEid">
+                <input
+                    type="checkbox"
+                    [disabled]="isInputDisabled || isInputReadonly"
+                    [checked]="isSelected(row.eid, column.eid)"
+                    (change)="toggleValue(row.eid, column.eid, $event)">
+                <div>
+                    <app-rich-text-view
+                        [html]="column.label"
+                        [compact]="true">
+                    </app-rich-text-view>
+                </div>
+            </label>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #answerOnlyTemplate>
+    <div class="question-matrix-summary-list">
+        <div class="question-matrix-summary-item" *ngFor="let row of schema.matrixRows; trackBy: trackByEid">
+            <div class="question-matrix-summary-label">
+                <app-rich-text-view
+                    [html]="row.label"
+                    [compact]="true">
+                </app-rich-text-view>
+            </div>
+            @if (!getSelectedLabelItems(row.eid).length) {
+                <div class="question-matrix-summary-value question-matrix-summary-value--hint">Yanit verilmedi</div>
+            } @else {
+                <div class="question-chip-list question-chip-list--matrix">
+                    @for (label of getSelectedLabelItems(row.eid); track label.eid) {
+                        <div class="question-chip">
+                            <app-rich-text-view
+                                [html]="label.label"
+                                [compact]="true">
+                            </app-rich-text-view>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</ng-template>

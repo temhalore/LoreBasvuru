@@ -1,0 +1,93 @@
+<div
+    class="respondent-completion-state"
+    [class.respondent-completion-state--submitting]="isSubmitting"
+    [class.respondent-completion-state--error]="isError"
+    [class.respondent-completion-state--success]="!isSubmitting">
+    <section class="respondent-completion-state__panel">
+        @if (isSubmitting) {
+            <div class="respondent-completion-state__status-rail respondent-completion-state__status-rail--top" aria-hidden="true">
+                <span class="respondent-completion-state__status-bar"></span>
+            </div>
+        }
+
+        <div
+            class="respondent-completion-state__status-chip-wrap"
+            [class.respondent-completion-state__status-chip-wrap--submitting]="isSubmitting">
+            @if (showStatusIcon) {
+                <span
+                    class="respondent-completion-state__status-icon"
+                    [class.respondent-completion-state__status-icon--error]="isError"
+                    [class.respondent-completion-state__status-icon--success]="!isError">
+                    <mat-icon aria-hidden="true" class="respondent-completion-state__status-icon-glyph">
+                        {{ iconName }}
+                    </mat-icon>
+                </span>
+
+                <span
+                    class="respondent-completion-state__eyebrow respondent-completion-state__eyebrow--stacked"
+                    [class.respondent-completion-state__eyebrow--error]="isError">
+                    {{ eyebrowText }}
+                </span>
+            }
+        </div>
+
+        <h2>{{ resolvedTitle }}</h2>
+        <p>{{ resolvedMessage }}</p>
+
+        @if (visibleErrorDetails.length > 0) {
+            <ul class="respondent-completion-state__error-list">
+                @for (detail of visibleErrorDetails; track detail) {
+                    <li>{{ detail }}</li>
+                }
+            </ul>
+        }
+
+        @if (phase === 'success') {
+            <div class="respondent-completion-state__divider" aria-hidden="true"></div>
+
+            <div class="respondent-completion-state__actions">
+                <button
+                    type="button"
+                    mat-flat-button
+                    color="primary"
+                    class="respondent-completion-state__action respondent-completion-state__action--primary"
+                    (click)="backToMyApplications.emit()">
+                    <mat-icon aria-hidden="true">folder_open</mat-icon>
+                    <span>Başvurularıma Dön</span>
+                </button>
+
+                <button
+                    type="button"
+                    mat-stroked-button
+                    class="respondent-completion-state__action respondent-completion-state__action--secondary"
+                    (click)="backToDashboard.emit()">
+                    <mat-icon aria-hidden="true">home</mat-icon>
+                    <span>Ana Sayfaya Dön</span>
+                </button>
+            </div>
+        } @else if (isError) {
+            <div class="respondent-completion-state__divider" aria-hidden="true"></div>
+
+            <div class="respondent-completion-state__actions respondent-completion-state__actions--error">
+                <button
+                    type="button"
+                    mat-stroked-button
+                    class="respondent-completion-state__action respondent-completion-state__action--secondary"
+                    (click)="backToForm.emit()">
+                    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+                    <span>Geri Dön</span>
+                </button>
+
+                <button
+                    type="button"
+                    mat-flat-button
+                    color="primary"
+                    class="respondent-completion-state__action respondent-completion-state__action--primary"
+                    (click)="retrySubmit.emit()">
+                    <mat-icon aria-hidden="true">refresh</mat-icon>
+                    <span>Tekrar Dene</span>
+                </button>
+            </div>
+        }
+    </section>
+</div>

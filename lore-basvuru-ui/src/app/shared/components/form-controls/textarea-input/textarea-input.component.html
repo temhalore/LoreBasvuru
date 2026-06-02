@@ -1,0 +1,116 @@
+<div class="textarea-input-container" [class.disabled]="isControlDisabled" [ngClass]="customClass" [formGroup]="formGroup">
+    
+    <!-- Clean Textarea Field -->
+    <div class="form-field-wrapper">
+        
+        <!-- Label -->
+        <label *ngIf="label" class="form-label">
+            {{ label }}
+            <span *ngIf="showRequiredMarker" class="required-asterisk">*</span>
+        </label>
+
+        <!-- Textarea Container -->
+        <div class="textarea-wrapper">
+            <!-- Prefix Icon -->
+            <mat-icon *ngIf="icon" class="prefix-icon">{{ icon }}</mat-icon>
+            
+            <!-- Textarea Field -->
+            <textarea 
+                class="clean-textarea"
+                [formControlName]="controlName"
+                [placeholder]="placeholder"
+                [rows]="currentRows"
+                [maxlength]="maxLength"
+                (focus)="onFocus()"
+                (blur)="onBlur()"
+                (input)="onInput($event)">
+            </textarea>
+
+            <!-- Action Buttons Container -->
+            <div class="action-buttons" *ngIf="enableClearButton || enableCopyButton || enableExpandButton || hasTooltip">
+                <!-- Clear Button -->
+                <button 
+                    *ngIf="enableClearButton && value" 
+                    type="button"
+                    mat-icon-button
+                    class="action-button clear-button"
+                    (click)="clearText()"
+                    matTooltip="Temizle">
+                    <mat-icon>clear</mat-icon>
+                </button>
+
+                <!-- Copy Button -->
+                <button 
+                    *ngIf="enableCopyButton && value" 
+                    type="button"
+                    mat-icon-button
+                    class="action-button copy-button"
+                    (click)="copyText()"
+                    matTooltip="Kopyala">
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+
+                <!-- Expand/Collapse Button -->
+                <button 
+                    *ngIf="enableExpandButton" 
+                    type="button"
+                    mat-icon-button
+                    class="action-button expand-button"
+                    (click)="toggleExpand()"
+                    [matTooltip]="isExpanded ? 'Küçült' : 'Genişlet'">
+                    <mat-icon>{{ isExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+                </button>
+
+                <!-- Tooltip Icon -->
+                <mat-icon 
+                    *ngIf="hasTooltip" 
+                    class="suffix-icon tooltip-icon"
+                    [matTooltip]="tooltip">
+                    info_outline
+                </mat-icon>
+            </div>
+        </div>
+
+        <!-- Character Count -->
+        <div *ngIf="showCharacterCount || maxLength" class="character-count">
+            <span class="count" [class.over-limit]="isCharacterLimitExceeded">
+                {{ characterCount }}
+                <span *ngIf="maxLength">/ {{ maxLength }}</span>
+            </span>
+            <span *ngIf="maxLength && remainingCharacters <= 50 && remainingCharacters > 0" class="remaining">
+                ({{ remainingCharacters }} kalan)
+            </span>
+        </div>
+
+        <!-- Error Messages -->
+        <div *ngIf="hasError('required')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>{{ label || 'Bu alan' }} zorunludur</span>
+            </div>
+        </div>
+
+        <div *ngIf="hasError('minlength')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>Minimum {{ minLength }} karakter olmalıdır</span>
+            </div>
+        </div>
+
+        <div *ngIf="hasError('maxlength')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>Maksimum {{ maxLength }} karakter olabilir</span>
+            </div>
+        </div>
+
+        <!-- Success State -->
+        <div *ngIf="isControlValid && !hasError('required')" class="success-messages">
+            <div class="success-item">
+                <mat-icon class="success-icon">check_circle_outline</mat-icon>
+                <span>Geçerli</span>
+            </div>
+        </div>
+
+    </div>
+</div>

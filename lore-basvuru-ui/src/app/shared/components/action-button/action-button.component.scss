@@ -1,0 +1,62 @@
+/* Action Button Component Styles */
+
+.ek-action-btn {
+  border: 1px solid rgba(var(--fuse-primary-rgb), 0.2);
+  background: var(--ek-btn-primary-bg);
+  color: var(--ek-btn-primary-text);
+  box-shadow: none;
+}
+
+.ek-action-btn:not(:disabled):hover {
+  background: var(--ek-btn-primary-bg-hover);
+  filter: none;
+}
+
+.ek-action-btn:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 24%, transparent);
+}
+
+.ek-action-btn.is-disabled,
+.ek-action-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.ek-action-btn--outline {
+  background: var(--ek-btn-outline-bg);
+  color: var(--ek-btn-outline-text);
+  border-color: var(--ek-btn-outline-border);
+  box-shadow: none;
+}
+
+.ek-action-btn--outline:not(:disabled):hover {
+  background: var(--ek-btn-outline-hover-bg);
+}
+
+.ek-action-btn--secondary,
+.ek-action-btn--info,
+.ek-action-btn--warning,
+.ek-action-btn--success,
+.ek-action-btn--danger,
+.ek-action-btn--primary {
+  background: var(--ek-btn-primary-bg);
+  color: var(--ek-btn-primary-text);
+  border-color: color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 55%, white);
+}
+
+/* Custom animation for loading state */
+.fa-spin {
+  animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,17 @@
+/* Froala Editor'deki özel butonları özelleştirmek için */
+.fr-command[data-cmd="Unvan Ekle"],
+.fr-command[data-cmd="Ad Ekle"],
+.fr-command[data-cmd="Soyad Ekle"] {
+  font-weight: bold;    /* Butonları kalın yazı yapar */
+  padding: 10px 15px!important;   /* Butonlara daha fazla boşluk ekler */
+  font-size: 14px!important;      /* Butonların yazı boyutunu artırır */
+  background-color: #6ab0fa!important;  /* Butonların arka plan rengini değiştirir */
+  color: white!important;         /* Yazı rengini beyaz yapar */
+  border-radius: 5px!important;   /* Butonlara yuvarlak köşeler ekler */
+}
+
+.fr-command[data-cmd="Unvan Ekle"]:hover,
+.fr-command[data-cmd="Ad Ekle"]:hover,
+.fr-command[data-cmd="Soyad Ekle"]:hover {
+  background-color: #0056b3!important;  /* Hover durumunda arka plan rengini değiştirir */
+}

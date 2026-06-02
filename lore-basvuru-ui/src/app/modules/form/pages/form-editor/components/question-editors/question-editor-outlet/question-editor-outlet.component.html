@@ -1,0 +1,56 @@
+<form class="question-editor-outlet" *ngIf="draft && form" [formGroup]="form" (ngSubmit)="submit()">
+    <app-common-question-editor
+        [form]="form"
+        [descriptionOnly]="isDescriptionQuestion">
+    </app-common-question-editor>
+
+    <section class="question-editor-outlet__scale mb-4" *ngIf="showScaleEditor">
+        <app-text-input
+            [formGroup]="form"
+            controlName="olcekMinDeger"
+            type="number"
+            label="Minimum değer"
+            placeholder="Minimum değer">
+        </app-text-input>
+
+        <app-text-input
+            [formGroup]="form"
+            controlName="olcekMaxDeger"
+            type="number"
+            label="Maksimum değer"
+            placeholder="Maksimum değer">
+        </app-text-input>
+
+        <app-text-input
+            [formGroup]="form"
+            controlName="olcekMinEtiket"
+            label="Minimum etiket"
+            placeholder="Minimum etiket">
+        </app-text-input>
+
+        <app-text-input
+            [formGroup]="form"
+            controlName="olcekMaxEtiket"
+            label="Maksimum etiket"
+            placeholder="Maksimum etiket">
+        </app-text-input>
+    </section>
+
+    <app-option-list-editor *ngIf="showOptionsEditor" [form]="form"></app-option-list-editor>
+    <app-matrix-list-editor *ngIf="showMatrixEditor" [form]="form"></app-matrix-list-editor>
+
+    <div class="question-editor-outlet__notice" *ngIf="draft.soruTipKID === QuestionTypeId.TEKRARLI_GRUP">
+        Alt soru listesine karttaki "Alt sorulari duzenle" aksiyonundan ulasabilirsiniz.
+    </div>
+
+    <div class="question-editor-outlet__error" *ngIf="visibleError">{{ visibleError }}</div>
+
+    <div class="question-editor-outlet__actions">
+        <button type="button" mat-button (click)="cancelEdit()" [disabled]="isSaving">Iptal</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="isSaving">
+            <mat-icon aria-hidden="true">save</mat-icon>
+            Kaydet
+        </button>
+    </div>
+</form>
+

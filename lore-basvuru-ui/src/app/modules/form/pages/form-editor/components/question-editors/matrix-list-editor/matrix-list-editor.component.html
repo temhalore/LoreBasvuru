@@ -1,0 +1,217 @@
+<section class="matrix-list-editor">
+    <!-- ── Satırlar ──────────────────────────────────────── -->
+    <div class="matrix-list-editor__accordion">
+        <button
+            type="button"
+            class="matrix-list-editor__accordion-trigger"
+            [attr.aria-expanded]="isRowsOpen"
+            (click)="isRowsOpen = !isRowsOpen">
+            <span class="matrix-list-editor__accordion-heading">
+                <span class="matrix-list-editor__accordion-title">Satırlar</span>
+                <span class="matrix-list-editor__accordion-badge">{{ rows.length }}</span>
+            </span>
+            <span
+                class="matrix-list-editor__accordion-icon"
+                [class.matrix-list-editor__accordion-icon--open]="isRowsOpen"
+                aria-hidden="true">
+                <mat-icon>{{ isRowsOpen ? 'expand_more' : 'chevron_right' }}</mat-icon>
+            </span>
+        </button>
+
+        <div class="matrix-list-editor__accordion-wrap"
+             [class.matrix-list-editor__accordion-wrap--open]="isRowsOpen">
+            <div class="matrix-list-editor__accordion-inner">
+                <div class="matrix-list-editor__accordion-content">
+                    <div class="matrix-list-editor__items"
+                         cdkDropList
+                         #rowsListEl
+                         (cdkDropListDropped)="onRowDrop($event)">
+                        <div
+                            class="matrix-list-editor__row"
+                            [class.matrix-list-editor__row--editing]="isEditing(row)"
+                            *ngFor="let row of rows.controls; let i = index; trackBy: trackByEid"
+                            cdkDrag
+                            cdkDragLockAxis="y"
+                            [cdkDragBoundary]="rowsListEl"
+                            [cdkDragDisabled]="isEditing(row)">
+
+                            <div class="matrix-list-editor__compact">
+                                <span class="matrix-list-editor__compact-order">{{ i + 1 }}.</span>
+
+                                <span class="matrix-list-editor__compact-label"
+                                      [class.matrix-list-editor__compact-label--empty]="!getPlainText(row.controls.satirMetni.value)">
+                                    {{ getPlainText(row.controls.satirMetni.value) || 'Bos satir' }}
+                                </span>
+
+                                <div class="matrix-list-editor__compact-actions">
+                                    <button
+                                        type="button"
+                                        class="matrix-list-editor__compact-btn matrix-list-editor__compact-btn--delete"
+                                        [disabled]="rows.length <= 1"
+                                        (click)="removeRow(row)"
+                                        aria-label="Satırı sil">
+                                        <mat-icon aria-hidden="true">close</mat-icon>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="matrix-list-editor__compact-btn"
+                                        [class.matrix-list-editor__compact-btn--active]="isEditing(row)"
+                                        (click)="isEditing(row) ? stopEditing() : startEditing(row)"
+                                        aria-label="Satırı düzenle">
+                                        <mat-icon aria-hidden="true">{{ isEditing(row) ? 'check' : 'edit' }}</mat-icon>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="matrix-list-editor__compact-btn matrix-list-editor__compact-btn--drag"
+                                        cdkDragHandle
+                                        aria-label="Satırı sırala">
+                                        <mat-icon aria-hidden="true">drag_indicator</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="matrix-list-editor__edit-wrap"
+                                 [class.matrix-list-editor__edit-wrap--open]="isEditing(row)">
+                                <div class="matrix-list-editor__edit-inner">
+                                    <div class="matrix-list-editor__edit-panel" [formGroup]="row">
+                                        <app-froala-textarea-input
+                                            [nameOfFormGroup]="row"
+                                            controlName="satirMetni"
+                                            placeHolder="Satir metni"
+                                            [isRequired]="true"
+                                            [editorHeight]="100">
+                                        </app-froala-textarea-input>
+
+                                        <div class="matrix-list-editor__edit-actions">
+                                            <button type="button" mat-stroked-button (click)="stopEditing()">
+                                                <mat-icon aria-hidden="true">check</mat-icon>
+                                                Tamam
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="matrix-list-editor__add-action flex justify-end my-4">
+                        <button type="button" mat-stroked-button (click)="addRow()">
+                            <mat-icon aria-hidden="true">add</mat-icon>
+                            Satır Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Sütunlar ──────────────────────────────────────── -->
+    <div class="matrix-list-editor__accordion">
+        <button
+            type="button"
+            class="matrix-list-editor__accordion-trigger"
+            [attr.aria-expanded]="isColumnsOpen"
+            (click)="isColumnsOpen = !isColumnsOpen">
+            <span class="matrix-list-editor__accordion-heading">
+                <span class="matrix-list-editor__accordion-title">Sütunlar</span>
+                <span class="matrix-list-editor__accordion-badge">{{ columns.length }}</span>
+            </span>
+            <span
+                class="matrix-list-editor__accordion-icon"
+                [class.matrix-list-editor__accordion-icon--open]="isColumnsOpen"
+                aria-hidden="true">
+                <mat-icon>{{ isColumnsOpen ? 'expand_more' : 'chevron_right' }}</mat-icon>
+            </span>
+        </button>
+
+        <div class="matrix-list-editor__accordion-wrap"
+             [class.matrix-list-editor__accordion-wrap--open]="isColumnsOpen">
+            <div class="matrix-list-editor__accordion-inner">
+                <div class="matrix-list-editor__accordion-content">
+                    <div class="matrix-list-editor__items"
+                         cdkDropList
+                         #columnsListEl
+                         (cdkDropListDropped)="onColumnDrop($event)">
+                        <div
+                            class="matrix-list-editor__row"
+                            [class.matrix-list-editor__row--editing]="isEditing(column)"
+                            *ngFor="let column of columns.controls; let i = index; trackBy: trackByEid"
+                            cdkDrag
+                            cdkDragLockAxis="y"
+                            [cdkDragBoundary]="columnsListEl"
+                            [cdkDragDisabled]="isEditing(column)">
+
+                            <div class="matrix-list-editor__compact">
+                                <span class="matrix-list-editor__compact-order">{{ i + 1 }}.</span>
+
+                                <span class="matrix-list-editor__compact-label"
+                                      [class.matrix-list-editor__compact-label--empty]="!getPlainText(column.controls.sutunMetni.value)">
+                                    {{ getPlainText(column.controls.sutunMetni.value) || 'Boş sütun' }}
+                                </span>
+
+                                <div class="matrix-list-editor__compact-actions">
+                                    <button
+                                        type="button"
+                                        class="matrix-list-editor__compact-btn matrix-list-editor__compact-btn--delete"
+                                        [disabled]="columns.length <= 1"
+                                        (click)="removeColumn(column)"
+                                        aria-label="Sütunu sil">
+                                        <mat-icon aria-hidden="true">close</mat-icon>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="matrix-list-editor__compact-btn"
+                                        [class.matrix-list-editor__compact-btn--active]="isEditing(column)"
+                                        (click)="isEditing(column) ? stopEditing() : startEditing(column)"
+                                        aria-label="Sütunu düzenle">
+                                        <mat-icon aria-hidden="true">{{ isEditing(column) ? 'check' : 'edit' }}</mat-icon>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="matrix-list-editor__compact-btn matrix-list-editor__compact-btn--drag"
+                                        cdkDragHandle
+                                        aria-label="Sütunu sırala">
+                                        <mat-icon aria-hidden="true">drag_indicator</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="matrix-list-editor__edit-wrap"
+                                 [class.matrix-list-editor__edit-wrap--open]="isEditing(column)">
+                                <div class="matrix-list-editor__edit-inner">
+                                    <div class="matrix-list-editor__edit-panel" [formGroup]="column">
+                                        <app-froala-textarea-input
+                                            [nameOfFormGroup]="column"
+                                            controlName="sutunMetni"
+                                            placeHolder="Sütun metni"
+                                            [isRequired]="true"
+                                            [editorHeight]="100">
+                                        </app-froala-textarea-input>
+
+                                        <div class="matrix-list-editor__edit-actions">
+                                            <button type="button" mat-stroked-button (click)="stopEditing()">
+                                                <mat-icon aria-hidden="true">check</mat-icon>
+                                                Tamam
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="matrix-list-editor__add-action flex justify-end my-4">
+                        <button type="button" mat-stroked-button (click)="addColumn()">
+                            <mat-icon aria-hidden="true">add</mat-icon>
+                            Sütun Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

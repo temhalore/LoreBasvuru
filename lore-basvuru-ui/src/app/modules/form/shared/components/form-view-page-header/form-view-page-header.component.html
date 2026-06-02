@@ -1,0 +1,13 @@
+<header
+    class="form-view-page-header"
+    [class.form-view-page-header--interactive]="isSelectable"
+    [class.form-view-page-header--selected]="selected"
+    [attr.data-editor-node-eid]="nodeEid"
+    (click)="onSelect()">
+    <div class="form-view-page-header__title-block" *ngIf="resolvedTitle">
+        <h2>{{ resolvedTitle }}</h2>
+        <div class="form-view-page-header__accent"></div>
+    </div>
+
+    <p class="form-view-page-header__description" *ngIf="resolvedDescription">{{ resolvedDescription }}</p>
+</header>

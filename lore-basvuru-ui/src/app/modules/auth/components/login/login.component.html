@@ -1,0 +1,63 @@
+<div class="flex min-w-0 flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 min-h-screen">
+
+    <div class="w-full max-w-md mx-auto p-6">
+
+        <!-- Logo / Başlık -->
+        <div class="mb-8 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-500 mb-4">
+                <mat-icon class="text-white text-3xl">assignment</mat-icon>
+            </div>
+            <h1 class="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+                LoreBaşvuru
+            </h1>
+            <p class="mt-1 text-gray-500">Başvuru Yönetim Sistemi</p>
+        </div>
+
+        <!-- Kart -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
+
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Giriş Yap</h2>
+
+            <form [formGroup]="loginForm" (ngSubmit)="girisYap()" novalidate>
+
+                <!-- Kullanıcı Adı -->
+                <mat-form-field class="w-full mb-4" appearance="outline">
+                    <mat-label>Kullanıcı Adı</mat-label>
+                    <input matInput formControlName="loginName" autocomplete="username" placeholder="kullanici.adi">
+                    <mat-icon matPrefix class="text-gray-400 mr-1">person_outline</mat-icon>
+                    <mat-error *ngIf="f['loginName'].hasError('required')">Kullanıcı adı zorunludur.</mat-error>
+                </mat-form-field>
+
+                <!-- Şifre -->
+                <mat-form-field class="w-full mb-2" appearance="outline">
+                    <mat-label>Şifre</mat-label>
+                    <input matInput formControlName="sifre"
+                        [type]="showPassword ? 'text' : 'password'"
+                        autocomplete="current-password">
+                    <mat-icon matPrefix class="text-gray-400 mr-1">lock_outline</mat-icon>
+                    <button type="button" mat-icon-button matSuffix
+                        (click)="showPassword = !showPassword">
+                        <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                    <mat-error *ngIf="f['sifre'].hasError('required')">Şifre zorunludur.</mat-error>
+                    <mat-error *ngIf="f['sifre'].hasError('minlength')">En az 4 karakter olmalı.</mat-error>
+                </mat-form-field>
+
+                <!-- Hata mesajı -->
+                <div *ngIf="hatamesaji" class="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600 flex items-center gap-2">
+                    <mat-icon class="text-red-500 text-base">error_outline</mat-icon>
+                    {{ hatamesaji }}
+                </div>
+
+                <!-- Giriş Butonu -->
+                <button mat-flat-button color="primary" class="w-full h-12 mt-2" type="submit"
+                    [disabled]="loginForm.invalid">
+                    <span class="text-base font-semibold">Giriş Yap</span>
+                </button>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,420 @@
+:host {
+    display: block;
+}
+
+.respondent-completion-state {
+    position: relative;
+    overflow: hidden;
+    min-height: max(28rem, calc(100dvh - 15rem));
+    padding: clamp(1.25rem, 2vw, 2rem);
+}
+
+.respondent-completion-state::before,
+.respondent-completion-state::after {
+    content: '';
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(42px);
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.respondent-completion-state::before {
+    top: 0;
+    left: -8rem;
+    width: 26rem;
+    height: calc(100% + 8rem);
+    background: radial-gradient(
+        circle at 18% 18%,
+        rgba(239, 68, 68, 0.12) 0%,
+        rgba(239, 68, 68, 0.05) 26%,
+        rgba(239, 68, 68, 0) 58%
+    );
+}
+
+.respondent-completion-state::after {
+    top: 2rem;
+    right: -10rem;
+    width: 28rem;
+    height: calc(100% + 10rem);
+    background: radial-gradient(
+        circle at 58% 22%,
+        rgba(var(--form-view-primary-rgb), 0.14) 0%,
+        rgba(var(--form-view-primary-rgb), 0.06) 28%,
+        rgba(var(--form-view-primary-rgb), 0) 60%
+    );
+}
+
+.respondent-completion-state--submitting .respondent-completion-state__panel {
+    box-shadow: 0 24px 60px rgba(var(--form-view-primary-rgb), 0.12);
+}
+
+.respondent-completion-state--error .respondent-completion-state__panel {
+    border-color: rgba(239, 68, 68, 0.18);
+    box-shadow: 0 24px 60px rgba(239, 68, 68, 0.08);
+}
+
+.respondent-completion-state__panel {
+    position: relative;
+    width: min(100%, 44rem);
+    margin: 0 auto;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 1.6rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 251, 253, 0.98) 100%);
+    padding: clamp(1.6rem, 2.6vw, 2.8rem);
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+    transition:
+        box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+        background 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    animation: respondent-completion-state-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.respondent-completion-state__status-rail,
+.respondent-completion-state__status-chip-wrap,
+.respondent-completion-state__panel h2,
+.respondent-completion-state__panel p,
+.respondent-completion-state__divider,
+.respondent-completion-state__error-list,
+.respondent-completion-state__actions {
+    position: relative;
+    z-index: 1;
+}
+
+.respondent-completion-state__status-chip-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.4rem;
+    margin-top: 0.25rem;
+    animation: respondent-completion-state-rise 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.respondent-completion-state__status-chip-wrap--submitting {
+    min-height: 0;
+    margin-top: 0;
+}
+
+.respondent-completion-state__status-icon {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.4rem;
+    height: 4.4rem;
+    border-radius: 999px;
+    transform: translate(-50%, 0);
+}
+
+.respondent-completion-state__status-icon--success {
+    background: #ecfdf5;
+    color: #0f9f6e;
+}
+
+.respondent-completion-state__status-icon--error {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.respondent-completion-state__status-icon-glyph {
+    width: 1.65rem;
+    height: 1.65rem;
+    font-size: 1.65rem;
+}
+
+.respondent-completion-state__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.85rem;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 0.2rem 0.75rem;
+    color: #0f9f6e;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition:
+        background-color 260ms ease,
+        color 260ms ease;
+}
+
+.respondent-completion-state__eyebrow--stacked {
+    margin-top: 6rem;
+    padding: 0.45rem 0.95rem 0.35rem;
+}
+
+.respondent-completion-state__eyebrow--submitting {
+    background: rgba(var(--form-view-primary-rgb), 0.1);
+    color: rgb(var(--form-view-primary-rgb));
+}
+
+.respondent-completion-state__eyebrow--error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.respondent-completion-state__panel h2 {
+    margin: 1.2rem 0 0.75rem;
+    color: var(--form-view-text);
+    font-size: clamp(1.8rem, 2vw, 2.35rem);
+    font-weight: 780;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    animation: respondent-completion-state-rise 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.respondent-completion-state__panel p {
+    margin: 0;
+    color: var(--form-view-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    animation: respondent-completion-state-rise 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.respondent-completion-state__status-rail {
+    width: min(100%, 18rem);
+    height: 0.45rem;
+    margin: 1.75rem auto 0;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(var(--form-view-primary-rgb), 0.12);
+}
+
+.respondent-completion-state__status-rail--top {
+    margin-top: 0;
+    margin-bottom: 1.4rem;
+}
+
+.respondent-completion-state__status-bar {
+    display: block;
+    width: 45%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(var(--form-view-primary-rgb), 0.12) 0%, rgba(var(--form-view-primary-rgb), 0.95) 52%, rgba(var(--form-view-primary-rgb), 0.12) 100%);
+    animation: respondent-completion-state-progress 1.45s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.respondent-completion-state__divider {
+    width: 100%;
+    height: 1px;
+    margin: 1.5rem 0;
+    background: linear-gradient(90deg, rgba(148, 163, 184, 0) 0%, rgba(148, 163, 184, 0.32) 50%, rgba(148, 163, 184, 0) 100%);
+}
+
+.respondent-completion-state__error-list {
+    margin: 1.2rem auto 0;
+    width: min(100%, 30rem);
+    padding: 0.95rem 1rem 0.95rem 2.1rem;
+    border: 1px solid rgba(239, 68, 68, 0.14);
+    border-radius: 1rem;
+    background: rgba(254, 242, 242, 0.92);
+    color: #991b1b;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.respondent-completion-state__error-list li + li {
+    margin-top: 0.35rem;
+}
+
+.respondent-completion-state__actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    animation: respondent-completion-state-actions-in 420ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
+}
+
+.respondent-completion-state__actions--error {
+    animation-delay: 0ms;
+}
+
+.respondent-completion-state__action {
+    min-height: 3rem;
+    border-radius: 999px;
+    padding-inline: 1.1rem;
+}
+
+.respondent-completion-state__action .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+@keyframes respondent-completion-state-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes respondent-completion-state-rise {
+    from {
+        opacity: 0;
+        transform: translateY(0.45rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes respondent-completion-state-actions-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes respondent-completion-state-progress {
+    from {
+        transform: translateX(-120%);
+    }
+
+    to {
+        transform: translateX(240%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .respondent-completion-state::before,
+    .respondent-completion-state::after,
+    .respondent-completion-state__panel,
+    .respondent-completion-state__status-chip-wrap,
+    .respondent-completion-state__panel h2,
+    .respondent-completion-state__panel p,
+    .respondent-completion-state__actions {
+        animation: none;
+        transition: none;
+    }
+
+    .respondent-completion-state__status-bar {
+        animation: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .respondent-completion-state {
+        min-height: max(24rem, calc(100dvh - 12rem));
+    }
+
+    .respondent-completion-state__panel {
+        padding: 1.3rem;
+        border-radius: 1.25rem;
+    }
+
+    .respondent-completion-state__actions {
+        flex-direction: column;
+    }
+
+    .respondent-completion-state__action {
+        width: 100%;
+    }
+}
+
+.respondent-completion-state__action .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+@keyframes respondent-completion-state-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes respondent-completion-state-rise {
+    from {
+        opacity: 0;
+        transform: translateY(0.45rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes respondent-completion-state-actions-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes respondent-completion-state-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes respondent-completion-state-progress {
+    from {
+        transform: translateX(-120%);
+    }
+
+    to {
+        transform: translateX(240%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .respondent-completion-state__panel,
+    .respondent-completion-state__badge,
+    .respondent-completion-state__eyebrow,
+    .respondent-completion-state__panel h2,
+    .respondent-completion-state__panel p,
+    .respondent-completion-state__actions {
+        animation: none;
+        transition: none;
+    }
+
+    .respondent-completion-state__status-bar {
+        animation: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .respondent-completion-state__panel {
+        padding: 1.3rem;
+        border-radius: 1.25rem;
+    }
+
+    .respondent-completion-state__actions {
+        flex-direction: column;
+    }
+
+    .respondent-completion-state__action {
+        width: 100%;
+    }
+}

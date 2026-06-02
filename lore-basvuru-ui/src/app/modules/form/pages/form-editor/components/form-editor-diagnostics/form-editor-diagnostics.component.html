@@ -1,0 +1,17 @@
+<div class="editor-panel__scroll editor-panel__scroll--content" *ngIf="diagnostics.length; else emptyDiagnostics">
+    <article class="editor-diagnostic" *ngFor="let diagnostic of diagnostics; trackBy: trackByDiagnostic">
+        <div class="editor-diagnostic__topline">
+            <span class="editor-diagnostic__severity">{{ diagnostic.severity || 'Info' }}</span>
+            <span class="editor-diagnostic__target">
+                {{ diagnostic.targetType || 'Genel' }} / {{ diagnostic.targetKey || '-' }}
+            </span>
+        </div>
+        <h4 class="editor-diagnostic__message">{{ diagnostic.message || 'Tani mesaji yok' }}</h4>
+        <p class="editor-diagnostic__details" *ngIf="diagnostic.details">{{ diagnostic.details }}</p>
+    </article>
+</div>
+<ng-template #emptyDiagnostics>
+    <div class="editor-panel__scroll editor-panel__placeholder">
+        Su anda gosterilecek tani bulunmuyor.
+    </div>
+</ng-template>

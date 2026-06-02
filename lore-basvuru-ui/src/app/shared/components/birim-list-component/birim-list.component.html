@@ -1,0 +1,29 @@
+<div class="w-full">
+  <div class="flex items-center gap-4 mb-3">
+    <mat-checkbox
+      [checked]="isAllChecked"
+      [indeterminate]="isAllIndeterminate"
+      (change)="onToggleAll($event.checked)">
+      Tümünü Seç
+    </mat-checkbox>
+
+    <button mat-stroked-button type="button" (click)="clearSelection()">
+	  <mat-icon class="mr-2" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+      Temizle
+    </button>
+
+    <div class="text-sm text-secondary">
+      Seçili: <span class="font-medium">{{ selectedCount }}</span>
+    </div>
+
+    <div class="flex-1"></div>
+
+    <mat-progress-spinner
+      *ngIf="isLoading"
+      diameter="20"
+      mode="indeterminate">
+    </mat-progress-spinner>
+  </div>
+
+  <app-tree-list [config]="treeConfig" [data]="treeNodes"></app-tree-list>
+</div>

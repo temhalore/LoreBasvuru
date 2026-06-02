@@ -1,0 +1,348 @@
+@use '../app/modules/form/shared/styles/questions/question-theme';
+@use '../app/modules/form/shared/styles/form-view/form-view-theme';
+
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ Import/write your custom styles here.
+/*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
+/* ----------------------------------------------------------------------------------------------------- */
+
+/* Modern Dialog Panel Styles */
+.modern-dialog-panel {
+  .mat-mdc-dialog-container {
+    border-radius: 12px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    overflow: hidden !important;
+    
+    .mat-mdc-dialog-surface {
+      border-radius: 12px !important;
+      
+      .modal-header {
+        border-radius: 12px 12px 0 0 !important;
+      }
+    }
+  }
+}
+
+/* Unified modal header style across modules */
+.mat-mdc-dialog-container .modal-header {
+  background: linear-gradient(
+    90deg,
+    var(--ek-nav-start, #0b1730) 0%,
+    var(--ek-nav-end, #1c3b6d) 100%
+  ) !important;
+  color: #ffffff !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.dark .mat-mdc-dialog-container .modal-header {
+  background: linear-gradient(
+    90deg,
+    var(--ek-nav-start, #0b1730) 0%,
+    var(--ek-nav-end, #1c3b6d) 100%
+  ) !important;
+}
+
+/* Auto-style simple title-only dialogs (no modal-header) */
+.mat-mdc-dialog-content h2[mat-dialog-title]:not(.ek-modal-title-plain) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px 0 !important;
+  padding: 16px 18px !important;
+  border-radius: 12px;
+  color: #ffffff !important;
+  background: linear-gradient(
+    90deg,
+    var(--ek-nav-start, #0b1730) 0%,
+    var(--ek-nav-end, #1c3b6d) 100%
+  );
+  font-weight: 700;
+}
+
+.mat-mdc-dialog-content h2[mat-dialog-title]:not(.ek-modal-title-plain)::before {
+  content: "check";
+  font-family: "Material Icons";
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Dialog Content Spacing */
+.mat-mdc-dialog-content {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+}
+
+.mat-mdc-dialog-actions {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: auto !important;
+}
+
+/* Form Section Styling */
+.form-section {
+  .mat-mdc-form-field {
+    width: 100%;
+    
+    .mat-mdc-text-field-wrapper {
+      border-radius: 8px !important;
+      transition: all 0.2s ease !important;
+      
+      &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+      }
+    }
+    
+    &.mat-focused .mat-mdc-text-field-wrapper {
+      box-shadow: 0 0 0 2px rgba(var(--fuse-primary-rgb), 0.25) !important;
+    }
+  }
+}
+
+/* Classic layout theme-driven shell and menu overrides */
+.theme-default {
+  --ek-nav-start: #0b1730;
+  --ek-nav-mid: #14284d;
+  --ek-nav-end: #1c3b6d;
+  --ek-form-primary: #1c3b6d;
+  --ek-form-primary-rgb: 28, 59, 109;
+  --ek-nav-text: #e8f1ff;
+  --ek-nav-border: rgba(147, 197, 253, 0.24);
+  --ek-nav-active-bg: rgba(96, 165, 250, 0.24);
+  --ek-nav-active-border: rgba(147, 197, 253, 0.34);
+  --ek-nav-hover-bg: rgba(96, 165, 250, 0.15);
+  --ek-nav-group: #bfdbfe;
+  --ek-header-bg: rgba(245, 249, 255, 0.96);
+  --ek-footer-bg: rgba(242, 247, 255, 0.92);
+  --ek-header-dark-start: #12264a;
+  --ek-header-dark-end: #1c3b6d;
+  --ek-footer-dark: #12264a;
+  --ek-btn-primary-bg: #1c3b6d;
+  --ek-btn-primary-bg-hover: #17335f;
+}
+
+.theme-teal {
+  --ek-nav-start: #062b24;
+  --ek-nav-mid: #0b3c31;
+  --ek-nav-end: #0f4d3c;
+  --ek-form-primary: #0f4d3c;
+  --ek-form-primary-rgb: 15, 77, 60;
+  --ek-nav-text: #e7fff8;
+  --ek-nav-border: rgba(153, 246, 228, 0.2);
+  --ek-nav-active-bg: rgba(16, 185, 129, 0.24);
+  --ek-nav-active-border: rgba(110, 231, 183, 0.35);
+  --ek-nav-hover-bg: rgba(45, 212, 191, 0.14);
+  --ek-nav-group: #99f6e4;
+  --ek-header-bg: rgba(250, 255, 253, 0.96);
+  --ek-footer-bg: rgba(246, 255, 251, 0.92);
+  --ek-header-dark-start: #0b3c31;
+  --ek-header-dark-end: #0f4d3c;
+  --ek-footer-dark: #0b3c31;
+  --ek-btn-primary-bg: #0f4d3c;
+  --ek-btn-primary-bg-hover: #0b4234;
+}
+
+.theme-brand {
+  --ek-nav-start: #1f1638;
+  --ek-nav-mid: #2b2152;
+  --ek-nav-end: #3a2f6b;
+  --ek-form-primary: #3a2f6b;
+  --ek-form-primary-rgb: 58, 47, 107;
+  --ek-nav-text: #f4f0ff;
+  --ek-nav-border: rgba(221, 214, 254, 0.22);
+  --ek-nav-active-bg: rgba(167, 139, 250, 0.22);
+  --ek-nav-active-border: rgba(196, 181, 253, 0.34);
+  --ek-nav-hover-bg: rgba(192, 132, 252, 0.14);
+  --ek-nav-group: #ddd6fe;
+  --ek-header-bg: rgba(249, 247, 255, 0.96);
+  --ek-footer-bg: rgba(245, 242, 255, 0.92);
+  --ek-header-dark-start: #2b2152;
+  --ek-header-dark-end: #3a2f6b;
+  --ek-footer-dark: #2b2152;
+  --ek-btn-primary-bg: #3a2f6b;
+  --ek-btn-primary-bg-hover: #31285a;
+}
+
+.ek-theme-nav {
+  background: linear-gradient(
+    180deg,
+    var(--ek-nav-start) 0%,
+    var(--ek-nav-mid) 55%,
+    var(--ek-nav-end) 100%
+  ) !important;
+  color: var(--ek-nav-text) !important;
+}
+
+.ek-theme-nav .fuse-vertical-navigation-wrapper {
+  box-shadow: inset -1px 0 0 var(--ek-nav-border) !important;
+}
+
+.ek-theme-nav .fuse-vertical-navigation-item {
+  border-radius: 10px !important;
+}
+
+.ek-theme-nav .fuse-vertical-navigation-item.fuse-vertical-navigation-item-active,
+.ek-theme-nav .fuse-vertical-navigation-item.fuse-vertical-navigation-item-active-forced {
+  background: var(--ek-nav-active-bg) !important;
+  box-shadow: inset 0 0 0 1px var(--ek-nav-active-border);
+}
+
+.ek-theme-nav .fuse-vertical-navigation-item:not(.fuse-vertical-navigation-item-active):not(.fuse-vertical-navigation-item-active-forced):hover {
+  background: var(--ek-nav-hover-bg) !important;
+}
+
+.ek-theme-nav fuse-vertical-navigation-group-item .fuse-vertical-navigation-item-title {
+  color: var(--ek-nav-group) !important;
+}
+
+.ek-theme-header {
+  background: var(--ek-header-bg);
+  border-bottom: 1px solid rgba(var(--fuse-primary-rgb), 0.14);
+}
+
+.dark .ek-theme-header {
+  background: linear-gradient(
+    180deg,
+    var(--ek-header-dark-start) 0%,
+    var(--ek-header-dark-end) 100%
+  );
+  border-bottom: 1px solid rgba(var(--fuse-primary-rgb), 0.2);
+}
+
+.ek-theme-footer {
+  background: var(--ek-footer-bg);
+  border-top-color: rgba(var(--fuse-primary-rgb), 0.2) !important;
+}
+
+.dark .ek-theme-footer {
+  background: var(--ek-footer-dark);
+  border-top-color: rgba(var(--fuse-primary-rgb), 0.2) !important;
+}
+
+/* Global theme-driven button system */
+:root {
+  --ek-form-primary: var(--fuse-primary, #4f46e5);
+  --ek-form-primary-rgb: var(--fuse-primary-rgb, 79, 70, 229);
+  --ek-btn-primary-text: #ffffff;
+  --ek-btn-primary-bg: var(--ek-nav-end, #1c3b6d);
+  --ek-btn-primary-bg-hover: color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 88%, black);
+  --ek-btn-primary-shadow: none;
+  --ek-btn-outline-text: var(--ek-nav-end, #1c3b6d);
+  --ek-btn-outline-border: color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 38%, transparent);
+  --ek-btn-outline-bg: color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 8%, transparent);
+  --ek-btn-outline-hover-bg: color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 16%, transparent);
+  --ek-btn-subtle-bg: color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 10%, transparent);
+  --ek-btn-subtle-hover-bg: color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 16%, transparent);
+  --ek-btn-subtle-text: var(--ek-nav-end, #1c3b6d);
+  --ek-chip-true-bg: rgba(var(--fuse-primary-rgb), 0.18);
+  --ek-chip-true-text: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 78%, black);
+  --ek-chip-false-bg: rgba(var(--fuse-primary-rgb), 0.08);
+  --ek-chip-false-text: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 58%, #64748b);
+}
+
+button.mat-mdc-unelevated-button,
+button.mat-mdc-raised-button,
+button.mat-mdc-fab,
+button.mat-mdc-mini-fab,
+button.mat-mdc-flat-button,
+.mat-mdc-dialog-actions button.mat-mdc-unelevated-button,
+.mat-mdc-dialog-actions button.mat-mdc-raised-button {
+  background: var(--ek-btn-primary-bg) !important;
+  color: var(--ek-btn-primary-text) !important;
+  border: 1px solid color-mix(in srgb, var(--ek-nav-end, #1c3b6d) 55%, white) !important;
+  box-shadow: var(--ek-btn-primary-shadow) !important;
+  // ae stil güncelleme eki dilersek kaldırabiliriz. 20260503 basla
+  border-radius: 8px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 14px !important;
+  font-size: 13px !important;
+  letter-spacing: 0.01em !important;
+  // ae stil güncelleme eki dilersek kaldırabiliriz. 20260503 bitti
+}
+
+button.mat-mdc-unelevated-button:hover,
+button.mat-mdc-raised-button:hover,
+button.mat-mdc-fab:hover,
+button.mat-mdc-mini-fab:hover,
+button.mat-mdc-flat-button:hover,
+.mat-mdc-dialog-actions button.mat-mdc-unelevated-button:hover,
+.mat-mdc-dialog-actions button.mat-mdc-raised-button:hover {
+  background: var(--ek-btn-primary-bg-hover) !important;
+  filter: none;
+}
+
+button.mat-mdc-outlined-button,
+button.mat-mdc-stroked-button,
+.mat-mdc-dialog-actions button.mat-mdc-stroked-button,
+.mat-mdc-dialog-actions button.mat-mdc-outlined-button {
+  color: var(--ek-btn-outline-text) !important;
+  border-color: var(--ek-btn-outline-border) !important;
+  background: var(--ek-btn-outline-bg) !important;
+  // ae stil güncelleme eki dilersek kaldırabiliriz. 20260503 başla 
+  border-radius: 8px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 14px !important;
+  font-size: 13px !important;
+  letter-spacing: 0.01em !important;
+  // ae stil güncelleme eki dilersek kaldırabiliriz. 20260503 bitti
+}
+
+button.mat-mdc-outlined-button:hover,
+button.mat-mdc-stroked-button:hover,
+button.mat-mdc-outlined-button:hover,
+button.mat-mdc-stroked-button:hover {
+  background: var(--ek-btn-outline-hover-bg) !important;
+}
+
+button.mat-mdc-icon-button,
+button.mat-mdc-button {
+  color: var(--ek-btn-subtle-text) !important;
+  // ae stil güncelleme eki dilersek kaldırabiliriz. 20260503 basla
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  // ae stil güncelleme eki dilersek kaldırabiliriz. 20260503 bitti
+}
+
+button.mat-mdc-icon-button:hover,
+button.mat-mdc-button:hover {
+  background: var(--ek-btn-subtle-bg) !important;
+}
+
+.text-primary {
+  color: var(--fuse-primary) !important;
+}
+
+.text-accent {
+  color: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 75%, #7c3aed) !important;
+}
+
+.text-warn {
+  color: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 55%, #b42318) !important;
+}
+
+.ek-danger-text-action {
+  color: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 55%, #b42318) !important;
+}
+
+.ek-danger-text-action:hover {
+  color: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 45%, #991b1b) !important;
+}
+
+.ek-primary-text-action {
+  color: var(--fuse-primary, #1d4ed8) !important;
+}
+
+.ek-primary-text-action:hover {
+  color: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 85%, #0f172a) !important;
+}
+

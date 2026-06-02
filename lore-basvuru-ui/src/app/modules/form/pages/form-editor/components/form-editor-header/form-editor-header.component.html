@@ -1,0 +1,68 @@
+<div class="editor-header">
+    <div class="editor-header__section editor-header__section--start">
+        <button type="button" class="editor-header__icon-button" (click)="back.emit()" aria-label="Listeye dön">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <div class="editor-header__title-wrap">
+            <input
+                class="editor-header__title-input"
+                [value]="title"
+                (input)="onTitleInput($event)"
+                type="text"
+                placeholder="Form başlığı"
+                aria-label="Form başlığı" />
+
+            <div class="editor-header__meta">
+                <span class="editor-header__status">{{ statusLabel }}</span>
+                <span class="editor-header__autosave" [ngClass]="saveToneClass">{{ saveState?.label }}</span>
+                <span class="editor-header__autosave editor-header__autosave--detail" *ngIf="saveState?.detail">{{ saveState?.detail }}</span>
+                <span class="editor-header__feedback" [ngClass]="actionFeedbackClass" *ngIf="actionFeedback?.message">{{ actionFeedback?.message }}</span>
+                <span class="editor-header__feedback editor-header__feedback--info" *ngIf="previewDisabledReason">{{ previewDisabledReason }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-header__section editor-header__section--center" *ngIf="hasPageNavigation">
+        <div class="editor-header__nav" aria-label="Sayfa gezinme kontrolleri">
+            <button
+                type="button"
+                class="editor-header__nav-button"
+                [disabled]="!canNavigatePrev"
+                (click)="onPrevPage()"
+                aria-label="Önceki sayfa">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <div class="editor-header__nav-label">
+                <span class="editor-header__nav-prefix">Sayfa</span>
+                <span class="editor-header__nav-value">{{ activePageIndex + 1 }} / {{ pageCount }}</span>
+            </div>
+
+            <button
+                type="button"
+                class="editor-header__nav-button"
+                [disabled]="!canNavigateNext"
+                (click)="onNextPage()"
+                aria-label="Sonraki sayfa">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <div class="editor-header__section editor-header__section--end">
+        <div class="editor-header__actions">
+            <app-action-button
+                *ngFor="let item of actions; trackBy: trackByAction"
+                [label]="item.label"
+                [icon]="item.icon"
+                [variant]="resolveVariant(item)"
+                [outline]="isOutline(item)"
+                size="small"
+                [disabled]="item.disabled"
+                [loading]="item.loading"
+                [loadingText]="resolveLoadingText(item)"
+                (onClick)="onActionClick(item.id)"></app-action-button>
+        </div>
+    </div>
+</div>

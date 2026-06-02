@@ -1,0 +1,79 @@
+<div class="phone-input-container" [formGroup]="formGroup">
+  <div class="form-field-wrapper">
+
+    <!-- Label -->
+    <label *ngIf="label" class="form-label">
+      {{ label }}
+      <span *ngIf="isRequired" class="required-asterisk">*</span>
+    </label>
+
+    <!-- Input Row -->
+    <div class="input-wrapper" [class.has-error]="isControlInvalid">
+
+      <ng-container *ngIf="!hideCountrySelector">
+        <!-- Country Selector Button -->
+        <button *ngIf="!readonlyCountry" type="button" class="country-selector" (click)="toggleDropdown()">
+          <span class="country-flag">{{ selectedCountry?.flag }}</span>
+          <span class="dial-code">{{ dialCodeDisplay }}</span>
+          <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+        </button>
+
+        <!-- Readonly Country Display -->
+        <div *ngIf="readonlyCountry" class="country-selector readonly">
+          <span class="country-flag">{{ selectedCountry?.flag }}</span>
+          <span class="dial-code">{{ dialCodeDisplay }}</span>
+        </div>
+
+        <div class="divider"></div>
+      </ng-container>
+
+      <!-- Phone Number Input -->
+      <input
+        class="clean-input"
+        type="tel"
+        [formControlName]="controlName"
+        [placeholder]="placeholder"
+        [attr.maxlength]="selectedCountry?.iso2 === 'TR' ? 13 : 15"
+        autocomplete="tel-national"
+        (input)="onPhoneInput($event)"
+        (paste)="onPaste($event)">
+    </div>
+
+    <!-- Country Dropdown -->
+    <div *ngIf="isDropdownOpen && !readonlyCountry" class="country-dropdown" #dropdownRef>
+      <div class="dropdown-search">
+        <input
+          #searchInputRef
+          type="text"
+          class="search-input"
+          placeholder="Ülke ara..."
+          [(ngModel)]="searchTerm"
+          [ngModelOptions]="{standalone: true}"
+          (click)="$event.stopPropagation()">
+      </div>
+      <div class="dropdown-list">
+        <div
+          *ngFor="let country of filteredCountries"
+          class="dropdown-item"
+          [class.selected]="country.iso2 === selectedCountry?.iso2"
+          (click)="selectCountry(country)">
+          <span class="country-flag">{{ country.flag }}</span>
+          <span class="country-name">{{ country.name }}</span>
+          <span class="country-dial-code">+{{ country.dialCode }}</span>
+        </div>
+        <div *ngIf="filteredCountries.length === 0" class="dropdown-empty">
+          Sonuç bulunamadı
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Messages -->
+    <div *ngIf="isControlInvalid" class="error-messages">
+      <div class="error-item">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <span>Geçerli bir telefon numarası giriniz</span>
+      </div>
+    </div>
+
+  </div>
+</div>

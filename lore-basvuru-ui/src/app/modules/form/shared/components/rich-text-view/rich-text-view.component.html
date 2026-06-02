@@ -1,0 +1,10 @@
+<div
+    *ngIf="hasHtml; else fallbackTemplate"
+    class="question-rich-text fr-view"
+    [class.question-rich-text--compact]="compact"
+    [innerHTML]="displayHtml | froalaSrc">
+</div>
+
+<ng-template #fallbackTemplate>
+    <span class="question-rich-text__fallback">{{ fallback }}</span>
+</ng-template>

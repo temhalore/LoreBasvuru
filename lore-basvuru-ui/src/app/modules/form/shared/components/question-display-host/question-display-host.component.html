@@ -1,0 +1,12 @@
+<article
+    class="editor-canvas__question"
+    [class.editor-canvas__question--selected]="selectedNodeEid === schema.eid"
+    (click)="onSelect(schema.eid)">
+
+    <div class="editor-canvas__widget-preview question-theme">
+        <app-question-type-renderer
+            [schema]="schema"
+            [state]="renderState">
+        </app-question-type-renderer>
+    </div>
+</article>

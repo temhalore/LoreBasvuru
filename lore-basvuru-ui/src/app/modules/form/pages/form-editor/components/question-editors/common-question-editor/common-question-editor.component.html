@@ -1,0 +1,44 @@
+<div class="common-question-editor" [formGroup]="form">
+    <app-froala-textarea-input
+        [nameOfFormGroup]="form"
+        controlName="soruMetni"
+        [title]="'Soru Metni'"
+        [placeHolder]="'Bir soru girin'"
+        [isRequired]="true"
+        [editorHeight]="200">
+    </app-froala-textarea-input>
+
+    <app-textarea-input
+        *ngIf="!descriptionOnly"
+        class="common-question-editor__field"
+        [formGroup]="form"
+        controlName="yardimMetni"
+        label="Yardım metni"
+        placeholder="Yardım metni"
+        [rows]="2">
+    </app-textarea-input>
+
+    <app-text-input
+        *ngIf="!descriptionOnly"
+        class="common-question-editor__field"
+        [formGroup]="form"
+        controlName="placeholder"
+        label="Yer tutucu metin"
+        placeholder="Yer tutucu metin">
+    </app-text-input>
+
+    <!-- <app-checkbox-input
+        *ngIf="!descriptionOnly"
+        [formGroup]="form"
+        controlName="isZorunlu"
+        label="Zorunlu soru"
+        [showControlStatus]="false">
+    </app-checkbox-input> -->
+
+    <div class="ml-2 flex items-center gap-2 shrink-0 py-4" *ngIf="!descriptionOnly">
+        <!-- <mat-slide-toggle [formGroup]="form" formControlName="isZorunlu" color="primary" labelPosition="before" > -->
+        <mat-slide-toggle [formGroup]="form" formControlName="isZorunlu" color="primary" >
+            <span class="ml-2 mr-4 text-sm font-medium">Zorunlu Soru</span>
+        </mat-slide-toggle>
+    </div>
+</div>

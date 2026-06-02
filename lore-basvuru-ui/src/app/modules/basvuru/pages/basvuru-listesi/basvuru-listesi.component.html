@@ -1,0 +1,72 @@
+<div class="flex flex-col flex-auto min-w-0 p-6 md:p-8">
+
+    <!-- Başlık -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-3xl font-extrabold tracking-tight">Başvurularım</h2>
+            <p class="mt-1 text-secondary">Tüm başvurularınızı buradan takip edebilirsiniz.</p>
+        </div>
+        <button mat-flat-button color="primary" [matMenuTriggerFor]="yeniMenu">
+            <mat-icon>add</mat-icon>
+            <span class="ml-1">Yeni Başvuru</span>
+        </button>
+        <mat-menu #yeniMenu>
+            <p class="px-4 py-2 text-sm text-gray-500">Form listesi yükleniyor...</p>
+        </mat-menu>
+    </div>
+
+    <!-- Yükleniyor -->
+    <div *ngIf="yukleniyor" class="flex justify-center py-12">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Boş durum -->
+    <div *ngIf="!yukleniyor && basvurular.length === 0"
+        class="flex flex-col items-center justify-center py-16 bg-card rounded-2xl shadow">
+        <mat-icon class="text-6xl text-gray-300 mb-4">inbox</mat-icon>
+        <h3 class="text-xl font-semibold text-gray-500">Henüz başvurunuz yok</h3>
+        <p class="mt-1 text-gray-400">"Yeni Başvuru" butonuna tıklayarak başlayın.</p>
+    </div>
+
+    <!-- Tablo -->
+    <div *ngIf="!yukleniyor && basvurular.length > 0"
+        class="bg-card rounded-2xl shadow overflow-hidden">
+        <table mat-table [dataSource]="basvurular" class="w-full">
+
+            <ng-container matColumnDef="formAdi">
+                <th mat-header-cell *matHeaderCellDef class="font-semibold">Form Adı</th>
+                <td mat-cell *matCellDef="let row">{{ row.basvuruFormAdi }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="durum">
+                <th mat-header-cell *matHeaderCellDef class="font-semibold">Durum</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold"
+                        [ngClass]="durumRengi(row.durum)">
+                        {{ row.durum }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="tarih">
+                <th mat-header-cell *matHeaderCellDef class="font-semibold">Tarih</th>
+                <td mat-cell *matCellDef="let row">
+                    {{ row.olusturmaTarihi | date:'dd.MM.yyyy HH:mm' }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="islemler">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let row" class="text-right">
+                    <button mat-icon-button matTooltip="Detay">
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 cursor-pointer"></tr>
+        </table>
+    </div>
+
+</div>

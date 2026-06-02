@@ -1,0 +1,138 @@
+<div class="json-node-container flex flex-col w-full">
+    <!-- Node Row -->
+    <div class="json-node-row flex items-center p-1 hover:bg-gray-50 dark:hover:bg-gray-800 rounded group border-b border-transparent hover:border-gray-100 dark:hover:border-gray-700 transition-colors">
+        
+        <!-- Indentation -->
+        <div [style.width.px]="level * 20" class="flex-shrink-0"></div>
+
+        <!-- Expand/Collapse Toggle -->
+        <button type="button" mat-icon-button class="w-6 h-6 flex items-center justify-center mr-1" 
+                *ngIf="valueType === 'object' || valueType === 'array'"
+                (click)="toggleExpand()">
+            <mat-icon class="text-gray-400 icon-size-4">{{ isExpanded ? 'expand_more' : 'chevron_right' }}</mat-icon>
+        </button>
+        <div class="w-6 mr-1" *ngIf="valueType !== 'object' && valueType !== 'array'"></div>
+
+        <!-- Key Input (Only if parent is Object) -->
+        <div class="flex items-center mr-2" *ngIf="parentType === 'object'">
+            <input type="text" 
+                   [(ngModel)]="editingKey" 
+                   (blur)="onKeyBlur()"
+                   (keydown.tab)="onKeyTab($event)"
+                   class="bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-primary text-purple-600 dark:text-purple-400 font-medium text-sm px-1 py-0.5 outline-none w-32 transition-colors"
+                   placeholder="key">
+            <span class="text-gray-400 mx-1">:</span>
+        </div>
+
+        <!-- Array Index (Only if parent is Array) -->
+        <div class="flex items-center mr-2" *ngIf="parentType === 'array'">
+            <span class="text-gray-400 text-xs font-mono mr-1">{{ index }}</span>
+            <span class="text-gray-400 mx-1">:</span>
+        </div>
+
+        <!-- Value Input / Display -->
+        <div class="flex-grow flex items-center min-w-0">
+            
+            <!-- String -->
+            <input *ngIf="valueType === 'string'" 
+                   #valueInput
+                   type="text" 
+                   [(ngModel)]="editingValue" 
+                   (blur)="onValueBlur()"
+                   class="w-full bg-transparent border-b border-gray-200 dark:border-gray-700 focus:border-primary text-green-600 dark:text-green-400 text-sm px-1 py-0.5 outline-none transition-colors"
+                   placeholder="value">
+
+            <!-- Number -->
+            <input *ngIf="valueType === 'number'" 
+                   #valueInput
+                   type="number" 
+                   [(ngModel)]="editingValue" 
+                   (blur)="onValueBlur()"
+                   class="w-full bg-transparent border-b border-gray-200 dark:border-gray-700 focus:border-primary text-blue-600 dark:text-blue-400 text-sm px-1 py-0.5 outline-none transition-colors"
+                   placeholder="0">
+
+            <!-- Boolean -->
+            <mat-checkbox *ngIf="valueType === 'boolean'" 
+                          [ngModel]="value" 
+                          (ngModelChange)="onValueChange($event)"
+                          color="primary"
+                          class="scale-75 -ml-2">
+            </mat-checkbox>
+
+            <!-- Object/Array Badge -->
+            <span *ngIf="valueType === 'object'" class="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                Object {{ '{' + getObjectKeys(value).length + '}' }}
+            </span>
+            <span *ngIf="valueType === 'array'" class="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                Array [{{ value.length }}]
+            </span>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+            
+            <!-- Type Selector -->
+            <button type="button" mat-icon-button [matMenuTriggerFor]="typeMenu" class="w-6 h-6 flex items-center justify-center" matTooltip="Change Type">
+                <mat-icon class="text-gray-400 icon-size-4 text-xs">data_object</mat-icon>
+            </button>
+            <mat-menu #typeMenu="matMenu">
+                <button type="button" mat-menu-item *ngFor="let type of types" (click)="onTypeChange(type.value)">
+                    <mat-icon class="icon-size-4">{{ type.icon }}</mat-icon>
+                    <span>{{ type.label }}</span>
+                </button>
+            </mat-menu>
+
+            <!-- Add Child (for Object/Array) -->
+                <button type="button" mat-icon-button class="w-6 h-6 flex items-center justify-center ek-primary-text-action" 
+                    *ngIf="valueType === 'object' || valueType === 'array'"
+                    (click)="addChild()"
+                    matTooltip="Add Item">
+                <mat-icon class="icon-size-4">add</mat-icon>
+            </button>
+
+            <!-- Delete -->
+                <button type="button" mat-icon-button class="w-6 h-6 flex items-center justify-center ek-danger-text-action" 
+                    (click)="delete.emit()"
+                    matTooltip="Delete">
+                <mat-icon class="icon-size-4">delete</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Children (Recursive) -->
+    <div class="json-node-children w-full" *ngIf="isExpanded && (valueType === 'object' || valueType === 'array')">
+        
+        <!-- Object Children -->
+        <ng-container *ngIf="valueType === 'object'">
+            <app-json-node *ngFor="let key of getObjectKeys(value); trackBy: trackByKey"
+                           [key]="key"
+                           [value]="value[key]"
+                           [parentType]="'object'"
+                           [level]="level + 1"
+                           (keyChange)="onChildKeyChange(key, $event)"
+                           (valueChange)="onChildValueChange(key, $event)"
+                           (delete)="onChildDelete(key)">
+            </app-json-node>
+        </ng-container>
+
+        <!-- Array Children -->
+        <ng-container *ngIf="valueType === 'array'">
+            <app-json-node *ngFor="let item of value; let i = index; trackBy: trackByIndex"
+                           [key]="''"
+                           [value]="item"
+                           [parentType]="'array'"
+                           [index]="i"
+                           [level]="level + 1"
+                           (valueChange)="onChildValueChange(i, $event)"
+                           (delete)="onChildDelete(i)">
+            </app-json-node>
+        </ng-container>
+
+        <!-- Empty State -->
+        <div *ngIf="(valueType === 'object' && getObjectKeys(value).length === 0) || (valueType === 'array' && value.length === 0)"
+             class="text-xs text-gray-400 italic py-1"
+             [style.padding-left.px]="(level + 1) * 20 + 24">
+            No items
+        </div>
+    </div>
+</div>

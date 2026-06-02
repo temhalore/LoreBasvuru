@@ -1,0 +1,68 @@
+<!-- Modern Page Layout -->
+<div class="flex min-w-0 flex-auto flex-col">
+  <!-- Page Header -->
+  <div class="mb-8 p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              🛡️ Rol Komponent İşlemleri
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400">
+              Rol bazında komponentleri yönetin. Hangi rolün hangi componentlere erişebileceğini belirleyin.
+            </p>
+          </div>
+          <!-- Back Button -->
+          <div class="flex space-x-3">
+            <app-action-button 
+              label="Geri"
+              icon="arrow-left"
+              variant="secondary"
+              [outline]="true"
+              (onClick)="GoToRoleWidgetToRole()"
+              >
+            </app-action-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role Selection -->
+      <div class="p-6">
+        <div class="mb-6">
+          <app-api-select-input 
+            [nameOfFormGroup]="formGroup" 
+            controlName="roleDto" 
+            title="Rol Seçiniz"
+            placeHolder="Rol seçiniz..."
+            apiUrl="Security/Role/GetList"
+            [isRequired]="true"
+      
+            (selectChangeEvent)="onRoleSelectionChange($event)">
+          </app-api-select-input>
+        </div>
+
+        <!-- Hierarchical Tree Component -->
+        <div class="mt-6" *ngIf="selectedRoleDto$ | async as selectedRole">
+          <app-hierarchical-tree
+            [data]="hierarchicalTreeData"
+            [config]="hierarchicalTreeConfig"
+            [loading]="isLoading"
+            (itemPermissionChange)="onItemPermissionChange($event)"
+            (parentPermissionChange)="onParentPermissionChange($event)">
+          </app-hierarchical-tree>
+        </div>
+
+        <!-- No Role Selected -->
+        <div *ngIf="!selectedRoleDto$" 
+             class="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 mt-6">
+          <i class="fas fa-shield-alt text-6xl text-gray-400 dark:text-gray-500 mb-4"></i>
+          <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Rol Seçimi Gerekli</h3>
+          <p class="text-gray-500 dark:text-gray-400">
+            Component yetkilerini görüntülemek için önce bir yetki grubu seçiniz
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

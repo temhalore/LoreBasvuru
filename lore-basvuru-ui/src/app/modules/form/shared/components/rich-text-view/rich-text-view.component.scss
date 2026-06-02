@@ -1,0 +1,38 @@
+app-rich-text-view {
+    display: block;
+    min-width: 0;
+}
+
+.question-rich-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.question-rich-text :where(p, ul, ol, blockquote, pre, table) {
+    margin-top: 0;
+}
+
+.question-rich-text :where(p, ul, ol, blockquote, pre, table):last-child {
+    margin-bottom: 0;
+}
+
+.question-rich-text :where(ul, ol) {
+    padding-inline-start: 1.35rem;
+}
+
+.question-rich-text :where(img) {
+    max-width: 100%;
+    height: auto;
+}
+
+.question-rich-text--compact :where(p, ul, ol) {
+    margin-bottom: 0.25rem;
+}
+
+.question-rich-text--compact :where(ul, ol) {
+    padding-inline-start: 1.1rem;
+}
+
+.question-rich-text__fallback {
+    color: inherit;
+}

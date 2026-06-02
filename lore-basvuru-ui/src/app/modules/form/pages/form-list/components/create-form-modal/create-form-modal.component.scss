@@ -1,0 +1,27 @@
+:host {
+    display: block;
+}
+
+.create-form-modal {
+    overflow: hidden;
+}
+
+.modal-header {
+    background-image:
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.24), transparent 32%),
+        linear-gradient(135deg, #0f766e 0%, #0369a1 100%);
+}
+
+.close-button {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.close-button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.close-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}

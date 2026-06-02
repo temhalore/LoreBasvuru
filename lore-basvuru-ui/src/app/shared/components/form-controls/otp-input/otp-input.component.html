@@ -1,0 +1,122 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <!-- Label -->
+    <div class="flex items-center gap-2 mb-3" *ngIf="label">
+        <label [class]="'font-medium text-gray-700 dark:text-gray-300 ' + (size === 'small' ? 'text-sm' : size === 'large' ? 'text-lg' : 'text-base')">
+            {{ label }}
+            <span class="text-red-500 ml-1" *ngIf="isRequired">*</span>
+        </label>
+        <mat-icon class="text-gray-400 text-base cursor-help" 
+                  [matTooltip]="tooltip" 
+                  *ngIf="tooltip">
+            help_outline
+        </mat-icon>
+    </div>
+
+    <!-- OTP Input Container -->
+    <div class="flex flex-col gap-4">
+        <!-- OTP Inputs -->
+        <div class="flex justify-center gap-2 md:gap-3 flex-wrap">
+            <input 
+                #otpInput
+                *ngFor="let digit of otpArray; let i = index"
+                [type]="getInputType()"
+                [placeholder]="placeholder"
+                [disabled]="isDisabled"
+                [value]="otpArray[i] || ''"
+                class="otp-input-field"
+                [class.size-small]="size === 'small'"
+                [class.size-medium]="size === 'medium'"
+                [class.size-large]="size === 'large'"
+                [maxlength]="1"
+                (input)="onOtpInput($event, i)"
+                (keydown)="onKeyDown($event, i)"
+                (paste)="onPaste($event, i)"
+                (focus)="onTouched()"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false">
+        </div>
+
+        <!-- OTP Actions -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3" *ngIf="resendEnabled">
+            <div class="flex items-center gap-2">
+                <button 
+                    mat-stroked-button
+                    [disabled]="timerActive || isDisabled"
+                    (click)="onResendOtp()"
+                    [class]="size === 'small' ? 'text-xs' : size === 'large' ? 'text-base' : 'text-sm'">
+                    <mat-icon class="mr-1" [class]="size === 'small' ? 'text-sm' : 'text-base'">refresh</mat-icon>
+                    Tekrar Gönder
+                </button>
+                <span class="text-sm text-gray-500" *ngIf="timerActive">
+                    {{ getTimerDisplay() }}
+                </span>
+            </div>
+
+            <div class="flex gap-2">
+                <button 
+                    mat-stroked-button
+                    [disabled]="isDisabled"
+                    (click)="clearOtp()"
+                    [class]="size === 'small' ? 'text-xs' : size === 'large' ? 'text-base' : 'text-sm'">
+                    <mat-icon class="mr-1" [class]="size === 'small' ? 'text-sm' : 'text-base'">clear</mat-icon>
+                    Temizle
+                </button>
+                
+                <button 
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="!isOtpComplete() || isDisabled"
+                    (click)="otpComplete.emit(currentOtp)"
+                    [class]="size === 'small' ? 'text-xs' : size === 'large' ? 'text-base' : 'text-sm'">
+                    <mat-icon class="mr-1" [class]="size === 'small' ? 'text-sm' : 'text-base'">check</mat-icon>
+                    Doğrula
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="flex justify-center" *ngIf="digits > 4">
+            <div class="flex gap-1">
+                <div 
+                    *ngFor="let digit of otpArray; let i = index"
+                    [class]="'w-2 h-2 rounded-full transition-colors duration-200 ' + 
+                             (digit ? 'bg-primary-500' : 'bg-gray-300 dark:bg-gray-600')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <p class="text-sm text-gray-600 dark:text-gray-400 text-center" *ngIf="description">
+            {{ description }}
+        </p>
+
+        <!-- OTP Status -->
+        <div class="flex justify-center gap-4 text-sm" *ngIf="currentOtp">
+            <span class="text-gray-600 dark:text-gray-400">
+                Girilen: {{ currentOtp.length }}/{{ digits }}
+            </span>
+            <span [class]="isOtpComplete() ? 'text-green-600 dark:text-green-400' : 'text-gray-500'">
+                <mat-icon class="text-sm mr-1">{{ isOtpComplete() ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                {{ isOtpComplete() ? 'Tamamlandı' : 'Eksik' }}
+            </span>
+        </div>
+
+        <!-- Validation Error -->
+        <div class="validation-error" *ngIf="isInvalid">
+            <mat-icon class="text-red-500 text-sm mr-1">error</mat-icon>
+            <span class="text-red-500 text-sm">{{ errorMessage }}</span>
+        </div>
+
+        <!-- Help Text -->
+        <div class="help-text text-center" *ngIf="!isInvalid">
+            <div class="flex flex-col gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <span *ngIf="allowPaste">• {{ digits }} haneli kodu yapıştırarak otomatik doldurabilirsiniz</span>
+                <span>• Alanlar arasında ok tuşlarıyla gezinebilirsiniz</span>
+                <span *ngIf="autoSubmit">• Kod tamamlandığında otomatik gönderilecektir</span>
+                <span *ngIf="allowNumbersOnly">• Sadece rakam giriniz</span>
+            </div>
+        </div>
+    </div>
+</div>

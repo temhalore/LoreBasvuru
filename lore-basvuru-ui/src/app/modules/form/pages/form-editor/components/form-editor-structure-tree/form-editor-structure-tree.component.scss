@@ -1,0 +1,209 @@
+:host {
+    display: block;
+    height: 100%;
+    min-height: 0;
+    background: #fff;
+}
+
+.editor-panel__body {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.editor-panel__scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: #f8fafc;
+}
+
+.struct-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.45rem 0.875rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    flex-shrink: 0;
+    background: #fff;
+}
+
+.struct-stats__item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.struct-stats__icon {
+    font-size: 0.85rem;
+    width: 0.85rem;
+    height: 0.85rem;
+    color: #94a3b8;
+}
+
+.struct-stats__sep {
+    width: 1px;
+    height: 1rem;
+    background: rgba(148, 163, 184, 0.28);
+    margin: 0 0.375rem;
+    flex-shrink: 0;
+}
+
+.struct-tree {
+    padding: 0.25rem 0.375rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.struct-item__children {
+    margin-left: 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 1px solid rgba(148, 163, 184, 0.18);
+    display: flex;
+    flex-direction: column;
+}
+
+.struct-item__children--nested {
+    margin-left: 0.625rem;
+    padding-left: 0.625rem;
+}
+
+.struct-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0.3rem;
+    padding: 0.35rem 0.5rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 100ms ease;
+}
+
+.struct-card:hover {
+    background: rgba(15, 23, 42, 0.05);
+}
+
+.struct-card--selected {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.struct-card--active-page {
+    background: rgba(219, 234, 254, 0.5);
+}
+
+.struct-card__top {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-width: 0;
+}
+
+.struct-card__fold {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    color: #94a3b8;
+    border-radius: 0.2rem;
+    transition: color 100ms ease, background-color 100ms ease;
+}
+
+.struct-card__fold mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+}
+
+.struct-card__fold--hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.struct-card:hover .struct-card__fold:not(.struct-card__fold--hidden) {
+    color: #475569;
+    background: rgba(15, 23, 42, 0.07);
+    border-radius: 0.2rem;
+}
+
+.struct-card__type-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    color: #64748b;
+}
+
+.struct-card--page .struct-card__type-icon {
+    color: #475569;
+}
+
+.struct-card__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2rem;
+    height: 1.05rem;
+    padding: 0 0.3rem;
+    background: rgba(148, 163, 184, 0.16);
+    border-radius: 999px;
+    font-size: 0.64rem;
+    font-weight: 700;
+    color: #64748b;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.struct-card__meta {
+    margin-left: auto;
+    font-size: 0.69rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.struct-card__label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 1.3rem;
+    line-height: 1.35;
+}
+
+.struct-card--page .struct-card__label {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.struct-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2.5rem 1rem;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.struct-empty mat-icon {
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
+    opacity: 0.35;
+}

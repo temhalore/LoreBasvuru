@@ -1,0 +1,409 @@
+.custom-select {
+  width: 100%;
+  
+  .form-select {
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    background-color: #fff;
+    transition: all 0.15s ease-in-out;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    
+    &:hover {
+      background-color: #f8f9fa;
+      border-color: #adb5bd;
+    }
+    
+    &.show {
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    &:focus {
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    // Inner flex container
+    > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      
+      // Icons container on the right
+      .d-flex.align-items-center {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+    }
+
+    // Clear button styling
+    .fa-times {
+      opacity: 0.6;
+      transition: all 0.15s ease-in-out;
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 1;
+        color: #dc3545;
+        transform: scale(1.1);
+      }
+    }
+
+    // Times circle for multiple selection
+    .fa-times-circle {
+      opacity: 0.6;
+      transition: all 0.15s ease-in-out;
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 1;
+        color: #dc3545;
+        transform: scale(1.1);
+      }
+    }
+
+    // Chevron styling
+    .fa-chevron-down {
+      transition: transform 0.15s ease-in-out;
+      opacity: 0.7;
+      
+      &.rotate-180 {
+        transform: rotate(180deg);
+      }
+      
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  // Multiple selection display
+  .selected-items-display {
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    background-color: #fff;
+    transition: all 0.15s ease-in-out;
+    min-height: 44px;
+    
+    &:hover {
+      background-color: #f8f9fa;
+      border-color: #adb5bd;
+    }
+    
+    &.show {
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    &:focus {
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    // Inner flex container for multiple items
+    > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+      
+      // Icons container on the right
+      .d-flex.align-items-center {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px;
+        flex-shrink: 0;
+        margin-top: 2px; // Slight adjustment for alignment with badges
+      }
+    }
+  }
+  
+  .dropdown-menu {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    background-color: white;
+    min-width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    
+    .dropdown-item {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: none;
+      text-align: left;
+      width: 100%;
+      transition: background-color 0.15s ease-in-out;
+      
+      &:hover, &:focus {
+        background-color: #e9ecef;
+        color: #212529;
+      }
+      
+      &:active {
+        background-color: #0d6efd;
+        color: white;
+      }
+      
+      &.selected {
+        background-color: #e7f3ff;
+        color: #0d6efd;
+        font-weight: 500;
+      }
+    }
+    
+    .dropdown-item-text {
+      padding: 0.5rem 1rem;
+      color: #6c757d;
+    }
+  }
+  
+  .max-height-200 {
+    max-height: 200px;
+  }
+  
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  
+  .rotate-180 {
+    transform: rotate(180deg);
+    transition: transform 0.2s ease;
+  }
+  
+  .z-3 {
+    z-index: 1030;
+  }
+  
+  .selected-items-display {
+    min-height: 38px;
+    padding: 0.375rem 0.75rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    max-height: 120px;
+    overflow-y: auto;
+    
+    &:hover {
+      background-color: #f8f9fa;
+      border-color: #adb5bd;
+    }
+    
+    &.show {
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    &:focus {
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .selected-badge {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.125rem 0.5rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      gap: 0.25rem;
+      line-height: 1.4;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      transition: all 0.2s ease-in-out;
+      max-width: 200px;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+      
+      .badge-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .remove-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 0.875rem;
+        padding: 0;
+        line-height: 1;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: all 0.15s ease-in-out;
+        margin-left: 0.25rem;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &:hover {
+          opacity: 1;
+          background-color: rgba(255, 255, 255, 0.2);
+          transform: scale(1.1);
+        }
+      }
+    }
+    
+    .placeholder-text {
+      color: #6c757d;
+      font-size: 0.875rem;
+      font-style: italic;
+    }
+  }
+}
+
+// Dark mode support
+[data-bs-theme="dark"] {
+  .custom-select {
+    .form-select {
+      background-color: #212529;
+      border-color: #495057;
+      color: #fff;
+      
+      &:hover {
+        background-color: #2c3034;
+        border-color: #6c757d;
+      }
+      
+      &.show, &:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      }
+    }
+    
+    .dropdown-menu {
+      background-color: #212529;
+      border-color: #495057;
+      
+      .dropdown-item {
+        color: #fff;
+        
+        &:hover, &:focus {
+          background-color: #495057;
+          color: #fff;
+        }
+        
+        &:active {
+          background-color: #0d6efd;
+          color: white;
+        }
+        
+        &.selected {
+          background-color: #1e3a5f;
+          color: #79c0ff;
+          font-weight: 500;
+        }
+      }
+    }
+    
+    .selected-items-display {
+      background-color: #212529;
+      border-color: #495057;
+      color: #fff;
+      
+      &:hover {
+        background-color: #2c3034;
+        border-color: #6c757d;
+      }
+      
+      &.show, &:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      }
+      
+      .selected-badge {
+        background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        color: #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+        
+        .remove-btn {
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+          }
+        }
+      }
+      
+      .placeholder-text {
+        color: #adb5bd;
+      }
+    }
+  }
+}
+
+// Global overrides to ensure proper layout
+.custom-select {
+  // Override Bootstrap flex classes that might interfere
+  .d-flex {
+    display: flex !important;
+  }
+  
+  .justify-content-between {
+    justify-content: space-between !important;
+  }
+  
+  .align-items-center {
+    align-items: center !important;
+  }
+  
+  .align-items-start {
+    align-items: flex-start !important;
+  }
+  
+  .flex-wrap {
+    flex-wrap: wrap !important;
+  }
+  
+  .flex-1 {
+    flex: 1 !important;
+  }
+  
+  .flex-shrink-0 {
+    flex-shrink: 0 !important;
+  }
+  
+  // Ensure text truncation for long text
+  .text-muted {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  // Cursor styles
+  .cursor-pointer {
+    cursor: pointer !important;
+  }
+}

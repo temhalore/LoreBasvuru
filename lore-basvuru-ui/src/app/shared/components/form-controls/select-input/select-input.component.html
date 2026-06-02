@@ -1,0 +1,74 @@
+<div class="select-input-container" [class.disabled]="isControlDisabled" [ngClass]="customClass" [formGroup]="formGroup">
+    
+    <!-- Clean Select Field -->
+    <div class="form-field-wrapper">
+        
+        <!-- Label -->
+        <label *ngIf="label" class="form-label">
+            {{ label }}
+            <span *ngIf="showRequiredMarker" class="required-asterisk">*</span>
+        </label>
+
+        <!-- Select Container -->
+        <div class="select-wrapper">
+            <!-- Prefix Icon -->
+            <mat-icon *ngIf="icon" class="prefix-icon">{{ icon }}</mat-icon>
+
+            <!-- Clean Select -->
+            <mat-select 
+                class="clean-select"
+                [formControlName]="controlName"
+                [placeholder]="placeholder"
+                [multiple]="multiple">
+                
+                <!-- Search Input (only for searchable selects) -->
+                <div *ngIf="searchable" class="search-input-container" (click)="$event.stopPropagation()">
+                    <!-- Seçilmiş olanların sayısı (çoklu seçimde) -->
+                    <div *ngIf="multiple && selectedCount > 0" class="selected-count">
+                        {{ selectedCount }} öğe seçildi
+                    </div>
+                    
+                    <mat-form-field appearance="outline" class="search-field">
+                        <mat-icon matPrefix>search</mat-icon>
+                        <input matInput
+                               [formControl]="searchControl"
+                               placeholder="Ara..."
+                               (click)="$event.stopPropagation()">
+                        <button matSuffix 
+                                mat-icon-button 
+                                *ngIf="searchControl.value"
+                                (click)="clearSearch(); $event.stopPropagation()"
+                                type="button">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+                
+                <mat-option *ngFor="let option of filteredOptions" 
+                            [value]="option.value" 
+                            [disabled]="option.disabled"
+                            [class.selected-option]="isOptionSelected(option.value)">
+                    <span class="option-label">{{ option.label }}</span>
+                    <mat-icon *ngIf="multiple && isOptionSelected(option.value)" class="selected-icon">check</mat-icon>
+                </mat-option>
+            </mat-select>
+
+            <!-- Tooltip Icon -->
+            <mat-icon 
+                *ngIf="hasTooltip" 
+                class="suffix-icon"
+                [matTooltip]="tooltip">
+                info_outline
+            </mat-icon>
+        </div>
+
+        <!-- Error Messages -->
+        <div *ngIf="hasError('required')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>{{ label || 'Bu alan' }} zorunludur</span>
+            </div>
+        </div>
+        
+    </div>
+</div>

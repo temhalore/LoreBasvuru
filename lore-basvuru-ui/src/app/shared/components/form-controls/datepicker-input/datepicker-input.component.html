@@ -1,0 +1,261 @@
+<div [formGroup]="formGroup" [ngClass]="customClass" class="datepicker-input-component">
+    <!-- Single Date Picker -->
+    <mat-form-field 
+        *ngIf="!isRangePicker"
+        [appearance]="appearance"
+        [floatLabel]="floatLabel"
+        class="w-full">
+        
+        <mat-label>
+            {{ label }}
+            <span *ngIf="showRequiredMarker" class="text-red-500 ml-1">*</span>
+        </mat-label>
+
+        <!-- Date/DateTime/Month/Year Input -->
+        <input 
+            *ngIf="dateType !== 'time'"
+            matInput 
+            [matDatepicker]="getPickerRef()"
+            [formControlName]="controlName"
+            [placeholder]="placeholder"
+            [min]="minDate"
+            [max]="maxDate"
+            [matDatepickerFilter]="dateFilter"
+            [matTooltip]="tooltip"
+            [matTooltipDisabled]="!hasTooltip"
+            [attr.inputmode]="usesMaskedDateInput ? 'numeric' : null"
+            [attr.maxlength]="usesMaskedDateInput ? 10 : null"
+            autocomplete="off"
+            (input)="onManualDateInput($event)"
+            (keydown)="onManualDateKeydown($event)"
+            (blur)="onManualDateBlur($event)"
+            (dateInput)="onDateChange($event)"
+            (dateChange)="onDateChange($event)"
+            >
+
+        <!-- Time Input -->
+        <input 
+            *ngIf="dateType === 'time'"
+            #timeInput
+            matInput 
+            type="time"
+            [formControlName]="controlName"
+            [placeholder]="placeholder"
+            [matTooltip]="tooltip"
+            [matTooltipDisabled]="!hasTooltip"
+            (change)="onDateChange($event)">
+
+        <!-- Calendar Icon -->
+        <mat-datepicker-toggle 
+            *ngIf="showCalendarIcon && dateType !== 'time'"
+            matSuffix 
+            [for]="getPickerRef()">
+        </mat-datepicker-toggle>
+
+        <!-- Time Icon -->
+        <button
+            *ngIf="showCalendarIcon && dateType === 'time'"
+            mat-icon-button
+            matSuffix 
+            type="button"
+            (click)="openTimePicker()"
+            [disabled]="isControlDisabled"
+            matTooltip="Saat seçici">
+            <mat-icon>{{ calendarIcon }}</mat-icon>
+        </button>
+
+        <!-- Date Picker -->
+        <mat-datepicker 
+            #datePicker
+            [startView]="startView">
+        </mat-datepicker>
+
+        <!-- Month Picker -->
+        <mat-datepicker 
+            #monthPicker
+            startView="year"
+            (monthSelected)="onDateChange({ value: $event }); monthPicker.close()">
+        </mat-datepicker>
+
+        <!-- Year Picker -->
+        <mat-datepicker 
+            #yearPicker
+            startView="multi-year"
+            (yearSelected)="onDateChange({ value: $event }); yearPicker.close()">
+        </mat-datepicker>
+
+        <!-- Error Messages -->
+        <mat-error *ngFor="let error of getAllErrors()">
+            {{ getErrorMessage(error.errorName) }}
+        </mat-error>
+
+        <!-- Hint -->
+        <mat-hint *ngIf="placeholder && !isControlInvalid">{{ placeholder }}</mat-hint>
+    </mat-form-field>
+
+    <!-- Action Buttons - Always in a single row -->
+    <div *ngIf="(enableClearButton || enableTodayButton) && !isRangePicker" class="flex items-center gap-2 mt-2">
+        <!-- Today Button -->
+        <button 
+            *ngIf="enableTodayButton"
+            mat-stroked-button
+            type="button"
+            [disabled]="isControlDisabled"
+            matTooltip="Bugün"
+            (click)="setToday()"
+            class="text-sm">
+            <mat-icon class="mr-1 text-base">today</mat-icon>
+            Bugün
+        </button>
+
+        <!-- Clear Button -->
+        <button 
+            *ngIf="enableClearButton && value"
+            mat-stroked-button
+            type="button"
+            [disabled]="isControlDisabled"
+            matTooltip="Temizle"
+            (click)="clearDate()"
+            class="text-sm">
+            <mat-icon class="mr-1 text-base">clear</mat-icon>
+            Temizle
+        </button>
+    </div>
+
+    <!-- Date Range Picker -->
+    <div *ngIf="isRangePicker" class="flex flex-col gap-4">
+        <!-- Start Date -->
+        <mat-form-field 
+            [appearance]="appearance"
+            [floatLabel]="floatLabel"
+            class="w-full">
+            
+            <mat-label>
+                Başlangıç {{ label }}
+                <span *ngIf="showRequiredMarker" class="text-red-500 ml-1">*</span>
+            </mat-label>
+
+            <input 
+                matInput 
+                [matDatepicker]="startPicker"
+                [formControlName]="rangeStartControlName!"
+                [placeholder]="'Başlangıç ' + placeholder"
+                [min]="minDate"
+                [max]="rangeValue.end || maxDate"
+                [matDatepickerFilter]="dateFilter"
+                [matTooltip]="tooltip"
+                [matTooltipDisabled]="!hasTooltip"
+                (dateChange)="onRangeStartChange($event)"
+                readonly>
+
+            <mat-datepicker-toggle 
+                *ngIf="showCalendarIcon"
+                matSuffix 
+                [for]="startPicker">
+            </mat-datepicker-toggle>
+
+            <mat-datepicker #startPicker [startView]="startView"></mat-datepicker>
+
+            <mat-error *ngIf="rangeStartControl?.invalid && rangeStartControl?.touched">
+                Başlangıç tarihi gerekli
+            </mat-error>
+        </mat-form-field>
+
+        <!-- End Date -->
+        <mat-form-field 
+            [appearance]="appearance"
+            [floatLabel]="floatLabel"
+            class="w-full">
+            
+            <mat-label>
+                Bitiş {{ label }}
+                <span *ngIf="showRequiredMarker" class="text-red-500 ml-1">*</span>
+            </mat-label>
+
+            <input 
+                matInput 
+                [matDatepicker]="endPicker"
+                [formControlName]="rangeEndControlName!"
+                [placeholder]="'Bitiş ' + placeholder"
+                [min]="rangeValue.start || minDate"
+                [max]="maxDate"
+                [matDatepickerFilter]="dateFilter"
+                [matTooltip]="tooltip"
+                [matTooltipDisabled]="!hasTooltip"
+                (dateChange)="onRangeEndChange($event)"
+                readonly>
+
+            <mat-datepicker-toggle 
+                *ngIf="showCalendarIcon"
+                matSuffix 
+                [for]="endPicker">
+            </mat-datepicker-toggle>
+
+            <mat-datepicker #endPicker [startView]="startView"></mat-datepicker>
+
+            <mat-error *ngIf="rangeEndControl?.invalid && rangeEndControl?.touched">
+                Bitiş tarihi gerekli
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Range Display -->
+        <div *ngIf="rangeValue.start || rangeValue.end" 
+             class="text-sm text-gray-600 bg-gray-50 p-3 rounded-md border">
+            <div class="font-medium mb-1">Seçilen Aralık:</div>
+            <div class="flex items-center gap-2">
+                <span>{{ formatDate(rangeValue.start) || 'Belirtilmedi' }}</span>
+                <mat-icon class="text-gray-400 text-sm">arrow_forward</mat-icon>
+                <span>{{ formatDate(rangeValue.end) || 'Belirtilmedi' }}</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons for Range Picker - Always in a single row -->
+        <div *ngIf="enableClearButton || enableTodayButton" class="flex items-center gap-2 mt-3">
+            <!-- Today Button -->
+            <button 
+                *ngIf="enableTodayButton"
+                mat-stroked-button
+                type="button"
+                [disabled]="isControlDisabled"
+                matTooltip="Bugün için aralık ayarla"
+                (click)="setToday()"
+                class="text-sm">
+                <mat-icon class="mr-1 text-base">today</mat-icon>
+                Bugün
+            </button>
+
+            <!-- Clear Button -->
+            <button 
+                *ngIf="enableClearButton && (rangeValue.start || rangeValue.end)"
+                mat-stroked-button
+                type="button"
+                [disabled]="isControlDisabled"
+                matTooltip="Aralığı temizle"
+                (click)="clearDate()"
+                class="text-sm">
+                <mat-icon class="mr-1 text-base">clear</mat-icon>
+                Temizle
+            </button>
+        </div>
+    </div>
+
+    <!-- Status Indicators -->
+    <div *ngIf="showControlStatus && isControlTouched" class="flex items-center gap-2 mt-2 text-xs">
+        <!-- Valid Indicator -->
+        <div *ngIf="isControlValid" class="flex items-center gap-1 text-green-600">
+            <mat-icon class="text-sm">check_circle</mat-icon>
+            <span>Geçerli</span>
+        </div>
+
+        <!-- Invalid Indicator -->
+        <div *ngIf="isControlInvalid" class="flex items-center gap-1 text-red-600">
+            <mat-icon class="text-sm">error</mat-icon>
+            <span>Geçersiz</span>
+        </div>
+
+        <!-- Current Value Display -->
+        <div *ngIf="value && !isRangePicker" class="text-gray-500 ml-auto">
+            {{ formatDate(value) }}
+        </div>
+    </div>
+</div>

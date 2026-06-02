@@ -1,0 +1,131 @@
+<ng-container *ngIf="isAnswerOnly; else uploadInputTemplate">
+    @if (uploadedFiles.length) {
+        <div class="question-file-list">
+            @for (file of uploadedFiles; track file.eid || file.label) {
+                @if (file.url) {
+                    <a class="question-file-card" [href]="file.url" target="_blank" rel="noopener noreferrer">
+                        <div class="question-file-icon" aria-hidden="true">
+                            <mat-icon>insert_drive_file</mat-icon>
+                        </div>
+                        <div class="question-file-info">
+                            <div class="question-file-title">{{ file.label }}</div>
+                        </div>
+                        <div class="question-file-action">Görüntüle</div>
+                    </a>
+                } @else {
+                    <div class="question-file-card question-file-card--static">
+                        <div class="question-file-icon" aria-hidden="true">
+                            <mat-icon>insert_drive_file</mat-icon>
+                        </div>
+                        <div class="question-file-info">
+                            <div class="question-file-title">{{ file.label }}</div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    } @else {
+        <div class="question-answer-box question-answer-box--secondary">Yanıt verilmedi</div>
+    }
+</ng-container>
+
+<ng-template #uploadInputTemplate>
+<div class="question-stack">
+    <ng-container *ngIf="isInteractiveUploadEnabled(); else readonlyUploadState">
+        <label
+            class="question-upload-zone"
+            [class.opacity-50]="uploading"
+            [class.question-upload-zone--active]="dragActive"
+            (dragenter)="onDragEnter($event)"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)">
+            <input class="hidden" type="file" multiple [disabled]="isInputDisabled || uploading" (change)="onFilesSelected($event)">
+            <span class="question-upload-icon">
+                <mat-icon>cloud_upload</mat-icon>
+            </span>
+            <p class="question-upload-title">
+                {{ dragActive ? 'Dosyaları bırakın' : 'Dosyaları sürükleyin veya seçmek için tıklayın' }}
+            </p>
+            <p class="question-upload-meta">
+                {{ dragActive ? 'Yükleme için bırakabilirsiniz.' : 'PDF, JPG veya PNG dosyalarınızı ekleyebilirsiniz.' }}
+            </p>
+        </label>
+    </ng-container>
+
+    <ng-template #readonlyUploadState>
+        <div class="question-upload-file question-upload-file--readonly" *ngIf="uploadedFiles.length === 0">
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-[color:var(--form-view-text)]">{{ emptyStateTitle }}</p>
+                <p class="mt-1 text-xs text-[color:var(--form-view-text-soft)]">{{ emptyStateDescription }}</p>
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="flex items-center gap-2 text-sm text-blue-600" *ngIf="uploading">
+        <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span>Dosyalar yükleniyor...</span>
+    </div>
+
+    <ng-container *ngIf="uploadedFiles.length">
+        <div class="question-upload-list-header">
+            <p class="question-upload-list-title">Eklenen dosyalar</p>
+        </div>
+
+        <div class="question-upload-list" [class.question-upload-list--cards]="state.useCardLayout">
+            <div class="question-upload-file" [class.question-upload-file--card]="state.useCardLayout" *ngFor="let file of uploadedFiles; trackBy: trackByFileEid">
+                <button
+                    *ngIf="isInteractiveUploadEnabled() && state.useCardLayout"
+                    type="button"
+                    class="question-upload-remove question-upload-remove--icon"
+                    aria-label="Dosyayi kaldir"
+                    (click)="removeUploadedFile(file.eid)">
+                    ×
+                </button>
+
+                <div class="question-upload-file-icon" [class.question-upload-file-icon--card]="state.useCardLayout" aria-hidden="true">
+                    <mat-icon>insert_drive_file</mat-icon>
+                </div>
+
+                <div class="question-upload-file-content" [class.question-upload-file-content--card]="state.useCardLayout">
+                    <a
+                        *ngIf="file.url; else plainFileName"
+                        [href]="file.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="question-upload-file-name question-upload-file-link"
+                        [class.question-upload-file-name--card]="state.useCardLayout">
+                        {{ file.label }}
+                    </a>
+
+                    <ng-template #plainFileName>
+                        <p class="question-upload-file-name text-[color:var(--form-view-text)]" [class.question-upload-file-name--card]="state.useCardLayout">
+                            {{ file.label }}
+                        </p>
+                    </ng-template>
+
+                    <div class="question-upload-file-footer" [class.question-upload-file-footer--card]="state.useCardLayout">
+                        <span class="question-upload-badge" [ngClass]="getFileExtensionBadgeClass(file)">
+                            {{ getFileExtensionLabel(file) }}
+                        </span>
+                        <span class="question-upload-file-meta text-[color:var(--form-view-text-soft)]">
+                            {{ formatSize(file.size) }}
+                        </span>
+                    </div>
+                </div>
+
+                <button *ngIf="isInteractiveUploadEnabled() && !state.useCardLayout" type="button" class="question-upload-remove" (click)="removeUploadedFile(file.eid)">
+                    Kaldır
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
+    <div class="text-sm text-red-600 space-y-1" *ngIf="errors.length">
+        <p *ngFor="let error of errors; trackBy: trackError">{{ error }}</p>
+    </div>
+</div>
+</ng-template>

@@ -1,0 +1,138 @@
+<!-- Loading bar -->
+<fuse-loading-bar></fuse-loading-bar>
+
+<!-- Navigation -->
+<fuse-vertical-navigation
+    class="ek-theme-nav print:hidden"
+    [mode]="isScreenSmall ? 'over' : 'side'"
+    [name]="'mainNavigation'"
+    [navigation]="navigation?.default || []"
+    [opened]="!isScreenSmall"
+>
+    <!-- Navigation header hook -->
+    <ng-container fuseVerticalNavigationContentHeader>
+        <!-- Logo -->
+        <div class="min-h-24 px-5 pt-4 pb-2">
+            <div class="mx-auto flex w-full flex-col items-center text-center">
+                <img
+                    class="h-10 w-10 flex-none ek-theme-logo"
+                    [ngClass]="logoThemeClass"
+                    src="images/logo/logo.svg"
+                    alt="Logo image"
+                />
+                <div class="mt-2 w-full space-y-1">
+                    @for (line of selectedEtikKurulNameLines; track $index) {
+                        <div class="break-words px-1 text-base font-semibold leading-5 text-white dark:text-slate-100">
+                            {{ line }}
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="mt-3 h-px w-full bg-white/15"></div>
+            <!-- Etik Kurul Bar -->
+            @if (showEtikKurulSelector) {
+                <button
+                    mat-button
+                    [matMenuTriggerFor]="etikKurulNavMenu"
+                    class="relative mt-2 flex h-11 w-full items-center justify-center overflow-hidden rounded-lg px-3 pr-8"
+                    [ngClass]="selectedEtikKurulThemeClass"
+                >
+                    <span class="text-sm font-semibold leading-5">{{ selectedEtikKurulShortName }}</span>
+                    <mat-icon class="!h-4 !w-4 absolute right-3 flex-none text-current" [svgIcon]="'heroicons_solid:chevron-down'"></mat-icon>
+                </button>
+                <mat-menu [xPosition]="'after'" [overlapTrigger]="false" class="ek-etik-kurul-menu-panel" #etikKurulNavMenu="matMenu">
+                    @for (item of etikKurulOptions; track trackByEtikKurul($index, item)) {
+                        <button mat-menu-item (click)="onEtikKurulChange(item)" class="ek-etik-kurul-menu-item rounded-lg py-2" [ngClass]="getEtikKurulItemClass(item)">
+                            <span class="block w-full whitespace-normal break-words text-sm font-medium leading-6 sm:text-base">{{ item.name }}</span>
+                        </button>
+                    }
+                </mat-menu>
+            }
+        </div>
+    </ng-container>
+</fuse-vertical-navigation>
+
+<!-- Wrapper -->
+<div class="flex w-full min-w-0 flex-auto flex-col">
+    <!-- Header -->
+    <div
+        class="bg-card relative z-49 flex h-16 w-full flex-0 items-center px-4 shadow dark:border-b dark:bg-transparent dark:shadow-none md:px-6 print:hidden"
+    >
+        <!-- Navigation toggle button -->
+        <button mat-icon-button (click)="toggleNavigation('mainNavigation')">
+            <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+        </button>
+        <!-- Components -->
+         <!-- {{config?.headerButtons?.showFullscreen}} 
+         {{config?.headerButtons?.showSearch}} 
+         {{config?.headerButtons?.showShortcuts}} 
+         {{config?.headerButtons?.showMessages}} 
+         {{config?.headerButtons?.showNotifications}} 
+         {{config?.headerButtons?.showQuickChat}} 
+         {{config?.headerButtons?.showUser}} 
+         {{config?.headerButtons?.showProfilButton}} 
+         {{config?.headerButtons?.showSettings}} -->
+        <div class="ml-auto flex items-center space-x-0.5 pl-2 sm:space-x-2">
+            @if (config?.headerButtons?.showLanguages !== false) {
+                <languages></languages>
+            }
+            @if (config?.headerButtons?.showFullscreen !== false) {
+                <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
+            }
+            @if (config?.headerButtons?.showSearch !== false) {
+                <search [appearance]="'bar'"></search>
+            }
+            @if (config?.headerButtons?.showShortcuts !== false) {
+                <shortcuts></shortcuts>
+            }
+            @if (config?.headerButtons?.showMessages !== false) {
+                <messages></messages>
+            }
+            @if (config?.headerButtons?.showNotifications !== false) {
+                <notifications></notifications>
+            }
+            @if (config?.headerButtons?.showQuickChat !== false) {
+                <button
+                    class="lg:hidden"
+                    mat-icon-button
+                    (click)="quickChat.toggle()"
+                >
+                    <mat-icon
+                        [svgIcon]="'heroicons_outline:chat-bubble-left-right'"
+                    ></mat-icon>
+                </button>
+            }
+            @if (config?.headerButtons?.showUser !== false) {
+                <user></user>
+            }
+            @if (config?.headerButtons?.showSettings && config?.settingsConfig?.buttonPosition === 'header') {
+                <button mat-icon-button matTooltip="Görünüm Ayarları" (click)="toggleSettings()">
+                    <mat-icon [svgIcon]="'heroicons_outline:cog-8-tooth'"></mat-icon>
+                </button>
+            }
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex flex-auto flex-col">
+        <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
+             Otherwise, layout changes won't be registered and the view won't be updated! -->
+        @if (true) {
+            <router-outlet></router-outlet>
+        }
+    </div>
+
+    <!-- Footer -->
+    <div
+        class="relative z-49 flex h-14 w-full flex-0 items-center justify-start border-t bg-card px-4 dark:bg-transparent md:px-6 print:hidden"
+    >
+        <span class="text-secondary font-medium"
+            >İstanbul Üniversitesi Bilgi İşlem Daire Başlanlığı &copy; {{ currentYear }}</span
+        >
+    </div>
+</div>
+
+<!-- Quick chat -->
+@if (config?.headerButtons?.showQuickChat !== false) {
+    <quick-chat #quickChat="quickChat"></quick-chat>
+}

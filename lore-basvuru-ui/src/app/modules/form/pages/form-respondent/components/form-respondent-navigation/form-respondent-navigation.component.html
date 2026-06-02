@@ -1,0 +1,81 @@
+<div class="form-view-nav-shell">
+    <div class="form-view-nav-frame" [class.form-view-nav-frame--centered]="!stretchContent">
+        <div class="form-view-nav-row">
+            <div class="min-w-24">
+                @if (canGoBack) {
+                    <app-action-button
+                        label="Geri"
+                        icon="chevron-left"
+                        variant="secondary"
+                        [outline]="true"
+                        [disabled]="isActionDisabled"
+                        (onClick)="back.emit()">
+                    </app-action-button>
+                }
+            </div>
+
+            <div class="hidden items-center gap-2 md:flex">
+                <div class="form-view-nav-dots">
+                    @for (page of pageMarkers; track page) {
+                        <span class="form-view-nav-dot" [class.form-view-nav-dot--active]="page === currentPage"></span>
+                    }
+                </div>
+            </div>
+
+            <div class="flex min-w-24 justify-end gap-3">
+                @if (isEffectiveLastStep) {
+                    @if (isReadonlyLastPage) {
+                        <app-action-button
+                            label="Son Sayfa"
+                            variant="secondary"
+                            [outline]="true"
+                            [disabled]="true">
+                        </app-action-button>
+                    } @else {
+                        @if (!readonly) {
+                            <app-action-button
+                                label="Kaydet ve Çık"
+                                icon="save"
+                                variant="secondary"
+                                [outline]="true"
+                                [disabled]="isActionDisabled"
+                                (onClick)="saveAndExit.emit()">
+                            </app-action-button>
+                        }
+
+                        @if (showSubmit) {
+                            <app-action-button
+                                label="Etik Kurula Gönder"
+                                icon="paper-plane"
+                                variant="primary"
+                                [disabled]="isSubmitDisabled"
+                                [loading]="submitting"
+                                loadingText="Gönderiliyor..."
+                                (onClick)="submit.emit()">
+                            </app-action-button>
+                        }
+                    }
+                } @else if (showNext) {
+                    @if (!readonly) {
+                        <app-action-button
+                            label="Kaydet ve Çık"
+                            icon="save"
+                            variant="secondary"
+                            [outline]="true"
+                            [disabled]="isActionDisabled"
+                            (onClick)="saveAndExit.emit()">
+                        </app-action-button>
+                    }
+
+                    <app-action-button
+                        label="İleri"
+                        icon="chevron-right"
+                        variant="primary"
+                        [disabled]="isActionDisabled"
+                        (onClick)="next.emit()">
+                    </app-action-button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,348 @@
+{
+  "generatedAt": "2026-04-22T09:45:00Z",
+  "organizationName": "İstanbul Üniversitesi Etik Kurul Sistemi",
+  "periodLabel": "Nisan 2026",
+  "globalStats": [
+    {
+      "label": "Açık Başvuru",
+      "value": 286,
+      "icon": "heroicons_outline:inbox-arrow-down",
+      "description": "Kurul sürecinde aktif devam eden dosyalar"
+    },
+    {
+      "label": "Bu Ay Karara Bağlanan",
+      "value": 124,
+      "icon": "heroicons_outline:check-circle",
+      "description": "Kurul kararı sisteme işlendi"
+    },
+    {
+      "label": "Kritik Gecikme",
+      "value": 17,
+      "icon": "heroicons_outline:exclamation-triangle",
+      "description": "SLA eşiğini aşan süreçler"
+    },
+    {
+      "label": "Aktif Etik Kurul",
+      "value": 9,
+      "icon": "heroicons_outline:user-group",
+      "description": "Sistemde işlem alan kurul adedi"
+    }
+  ],
+  "roles": {
+    "basvurucu": {
+      "roleLabel": "Başvurucu",
+      "headline": "Başvurularınızda karar aşamasına yaklaşan 3 dosya var",
+      "description": "Başvuru eksiklerini zamanında tamamladığınızda karar süresini ortalama 4.2 gün kısaltıyorsunuz.",
+      "kpis": [
+        {
+          "label": "Toplam Başvuru",
+          "value": 14,
+          "unit": "",
+          "icon": "heroicons_outline:clipboard-document-list",
+          "trend": 12,
+          "trendLabel": "geçen aya göre"
+        },
+        {
+          "label": "Eksik Belge",
+          "value": 3,
+          "unit": "",
+          "icon": "heroicons_outline:document-text",
+          "trend": -25,
+          "trendLabel": "iyileşme"
+        },
+        {
+          "label": "Değerlendirmede",
+          "value": 5,
+          "unit": "",
+          "icon": "heroicons_outline:scale",
+          "trend": 8,
+          "trendLabel": "artış"
+        },
+        {
+          "label": "Kararlandı",
+          "value": 6,
+          "unit": "",
+          "icon": "heroicons_outline:check-circle",
+          "trend": 20,
+          "trendLabel": "tamamlanan dosya"
+        }
+      ],
+      "workflow": [
+        { "label": "Taslak", "count": 2, "colorClass": "bar-indigo" },
+        { "label": "Ön Kontrol", "count": 4, "colorClass": "bar-teal" },
+        { "label": "Raportör İncelemesi", "count": 3, "colorClass": "bar-amber" },
+        { "label": "Kurul Değerlendirmesi", "count": 5, "colorClass": "bar-green" },
+        { "label": "Karar Bildirimi", "count": 6, "colorClass": "bar-rose" }
+      ],
+      "tasks": [
+        { "label": "Belge Yükleme Bekleyen", "count": 3, "status": "urgent", "description": "48 saat içinde kapanacak" },
+        { "label": "İmza Aşamasında", "count": 2, "status": "today", "description": "Bugün imza tamamlanmalı" },
+        { "label": "Toplantı Gündemine Alınan", "count": 4, "status": "planned", "description": "Sıradaki kurul toplantısında" },
+        { "label": "Kapanan Başvuru", "count": 6, "status": "done", "description": "Arşive taşınan dosyalar" }
+      ],
+      "alerts": [
+        { "label": "Süre Uyarısı", "detail": "2 dosyada eksik belge süresi 24 saatin altına düştü.", "tone": "critical" },
+        { "label": "Kalite Notu", "detail": "Son 5 başvuruda ortalama revizyon sayınız 1.1 oldu.", "tone": "success" },
+        { "label": "Bilgilendirme", "detail": "Kurul toplantısı 25 Nisan 10:00 tarihinde yapılacak.", "tone": "info" },
+        { "label": "Eylem Önerisi", "detail": "Aydınlatılmış onam formu olmayan 1 dosya var.", "tone": "warning" }
+      ],
+      "highlights": [
+        "En hızlı sonuçlanan dosya: EK-2026-041 (9 gün)",
+        "Sık hata: Yöntem bölümünde örneklem detayı eksik bırakılıyor",
+        "Sistem önerisi: Belgeleri toplu yükleme ile tek adımda tamamlayın"
+      ]
+    },
+    "baskan": {
+      "roleLabel": "Etik Kurul Başkanı",
+      "headline": "Bu hafta 4 toplantı kararı sizin nihai onayınızı bekliyor",
+      "description": "Karar metinlerinde standardizasyon arttı; itiraz oranı son çeyrekte %11'den %7'ye düştü.",
+      "kpis": [
+        {
+          "label": "Onay Bekleyen Karar",
+          "value": 11,
+          "unit": "",
+          "icon": "heroicons_outline:clipboard-document-list",
+          "trend": 18,
+          "trendLabel": "haftalık"
+        },
+        {
+          "label": "Toplantı Gündemi",
+          "value": 4,
+          "unit": "",
+          "icon": "heroicons_outline:calendar-days",
+          "trend": 0,
+          "trendLabel": "stabil"
+        },
+        {
+          "label": "Ertelenen Dosya",
+          "value": 6,
+          "unit": "",
+          "icon": "heroicons_outline:clock",
+          "trend": -14,
+          "trendLabel": "azalış"
+        },
+        {
+          "label": "Nihai Karar",
+          "value": 38,
+          "unit": "",
+          "icon": "heroicons_outline:check-circle",
+          "trend": 22,
+          "trendLabel": "bu ay"
+        }
+      ],
+      "workflow": [
+        { "label": "Sekreter Kontrolü", "count": 12, "colorClass": "bar-teal" },
+        { "label": "Raportör Raporu", "count": 9, "colorClass": "bar-amber" },
+        { "label": "Üye Görüşü", "count": 14, "colorClass": "bar-indigo" },
+        { "label": "Başkan Onayı", "count": 11, "colorClass": "bar-green" },
+        { "label": "Karar Tebliği", "count": 8, "colorClass": "bar-rose" }
+      ],
+      "tasks": [
+        { "label": "Nihai İmza", "count": 4, "status": "urgent", "description": "Bugün kurul kararı kapanacak" },
+        { "label": "Toplantı Notu İnceleme", "count": 7, "status": "today", "description": "Özet not doğrulaması" },
+        { "label": "Üye Atama Revizyonu", "count": 3, "status": "planned", "description": "Uzmanlık dengesine göre" },
+        { "label": "Tamamlanan Oylama", "count": 16, "status": "done", "description": "Karar metni oluşturuldu" }
+      ],
+      "alerts": [
+        { "label": "Toplantı Çakışması", "detail": "2 kurul toplantısında üye katılım çakışması var.", "tone": "warning" },
+        { "label": "İtiraz Riski", "detail": "Gerekçe metni kısa olan 3 karar tekrar gözden geçirilmeli.", "tone": "critical" },
+        { "label": "Performans", "detail": "Onay süreniz geçen aya göre 1.3 gün hızlandı.", "tone": "success" },
+        { "label": "Bilgi", "detail": "Yeni mevzuat maddesi karar metni şablonuna eklendi.", "tone": "info" }
+      ],
+      "highlights": [
+        "En çok gündem alan konu: Klinik olmayan insan araştırmaları",
+        "Yüksek riskli dosya oranı: %9",
+        "Karar metni revizyonlarında standart şablon kullanımı: %84"
+      ]
+    },
+    "sekreterlik": {
+      "roleLabel": "Etik Kurul Sekreterliği",
+      "headline": "Sekreterlikte 286 aktif dosyanın 91'i raportör üzerinde",
+      "description": "Ön kontrol tamamlanma süreniz 2.8 gün seviyesine indi; bu, son altı ayın en iyi değeri.",
+      "kpis": [
+        {
+          "label": "Toplam Başvuru",
+          "value": 286,
+          "unit": "",
+          "icon": "heroicons_outline:inbox-arrow-down",
+          "trend": 15,
+          "trendLabel": "aylık artış"
+        },
+        {
+          "label": "Raportörde Olan",
+          "value": 91,
+          "unit": "",
+          "icon": "heroicons_outline:user-group",
+          "trend": 9,
+          "trendLabel": "haftalık"
+        },
+        {
+          "label": "Eksik Evrak",
+          "value": 47,
+          "unit": "",
+          "icon": "heroicons_outline:document-text",
+          "trend": -6,
+          "trendLabel": "azalış"
+        },
+        {
+          "label": "Gündeme Hazır",
+          "value": 63,
+          "unit": "",
+          "icon": "heroicons_outline:calendar-days",
+          "trend": 13,
+          "trendLabel": "yükseliş"
+        }
+      ],
+      "workflow": [
+        { "label": "Yeni Başvuru", "count": 74, "colorClass": "bar-indigo" },
+        { "label": "Ön Kontrol", "count": 47, "colorClass": "bar-amber" },
+        { "label": "Raportörde", "count": 91, "colorClass": "bar-teal" },
+        { "label": "Gündemde", "count": 63, "colorClass": "bar-green" },
+        { "label": "Karar Sonrası", "count": 11, "colorClass": "bar-rose" }
+      ],
+      "tasks": [
+        { "label": "Süre Sonu Yaklaşan", "count": 12, "status": "urgent", "description": "72 saat içinde işlem şart" },
+        { "label": "Raportör Ataması Bekleyen", "count": 18, "status": "today", "description": "Bugün dağıtım yapılmalı" },
+        { "label": "Toplantı Öncesi Kontrol", "count": 26, "status": "planned", "description": "Dosya uygunluk kontrolü" },
+        { "label": "Tamamlanan Sevk", "count": 119, "status": "done", "description": "Rapor sürecine aktarıldı" }
+      ],
+      "alerts": [
+        { "label": "Yoğunluk Uyarısı", "detail": "Ön kontrolde 20+ bekleyen dosya eşiği aşıldı.", "tone": "warning" },
+        { "label": "SLA Riski", "detail": "5 dosyada mevzuat süresi kritik seviyede.", "tone": "critical" },
+        { "label": "Süreç Başarısı", "detail": "Eksik evrak tamamlama oranı %78'e yükseldi.", "tone": "success" },
+        { "label": "Bilgi", "detail": "Yeni raportör atama otomasyonu pilotu aktif edildi.", "tone": "info" }
+      ],
+      "highlights": [
+        "Rapor dönüş ortalaması: 6.4 gün",
+        "En çok eksik gelen belge: İzin yazısı",
+        "Toplantı öncesi hazır dosya oranı: %69"
+      ]
+    },
+    "uye": {
+      "roleLabel": "Etik Kurul Üyesi",
+      "headline": "Üye görüşü bekleyen 14 dosyada uzmanlık katkınız gerekiyor",
+      "description": "Görüş yazılarınızın kapsam puanı arttı; başkan revizyon isteği oranı %21'den %13'e düştü.",
+      "kpis": [
+        {
+          "label": "Atanan Dosya",
+          "value": 32,
+          "unit": "",
+          "icon": "heroicons_outline:clipboard-document-list",
+          "trend": 6,
+          "trendLabel": "haftalık"
+        },
+        {
+          "label": "Görüş Bekleyen",
+          "value": 14,
+          "unit": "",
+          "icon": "heroicons_outline:clock",
+          "trend": 17,
+          "trendLabel": "artış"
+        },
+        {
+          "label": "Tamamlanan Görüş",
+          "value": 18,
+          "unit": "",
+          "icon": "heroicons_outline:check-circle",
+          "trend": 25,
+          "trendLabel": "bu ay"
+        },
+        {
+          "label": "Revizyon İstenen",
+          "value": 4,
+          "unit": "",
+          "icon": "heroicons_outline:exclamation-triangle",
+          "trend": -19,
+          "trendLabel": "iyileşme"
+        }
+      ],
+      "workflow": [
+        { "label": "Yeni Atanan", "count": 9, "colorClass": "bar-indigo" },
+        { "label": "İncelemede", "count": 14, "colorClass": "bar-teal" },
+        { "label": "Görüş Yazılıyor", "count": 8, "colorClass": "bar-amber" },
+        { "label": "Gönderildi", "count": 13, "colorClass": "bar-green" },
+        { "label": "Revizyon", "count": 4, "colorClass": "bar-rose" }
+      ],
+      "tasks": [
+        { "label": "Bugün Görüş Gereken", "count": 5, "status": "today", "description": "Toplantı öncesi kapanmalı" },
+        { "label": "Acil Risk Değerlendirmesi", "count": 2, "status": "urgent", "description": "Klinik risk seviyesi yüksek" },
+        { "label": "Planlı İnceleme", "count": 7, "status": "planned", "description": "Bu hafta tamamlanacak" },
+        { "label": "Tamamlanan Değerlendirme", "count": 18, "status": "done", "description": "Kurula iletildi" }
+      ],
+      "alerts": [
+        { "label": "Uzmanlık Eşleşmesi", "detail": "3 dosya uzmanlık alanınızla doğrudan eşleşiyor.", "tone": "info" },
+        { "label": "Gecikme Riski", "detail": "2 dosyada görüş süresi 24 saat içinde doluyor.", "tone": "critical" },
+        { "label": "Kalite", "detail": "Son görüşlerinizde mevzuat atıf oranı %92.", "tone": "success" },
+        { "label": "Eylem", "detail": "Bir dosyada çıkar çatışması beyanı güncellenmeli.", "tone": "warning" }
+      ],
+      "highlights": [
+        "Ortalama dosya inceleme süresi: 2.1 gün",
+        "En sık revizyon nedeni: Risk azaltım planı detayı",
+        "Toplantı öncesi tamamlanan görüş oranı: %81"
+      ]
+    },
+    "raportor": {
+      "roleLabel": "Raportör",
+      "headline": "Bu ay 27 rapor tamamladınız, 13 rapor beklemede",
+      "description": "Rapor hazırlama veriminiz artıyor; ortalama hazırlama süresi 5.6 günden 4.9 güne geriledi.",
+      "kpis": [
+        {
+          "label": "Hazırlanan Rapor",
+          "value": 27,
+          "unit": "",
+          "icon": "heroicons_outline:document-text",
+          "trend": 19,
+          "trendLabel": "aylık"
+        },
+        {
+          "label": "Bekleyen İş",
+          "value": 13,
+          "unit": "",
+          "icon": "heroicons_outline:clock",
+          "trend": 11,
+          "trendLabel": "artış"
+        },
+        {
+          "label": "Kritik Öncelik",
+          "value": 4,
+          "unit": "",
+          "icon": "heroicons_outline:exclamation-triangle",
+          "trend": -20,
+          "trendLabel": "azalış"
+        },
+        {
+          "label": "Ortalama Hazırlama",
+          "value": 4.9,
+          "unit": " gün",
+          "icon": "heroicons_outline:bolt",
+          "trend": 13,
+          "trendLabel": "hız kazanımı"
+        }
+      ],
+      "workflow": [
+        { "label": "Yeni Atama", "count": 7, "colorClass": "bar-indigo" },
+        { "label": "Ön İnceleme", "count": 6, "colorClass": "bar-teal" },
+        { "label": "Rapor Yazımı", "count": 13, "colorClass": "bar-amber" },
+        { "label": "Kalite Kontrol", "count": 5, "colorClass": "bar-green" },
+        { "label": "Kurula Teslim", "count": 27, "colorClass": "bar-rose" }
+      ],
+      "tasks": [
+        { "label": "Bu Hafta Tamamlanacak", "count": 8, "status": "today", "description": "Toplantı gündemine yetişecek" },
+        { "label": "Acil Rapor", "count": 4, "status": "urgent", "description": "Süre eşiği kritik" },
+        { "label": "Planlı Atama", "count": 9, "status": "planned", "description": "Yeni dağıtım bekliyor" },
+        { "label": "Teslim Edilen", "count": 27, "status": "done", "description": "Kurul sekreterliğine iletildi" }
+      ],
+      "alerts": [
+        { "label": "SLA Uyarısı", "detail": "2 rapor 24 saat içinde tamamlanmazsa gecikmeye düşecek.", "tone": "critical" },
+        { "label": "Doküman Kalitesi", "detail": "Rapor şablon uyumu bu ay %94 seviyesinde.", "tone": "success" },
+        { "label": "İş Yükü", "detail": "Yeni haftada 5 yeni dosya ataması planlandı.", "tone": "warning" },
+        { "label": "Bilgilendirme", "detail": "Metodoloji kontrol checklist'i güncellendi.", "tone": "info" }
+      ],
+      "highlights": [
+        "En hızlı rapor: APP-2026-118 (1.8 gün)",
+        "En yoğun konu: Veri güvenliği ve mahremiyet",
+        "Revizyon gerektirmeden kabul oranı: %72"
+      ]
+    }
+  }
+}

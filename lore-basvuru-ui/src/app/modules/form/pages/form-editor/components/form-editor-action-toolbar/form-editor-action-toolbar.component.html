@@ -1,0 +1,36 @@
+<div class="editor-action-toolbar">
+    <ng-container *ngFor="let item of actions; trackBy: trackByAction">
+        <span
+            class="editor-action-toolbar__tooltip-anchor"
+            [matTooltip]="item.disabledReason || item.tooltip"
+            [matTooltipDisabled]="!(item.disabledReason || item.tooltip)">
+            <button
+                *ngIf="item.appearance === 'pill'; else iconAction"
+                type="button"
+                mat-stroked-button
+                class="editor-action-toolbar__action editor-action-toolbar__action--pill"
+                [class.editor-action-toolbar__action--active]="item.active"
+                [class.editor-action-toolbar__action--loading]="item.loading"
+                [attr.aria-label]="item.label"
+                [disabled]="item.disabled || item.loading"
+                (click)="onActionClick($event, item)">
+                <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+                <span>{{ item.label }}</span>
+            </button>
+
+            <ng-template #iconAction>
+                <button
+                    type="button"
+                    mat-icon-button
+                    class="editor-action-toolbar__action"
+                    [class.editor-action-toolbar__action--active]="item.active"
+                    [class.editor-action-toolbar__action--loading]="item.loading"
+                    [attr.aria-label]="item.label"
+                    [disabled]="item.disabled || item.loading"
+                    (click)="onActionClick($event, item)">
+                    <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+                </button>
+            </ng-template>
+        </span>
+    </ng-container>
+</div>

@@ -1,0 +1,46 @@
+<div class="question-group-container question-stack">
+    <div class="question-header" *ngIf="title || helpText">
+        <label class="question-title" *ngIf="title">
+            {{ title }}
+            <span class="question-required" *ngIf="required">*</span>
+        </label>
+
+        <p class="question-helper" *ngIf="helpText">{{ helpText }}</p>
+    </div>
+
+    <div class="question-group-empty" *ngIf="items.length === 0">
+        <p>{{ emptyMessage }}</p>
+    </div>
+
+    <div class="question-group-instance" *ngFor="let item of items; trackBy: trackByItemKey">
+        <div class="question-group-instance-header">
+            <span class="question-group-instance-order">{{ item.order }}</span>
+
+            <button
+                *ngIf="showDeleteButton"
+                type="button"
+                class="question-group-delete-btn"
+                (click)="onDelete(item.key)">
+                ×
+            </button>
+        </div>
+
+        <div class="question-group-instance-body">
+            <ng-container
+                *ngIf="itemTemplate"
+                [ngTemplateOutlet]="itemTemplate"
+                [ngTemplateOutletContext]="{ $implicit: item }">
+            </ng-container>
+        </div>
+    </div>
+
+    <button
+        *ngIf="showAddButton"
+        type="button"
+        class="question-group-add-btn"
+        [disabled]="addDisabled"
+        (click)="add.emit()">
+        <span>+</span>
+        <span>{{ addButtonLabel }}</span>
+    </button>
+</div>

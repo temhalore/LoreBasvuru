@@ -1,0 +1,30 @@
+<ng-container *ngIf="!isAnswerOnly; else answerOnlyTemplate">
+    <ng-container *ngIf="isMultiline; else singleLineTemplate">
+        <textarea
+            class="question-textarea"
+            [class.question-control--readonly]="isInputReadonly && !isInputDisabled"
+            [disabled]="isInputDisabled"
+            [readonly]="isInputReadonly"
+            [placeholder]="schema.placeholder || 'Metin giriniz'"
+            [value]="value"
+            rows="5"
+            (input)="emitValue($event)"></textarea>
+    </ng-container>
+
+    <ng-template #singleLineTemplate>
+        <input
+            class="question-input"
+            [class.question-control--readonly]="isInputReadonly && !isInputDisabled"
+            [disabled]="isInputDisabled"
+            [readonly]="isInputReadonly"
+            [placeholder]="schema.placeholder || 'Metin giriniz'"
+            [value]="value"
+            (input)="emitValue($event)">
+    </ng-template>
+</ng-container>
+
+<ng-template #answerOnlyTemplate>
+    <div class="question-answer-box" [class.question-answer-box--secondary]="!value?.trim()">
+        {{ summaryText }}
+    </div>
+</ng-template>

@@ -1,0 +1,19 @@
+<ng-container *ngIf="!isAnswerOnly; else answerOnlyTemplate">
+    <div class="question-rating-row">
+        <button
+            type="button"
+            class="question-rating-button"
+            *ngFor="let ratingValue of ratingValues"
+            [disabled]="isInputDisabled || isInputReadonly"
+            [class.question-rating-button--active]="value === ratingValue"
+            (click)="selectValue(ratingValue)">
+            {{ ratingValue }}
+        </button>
+    </div>
+</ng-container>
+
+<ng-template #answerOnlyTemplate>
+    <div class="question-answer-box" [class.question-answer-box--secondary]="value === null">
+        {{ summaryText }}
+    </div>
+</ng-template>

@@ -1,0 +1,16 @@
+<ng-container *ngIf="resolvedPage$ | async as currentPage">
+    <section class="form-view-section" *ngIf="currentPage">
+        <app-form-view-page-header
+            *ngIf="currentPage.title || currentPage.description"
+            [title]="currentPage.title"
+            [description]="currentPage.description">
+        </app-form-view-page-header>
+
+        <div class="space-y-4">
+            <app-question-preview-host
+                *ngFor="let question of currentPage.questions; trackBy: trackByEid"
+                [schema]="question">
+            </app-question-preview-host>
+        </div>
+    </section>
+</ng-container>

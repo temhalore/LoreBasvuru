@@ -1,0 +1,10 @@
+@if (renderState$ | async; as state) {
+    @if (issues$ | async; as issues) {
+        <app-question-type-renderer
+            [schema]="schema"
+            [state]="state"
+            [issues]="issues"
+            (answerChange)="onSharedAnswerChange($event)">
+        </app-question-type-renderer>
+    }
+}

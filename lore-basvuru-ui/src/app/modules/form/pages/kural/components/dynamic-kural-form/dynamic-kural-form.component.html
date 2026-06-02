@@ -1,0 +1,196 @@
+<form [formGroup]="formGroup" class="space-y-4">
+  <!-- RegexKontrol (2020001) -->
+  <ng-container *ngIf="currentKuralTip === '2020001'">
+    <div class="text-lg font-semibold mb-4 text-gray-700">Regex Kontrol Kuralı</div>
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Regex Pattern *</mat-label>
+      <input matInput formControlName="RegexPattern" placeholder="örn: ^[A-Za-z]+$">
+      <mat-hint>JavaScript regex formatında (/ işaretleri olmadan)</mat-hint>
+      <mat-error>Regex pattern zorunludur</mat-error>
+    </mat-form-field>
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Hata Mesajı *</mat-label>
+      <input matInput formControlName="HataMesaji" placeholder="Sadece harf girebilirsiniz">
+      <mat-error>Hata mesajı zorunludur</mat-error>
+    </mat-form-field>
+    
+    <mat-checkbox formControlName="IsZorunlu" class="block">
+      Zorunlu Kural
+    </mat-checkbox>
+  </ng-container>
+
+  <!-- SayiAraligi (2020002) -->
+  <ng-container *ngIf="currentKuralTip === '2020002'">
+    <div class="text-lg font-semibold mb-4 text-gray-700">Sayı Aralığı Kuralı</div>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Min Değer</mat-label>
+        <input matInput type="number" formControlName="MinDeger" placeholder="0">
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Max Değer</mat-label>
+        <input matInput type="number" formControlName="MaxDeger" placeholder="100">
+      </mat-form-field>
+    </div>
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Hata Mesajı *</mat-label>
+      <input matInput formControlName="HataMesaji" placeholder="Değer 0-100 arasında olmalıdır">
+      <mat-error>Hata mesajı zorunludur</mat-error>
+    </mat-form-field>
+    
+    <mat-checkbox formControlName="IsZorunlu" class="block">
+      Zorunlu Kural
+    </mat-checkbox>
+  </ng-container>
+
+  <!-- TarihAraligi (2020003) -->
+  <ng-container *ngIf="currentKuralTip === '2020003'">
+    <div class="text-lg font-semibold mb-4 text-gray-700">Tarih Aralığı Kuralı</div>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Başlangıç Tarihi</mat-label>
+        <input matInput [matDatepicker]="pickerBaslangic" formControlName="BaslangicTarihi">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerBaslangic"></mat-datepicker-toggle>
+        <mat-datepicker #pickerBaslangic></mat-datepicker>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Bitiş Tarihi</mat-label>
+        <input matInput [matDatepicker]="pickerBitis" formControlName="BitisTarihi">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerBitis"></mat-datepicker-toggle>
+        <mat-datepicker #pickerBitis></mat-datepicker>
+      </mat-form-field>
+    </div>
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Hata Mesajı *</mat-label>
+      <input matInput formControlName="HataMesaji" placeholder="Tarih belirtilen aralıkta olmalıdır">
+      <mat-error>Hata mesajı zorunludur</mat-error>
+    </mat-form-field>
+    
+    <mat-checkbox formControlName="IsZorunlu" class="block">
+      Zorunlu Kural
+    </mat-checkbox>
+  </ng-container>
+
+  <!-- MinMaxKarakter (2020004) -->
+  <ng-container *ngIf="currentKuralTip === '2020004'">
+    <div class="text-lg font-semibold mb-4 text-gray-700">Min-Max Karakter Kuralı</div>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Min Karakter</mat-label>
+        <input matInput type="number" formControlName="MinKarakter" placeholder="10">
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Max Karakter</mat-label>
+        <input matInput type="number" formControlName="MaxKarakter" placeholder="500">
+      </mat-form-field>
+    </div>
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Hata Mesajı *</mat-label>
+      <input matInput formControlName="HataMesaji" placeholder="Metin 10-500 karakter arasında olmalıdır">
+      <mat-error>Hata mesajı zorunludur</mat-error>
+    </mat-form-field>
+    
+    <mat-checkbox formControlName="IsZorunlu" class="block">
+      Zorunlu Kural
+    </mat-checkbox>
+  </ng-container>
+
+  <!-- DosyaKisitlamalari (2020005) -->
+  <ng-container *ngIf="currentKuralTip === '2020005'">
+    <div class="text-lg font-semibold mb-4 text-gray-700">Dosya Kısıtlamaları Kuralı</div>
+    
+    <app-code-select-input
+      [code]="DOSYA_UZANTI_KOD_ID"
+      [formControl]="formGroup.get('IzinVerilenUzantiKodList')"
+      [isRequired]="false"
+      [isMultiple]="true"
+      label="İzin Verilen Uzantılar">
+    </app-code-select-input>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Min Dosya Boyutu (MB)</mat-label>
+        <input matInput type="number" step="0.1" formControlName="MinDosyaBoyutuMB">
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Max Dosya Boyutu (MB)</mat-label>
+        <input matInput type="number" step="0.1" formControlName="MaxDosyaBoyutuMB">
+      </mat-form-field>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Min Dosya Adedi</mat-label>
+        <input matInput type="number" formControlName="MinDosyaAdedi">
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Max Dosya Adedi</mat-label>
+        <input matInput type="number" formControlName="MaxDosyaAdedi">
+      </mat-form-field>
+    </div>
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Hata Mesajı *</mat-label>
+      <input matInput formControlName="HataMesaji">
+      <mat-error>Hata mesajı zorunludur</mat-error>
+    </mat-form-field>
+    
+    <mat-checkbox formControlName="IsZorunlu" class="block">
+      Zorunlu Kural
+    </mat-checkbox>
+  </ng-container>
+
+  <!-- SoruRevizyonDavranis (2020008) -->
+  <ng-container *ngIf="currentKuralTip === '2020008'">
+    <div class="text-lg font-semibold mb-4 text-gray-700">Soru Revizyon Davranış Kuralı</div>
+    
+    <app-code-select-input
+      [code]="DAVRANIS_TIP_KOD_ID"
+      [formControl]="formGroup.get('DavranisTipKodDto')"
+      [isRequired]="true"
+      label="Davranış Tipi">
+    </app-code-select-input>
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Bilgilendirme Mesajı</mat-label>
+      <textarea matInput formControlName="BilgilendirmeMesaji" rows="3"></textarea>
+      <mat-hint>Kullanıcıya gösterilecek bilgilendirme mesajı</mat-hint>
+    </mat-form-field>
+    
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Hata Mesajı *</mat-label>
+      <input matInput formControlName="HataMesaji">
+      <mat-error>Hata mesajı zorunludur</mat-error>
+    </mat-form-field>
+    
+    <mat-checkbox formControlName="IsZorunlu" class="block">
+      Zorunlu Kural
+    </mat-checkbox>
+  </ng-container>
+
+  <!-- Bilinmeyen Kural Tip -->
+  <ng-container *ngIf="!currentKuralTip || 
+    (currentKuralTip !== '2020001' && 
+     currentKuralTip !== '2020002' && 
+     currentKuralTip !== '2020003' && 
+     currentKuralTip !== '2020004' && 
+     currentKuralTip !== '2020005' && 
+     currentKuralTip !== '2020008')">
+    <div class="text-center text-gray-500 py-8">
+      <p class="text-sm">Lütfen bir kural tipi seçiniz</p>
+    </div>
+  </ng-container>
+</form>

@@ -1,0 +1,79 @@
+<div class="minio-upload">
+  <div class="upload-head">
+    <div class="title-wrap">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <h6>{{ minioTitle }}</h6>
+    </div>
+    <div class="meta-wrap">
+      <span class="chip">{{ allowedExtensionsText }}</span>
+      <span class="chip">Maks: {{ maxFileSize }} MB</span>
+    </div>
+  </div>
+
+  <div class="upload-description" *ngIf="minioText" [innerHTML]="minioText"></div>
+
+  <div
+    *ngIf="isDragDrop; else classicFilePicker"
+    class="drop-zone"
+    [class.drag-over]="isDragOver$ | async"
+    [class.has-files]="(dosyaList$ | async)!.length > 0"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="fileInput.click()">
+
+    <input
+      #fileInput
+      type="file"
+      class="file-input"
+      [multiple]="isMultiple"
+      (change)="onFileSelect($event)">
+
+    <i class="fas fa-file-import"></i>
+    <p class="drop-primary">{{ minioButonText }}</p>
+    <p class="drop-secondary">veya dosyaları buraya sürükleyin</p>
+  </div>
+
+  <ng-template #classicFilePicker>
+    <div class="classic-picker">
+      <label class="picker-label" for="minioClassicInput">Dosya Seç</label>
+      <input
+        #fileInput
+        id="minioClassicInput"
+        type="file"
+        class="picker-input"
+        [multiple]="isMultiple"
+        (change)="onFileSelect($event)">
+      <p class="picker-help">İzin verilen uzantılar: {{ allowedExtensionsText }} | Maks: {{ maxFileSize }} MB</p>
+    </div>
+  </ng-template>
+
+  <div class="selected-files" *ngIf="(dosyaList$ | async)!.length > 0">
+    <div class="selected-head">
+      <span>{{ (dosyaList$ | async)!.length }} dosya seçildi</span>
+      <button type="button" class="action danger" (click)="deleteAllFiles()">Tümünü Sil</button>
+    </div>
+
+    <div class="file-row" *ngFor="let file of (dosyaList$ | async)">
+      <div class="file-main">
+        <i class="fas" [ngClass]="getFileIcon(file.uzanti)"></i>
+        <div class="file-text">
+          <div class="name" [title]="file.dosyaAd + '.' + file.uzanti">{{ file.dosyaAd }}.{{ file.uzanti }}</div>
+          <div class="details">{{ formatFileSize(file.boyut) }} MB</div>
+        </div>
+      </div>
+      <button type="button" class="action danger" (click)="deleteFile(file)">Sil</button>
+    </div>
+
+    <div class="footer">
+      <span class="total">Toplam: {{ formatFileSize((totalFileSize$ | async) || 0) }} MB</span>
+      <button
+        type="button"
+        class="action primary"
+        (click)="uploadFiles()"
+        [disabled]="(dosyaList$ | async)!.length === 0 || (isUploading$ | async)">
+        {{ (isUploading$ | async) ? 'Yükleniyor...' : 'Dosyaları Yükle' }}
+      </button>
+    </div>
+  </div>
+</div>

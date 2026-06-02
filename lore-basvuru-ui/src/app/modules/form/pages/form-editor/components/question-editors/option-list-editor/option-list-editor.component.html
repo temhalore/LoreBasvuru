@@ -1,0 +1,173 @@
+<section class="option-list-editor">
+    <div class="option-list-editor__accordion">
+        <button
+            type="button"
+            class="option-list-editor__accordion-trigger"
+            [attr.aria-expanded]="isAccordionOpen"
+            [attr.aria-controls]="accordionContentId"
+            (click)="toggleAccordion()">
+            <span class="option-list-editor__accordion-heading">
+                <span class="option-list-editor__accordion-title">Secenekler</span>
+                <span class="option-list-editor__accordion-summary">{{ totalOptionCount }}</span>
+            </span>
+
+            <span
+                class="option-list-editor__accordion-icon"
+                [class.option-list-editor__accordion-icon--open]="isAccordionOpen"
+                aria-hidden="true">
+                <mat-icon>{{ isAccordionOpen ? 'expand_more' : 'chevron_right' }}</mat-icon>
+            </span>
+        </button>
+
+        <div
+            [id]="accordionContentId"
+            class="option-list-editor__accordion-wrap"
+            [class.option-list-editor__accordion-wrap--open]="isAccordionOpen">
+            <div class="option-list-editor__accordion-inner">
+                <div class="option-list-editor__accordion-content">
+                    <div class="option-list-editor__rows"
+                         cdkDropList
+                         #optionListEl
+                         (cdkDropListDropped)="onOptionDrop($event)">
+                        <div
+                            class="option-list-editor__row"
+                            [class.option-list-editor__row--editing]="isEditing(item)"
+                            *ngFor="let item of normalOptions; let i = index; trackBy: trackByOptionEid"
+                            cdkDrag
+                            cdkDragLockAxis="y"
+                            [cdkDragBoundary]="optionListEl"
+                            [cdkDragDisabled]="isEditing(item)">
+
+                            <!-- ── Kompakt satır ────────────────────── -->
+                            <div class="option-list-editor__compact">
+                                <span class="option-list-editor__compact-order">{{ i + 1 }}.</span>
+
+                                <span class="option-list-editor__compact-label"
+                                      [class.option-list-editor__compact-label--empty]="!getPlainText(item.controls.secenekMetni.value)">
+                                    {{ getPlainText(item.controls.secenekMetni.value) || 'Bos secenek' }}
+                                </span>
+
+                                <div class="option-list-editor__compact-actions">
+                                    <button
+                                        type="button"
+                                        class="option-list-editor__compact-btn option-list-editor__compact-btn--delete"
+                                        (click)="removeOption(item)"
+                                        aria-label="Seçeneği sil">
+                                        <mat-icon aria-hidden="true">close</mat-icon>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="option-list-editor__compact-btn"
+                                        [class.option-list-editor__compact-btn--active]="isEditing(item)"
+                                        (click)="isEditing(item) ? stopEditing() : startEditing(item)"
+                                        aria-label="Seçeneği düzenle">
+                                        <mat-icon aria-hidden="true">{{ isEditing(item) ? 'check' : 'edit' }}</mat-icon>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="option-list-editor__compact-btn option-list-editor__compact-btn--drag"
+                                        cdkDragHandle
+                                        aria-label="Seçeneği sırala">
+                                        <mat-icon aria-hidden="true">drag_indicator</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ── Düzenleme paneli (inline genişleme) ── -->
+                            <div class="option-list-editor__edit-wrap"
+                                 [class.option-list-editor__edit-wrap--open]="isEditing(item)">
+                                <div class="option-list-editor__edit-inner">
+                                    <div class="option-list-editor__edit-panel" [formGroup]="item">
+                                        <app-froala-textarea-input
+                                            [nameOfFormGroup]="item"
+                                            controlName="secenekMetni"
+                                            placeHolder="Seçenek metni"
+                                            [isRequired]="true"
+                                            [editorHeight]="100">
+                                        </app-froala-textarea-input>
+
+                                        <div class="option-list-editor__edit-meta">
+                                            <app-text-input
+                                                [formGroup]="item"
+                                                controlName="secenekDegeri"
+                                                label="Değer"
+                                                placeholder="Değer">
+                                            </app-text-input>
+                                        </div>
+
+                                        <div class="option-list-editor__edit-actions">
+                                            <button
+                                                type="button"
+                                                mat-stroked-button
+                                                (click)="stopEditing()">
+                                                <mat-icon aria-hidden="true">check</mat-icon>
+                                                Tamam
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="option-list-editor__add-action flex justify-end my-4">
+                        <button type="button" mat-stroked-button (click)="addOption()" class="h-8">
+                            <mat-icon aria-hidden="true" class="scale-90">add</mat-icon>
+                            Seçenek
+                        </button>
+                    </div>
+
+                    <div class="option-list-editor__other">
+                        <!-- <app-checkbox-input
+                            [formGroup]="otherToggleForm"
+                            controlName="enabled"
+                            label="Diğer seçeneği ekle"
+                            [showControlStatus]="false">
+                        </app-checkbox-input> -->
+
+                        <div class="ml-2 flex items-center gap-2 shrink-0 py-4" [formGroup]="otherToggleForm">
+                            <mat-slide-toggle
+                                id="otherEnabledToggle"
+                                formControlName="enabled"
+                                color="primary"
+                                (change)="setOtherOptionEnabled($event.checked)">
+
+                                <span class="ml-2 mr-4 text-sm font-medium">Diğer seçeneği ekle</span>
+                            </mat-slide-toggle>
+                        </div>
+
+                        <div class="option-list-editor__other-wrap"
+                             [class.option-list-editor__other-wrap--open]="hasOtherOption">
+                            <div class="option-list-editor__other-inner">
+                                <div *ngIf="otherOption as option"
+                                     [formGroup]="option"
+                                     class="option-list-editor__other-fields">
+                                    <app-text-input
+                                        [formGroup]="option"
+                                        controlName="secenekMetni"
+                                        label="Diğer seçeneği etiketi"
+                                        placeholder="Diğer">
+                                    </app-text-input>
+
+                                    <!-- <app-checkbox-input
+                                        [formGroup]="option"
+                                        controlName="isAciklamaZorunlu"
+                                        label="Açıklama zorunlu"
+                                        [showControlStatus]="false">
+                                    </app-checkbox-input> -->
+                                    <div class="ml-2 flex items-center gap-2 shrink-0 py-4" [formGroup]="option">
+                                        <mat-slide-toggle formControlName="isAciklamaZorunlu" color="primary">
+                                            <span class="ml-2 mr-4 text-sm font-medium">Açıklama zorunlu</span>
+                                        </mat-slide-toggle>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

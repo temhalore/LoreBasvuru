@@ -1,0 +1,255 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <!-- Core Config Management -->
+    <div class="p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+            <!-- Header -->
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                            ⚙️ Core Configuration
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Sistem genelindeki header butonları, layout, tema ve diğer temel ayarları yönetin.
+                        </p>
+                    </div>
+                    <button 
+                        mat-raised-button 
+                        color="warn" 
+                        (click)="resetToDefaults()"
+                        class="min-w-0">
+                        <mat-icon>refresh</mat-icon>
+                        Varsayılanlara Sıfırla
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-8">
+                <!-- Layout Settings -->
+                <mat-card class="shadow-sm">
+                    <mat-card-header>
+                        <mat-card-title class="flex items-center">
+                            <mat-icon class="mr-2">dashboard</mat-icon>
+                            Layout Ayarları
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                            Uygulama layout'unu, temasını ve renk şemasını seçin
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content class="pt-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Layout Selection -->
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Layout</mat-label>
+                                <mat-select [(value)]="currentLayout" (selectionChange)="changeLayout($event.value)">
+                                    <mat-option *ngFor="let layout of layouts" [value]="layout.value">
+                                        {{ layout.label }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <!-- Theme Selection -->
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Tema</mat-label>
+                                <mat-select [(value)]="currentTheme" (selectionChange)="changeTheme($event.value)">
+                                    <mat-option *ngFor="let theme of themes" [value]="theme.value">
+                                        {{ theme.label }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <!-- Scheme Selection -->
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Renk Şeması</mat-label>
+                                <mat-select [(value)]="currentScheme" (selectionChange)="changeScheme($event.value)">
+                                    <mat-option *ngFor="let scheme of schemes" [value]="scheme.value">
+                                        {{ scheme.label }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Header Buttons Configuration -->
+                <mat-card class="shadow-sm">
+                    <mat-card-header>
+                        <mat-card-title class="flex items-center">
+                            <mat-icon class="mr-2">tune</mat-icon>
+                            Header Buton Ayarları
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                            Tüm layout'larda görüntülenecek header butonlarını yönetin
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content class="pt-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Languages Button -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <mat-icon class="mr-3 text-blue-500">language</mat-icon>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white">Dil Seçici</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Dil değiştirme butonu</p>
+                                    </div>
+                                </div>
+                                <mat-slide-toggle 
+                                    [checked]="headerButtons.showLanguages"
+                                    (change)="toggleHeaderButton('showLanguages')"
+                                    color="primary">
+                                </mat-slide-toggle>
+                            </div>
+
+                            <!-- Fullscreen Button -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <mat-icon class="mr-3 text-green-500">fullscreen</mat-icon>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white">Tam Ekran</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Tam ekran modu butonu</p>
+                                    </div>
+                                </div>
+                                <mat-slide-toggle 
+                                    [checked]="headerButtons.showFullscreen"
+                                    (change)="toggleHeaderButton('showFullscreen')"
+                                    color="primary">
+                                </mat-slide-toggle>
+                            </div>
+
+                            <!-- Search Button -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <mat-icon class="mr-3 text-purple-500">search</mat-icon>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white">Arama</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Global arama butonu</p>
+                                    </div>
+                                </div>
+                                <mat-slide-toggle 
+                                    [checked]="headerButtons.showSearch"
+                                    (change)="toggleHeaderButton('showSearch')"
+                                    color="primary">
+                                </mat-slide-toggle>
+                            </div>
+
+                            <!-- Shortcuts Button -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <mat-icon class="mr-3 text-orange-500">keyboard</mat-icon>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white">Kısayollar</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Klavye kısayolları butonu</p>
+                                    </div>
+                                </div>
+                                <mat-slide-toggle 
+                                    [checked]="headerButtons.showShortcuts"
+                                    (change)="toggleHeaderButton('showShortcuts')"
+                                    color="primary">
+                                </mat-slide-toggle>
+                            </div>
+
+                            <!-- Messages Button -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <mat-icon class="mr-3 text-indigo-500">mail</mat-icon>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white">Mesajlar</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Mesaj bildirimleri butonu</p>
+                                    </div>
+                                </div>
+                                <mat-slide-toggle 
+                                    [checked]="headerButtons.showMessages"
+                                    (change)="toggleHeaderButton('showMessages')"
+                                    color="primary">
+                                </mat-slide-toggle>
+                            </div>
+
+                            <!-- Notifications Button -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <mat-icon class="mr-3 text-red-500">notifications</mat-icon>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white">Bildirimler</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Bildirim butonu</p>
+                                    </div>
+                                </div>
+                                <mat-slide-toggle 
+                                    [checked]="headerButtons.showNotifications"
+                                    (change)="toggleHeaderButton('showNotifications')"
+                                    color="primary">
+                                </mat-slide-toggle>
+                            </div>
+
+                            <!-- Quick Chat Button -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <mat-icon class="mr-3 text-teal-500">chat</mat-icon>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white">Hızlı Sohbet</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Anlık sohbet butonu</p>
+                                    </div>
+                                </div>
+                                <mat-slide-toggle 
+                                    [checked]="headerButtons.showQuickChat"
+                                    (change)="toggleHeaderButton('showQuickChat')"
+                                    color="primary">
+                                </mat-slide-toggle>
+                            </div>
+
+                            <!-- User Menu Button -->
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <mat-icon class="mr-3 text-pink-500">account_circle</mat-icon>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 dark:text-white">Kullanıcı Menüsü</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Kullanıcı profil butonu</p>
+                                    </div>
+                                </div>
+                                <mat-slide-toggle 
+                                    [checked]="headerButtons.showUser"
+                                    (change)="toggleHeaderButton('showUser')"
+                                    color="primary">
+                                </mat-slide-toggle>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Current Configuration Summary -->
+                <mat-card class="shadow-sm">
+                    <mat-card-header>
+                        <mat-card-title class="flex items-center">
+                            <mat-icon class="mr-2">info</mat-icon>
+                            Mevcut Ayarlar
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                            Şu anda aktif olan konfigürasyon özeti
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content class="pt-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                                <h5 class="font-medium text-blue-900 dark:text-blue-100 mb-1">Layout</h5>
+                                <p class="text-blue-700 dark:text-blue-300 capitalize">{{ currentLayout }}</p>
+                            </div>
+                            <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                                <h5 class="font-medium text-green-900 dark:text-green-100 mb-1">Tema</h5>
+                                <p class="text-green-700 dark:text-green-300">{{ currentTheme.replace('theme-', '') | titlecase }}</p>
+                            </div>
+                            <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                                <h5 class="font-medium text-purple-900 dark:text-purple-100 mb-1">Renk Şeması</h5>
+                                <p class="text-purple-700 dark:text-purple-300 capitalize">{{ currentScheme }}</p>
+                            </div>
+                            <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
+                                <h5 class="font-medium text-orange-900 dark:text-orange-100 mb-1">Aktif Butonlar</h5>
+                                <p class="text-orange-700 dark:text-orange-300">
+                                    {{ getActiveButtonsCount() }}/{{ getTotalButtonsCount() }}
+                                </p>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

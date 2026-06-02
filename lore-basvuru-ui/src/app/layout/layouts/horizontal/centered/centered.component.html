@@ -1,0 +1,138 @@
+<!-- Loading bar -->
+<fuse-loading-bar></fuse-loading-bar>
+
+<div
+    class="flex w-full flex-auto justify-center bg-gray-200 dark:bg-card sm:p-4 md:p-8"
+>
+    <!-- Navigation -->
+    @if (isScreenSmall) {
+        <fuse-vertical-navigation
+            class="ek-theme-nav print:hidden"
+            [mode]="'over'"
+            [name]="'mainNavigation'"
+            [navigation]="navigation?.default || []"
+            [opened]="false"
+        >
+            <ng-container fuseVerticalNavigationContentHeader>
+                <div class="min-h-24 px-5 pt-4 pb-2">
+                    <div class="mx-auto flex w-full flex-col items-center text-center">
+                        <img class="h-10 w-10 flex-none ek-theme-logo" [ngClass]="logoThemeClass" src="images/logo/logo.svg" alt="Logo image" />
+                        <div class="mt-2 w-full space-y-1">
+                            @for (line of selectedEtikKurulNameLines; track $index) {
+                                <div class="break-words px-1 text-base font-semibold leading-5 text-white dark:text-slate-100">{{ line }}</div>
+                            }
+                        </div>
+                    </div>
+                    <div class="mt-3 h-px w-full bg-white/15"></div>
+                </div>
+            </ng-container>
+        </fuse-vertical-navigation>
+    }
+
+    <!-- Wrapper -->
+    <div
+        class="flex min-w-0 max-w-360 flex-auto flex-col items-center overflow-hidden shadow-2xl dark:shadow-none sm:rounded-xl"
+    >
+        <!-- Header -->
+        <div
+            class="bg-card relative z-49 flex h-16 w-full flex-0 items-center border-b px-4 dark:bg-default sm:h-20 md:px-6 print:hidden"
+        >
+            @if (!isScreenSmall) {
+                <!-- Logo -->
+                <div class="mx-2 flex items-center lg:mr-8">
+                    <div class="hidden lg:flex">
+                        <!-- Light version -->
+                        <img
+                            class="w-24 dark:hidden"
+                            src="images/logo/logo-text.svg"
+                            alt="Logo image"
+                        />
+                        <!-- Dark version -->
+                        <img
+                            class="hidden w-24 dark:flex"
+                            src="images/logo/logo-text-on-dark.svg"
+                            alt="Logo image"
+                        />
+                    </div>
+                    <!-- Small version -->
+                    <img
+                        class="flex w-8 lg:hidden"
+                        src="images/logo/logo.svg"
+                        alt="Logo image"
+                    />
+                </div>
+                <!-- Horizontal navigation -->
+                <fuse-horizontal-navigation
+                    class="mr-2"
+                    [name]="'mainNavigation'"
+                    [navigation]="navigation?.default || []"
+                ></fuse-horizontal-navigation>
+            }
+            <!-- Navigation toggle button -->
+            @if (isScreenSmall) {
+                <button
+                    class="mr-2"
+                    mat-icon-button
+                    (click)="toggleNavigation('mainNavigation')"
+                >
+                    <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+                </button>
+            }
+            <!-- Components -->
+            <div class="ml-auto flex items-center space-x-1 pl-2 sm:space-x-2">
+                @if (config?.headerButtons?.showLanguages !== false) { <languages></languages> }
+                @if (config?.headerButtons?.showFullscreen !== false) { <fuse-fullscreen class="hidden md:block"></fuse-fullscreen> }
+                @if (config?.headerButtons?.showSearch !== false) { <search [appearance]="'bar'"></search> }
+                @if (config?.headerButtons?.showShortcuts !== false) { <shortcuts></shortcuts> }
+                @if (config?.headerButtons?.showMessages !== false) { <messages></messages> }
+                @if (config?.headerButtons?.showNotifications !== false) { <notifications></notifications> }
+                @if (config?.headerButtons?.showUser !== false) { <user></user> }
+                @if (config?.headerButtons?.showSettings && config?.settingsConfig?.buttonPosition === 'header') {
+                    <button mat-icon-button matTooltip="Görünüm Ayarları" (click)="toggleSettings()">
+                        <mat-icon [svgIcon]="'heroicons_outline:cog-8-tooth'"></mat-icon>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Etik Kurul Bar -->
+        @if (showEtikKurulSelector) {
+            <div class="flex w-full flex-none items-stretch" [ngClass]="selectedEtikKurulThemeClass">
+                <button
+                    mat-button
+                    [matMenuTriggerFor]="etikKurulBarMenu"
+                    class="relative flex h-11 w-full items-center justify-center rounded-none px-6"
+                    [ngClass]="selectedEtikKurulThemeClass"
+                >
+                    <span class="text-sm font-semibold leading-5 sm:text-base">{{ selectedEtikKurulDisplayName }}</span>
+                    <mat-icon class="!h-4 !w-4 absolute right-4 text-current" [svgIcon]="'heroicons_solid:chevron-down'"></mat-icon>
+                </button>
+                <mat-menu [xPosition]="'before'" [overlapTrigger]="false" class="ek-etik-kurul-menu-panel" #etikKurulBarMenu="matMenu">
+                    @for (item of etikKurulOptions; track trackByEtikKurul($index, item)) {
+                        <button mat-menu-item (click)="onEtikKurulChange(item)" class="ek-etik-kurul-menu-item rounded-lg py-2" [ngClass]="getEtikKurulItemClass(item)">
+                            <span class="block w-full whitespace-normal break-words text-sm font-medium leading-6 sm:text-base">{{ item.name }}</span>
+                        </button>
+                    }
+                </mat-menu>
+            </div>
+        }
+
+        <!-- Content -->
+        <div class="bg-default flex w-full flex-auto flex-col">
+            <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
+                 Otherwise, layout changes won't be registered and the view won't be updated! -->
+            @if (true) {
+                <router-outlet></router-outlet>
+            }
+        </div>
+
+        <!-- Footer -->
+        <div
+            class="bg-card relative z-49 flex h-16 w-full flex-0 items-center justify-start border-t px-6 dark:bg-default sm:h-20 sm:px-8 print:hidden"
+        >
+            <span class="text-secondary font-medium"
+                >İstanbul Üniversitesi Bilgi İşlem Daire Başlanlığı &copy; {{ currentYear }}</span
+            >
+        </div>
+    </div>
+</div>

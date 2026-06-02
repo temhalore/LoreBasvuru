@@ -1,0 +1,178 @@
+<div class="flex min-w-0 flex-auto flex-col">
+  <!-- Widget Permission Management -->
+  <div class="mb-8 p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+      
+      <!-- Header -->
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <i class="fas fa-shield-alt text-primary text-2xl"></i>
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">🔐 Komponent Yetki İşlemleri</h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Sayfa ve komponent seçerek API yetkilerini yönetin. Controller bazında filtreleme yapabilirsiniz.
+              </p>
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <app-action-button
+             
+              [variant]="'secondary'"
+              [label]="'Geri'"
+              [icon]="'arrow-left'"
+              (onClick)="GoToWidgetPermissionToPageWidget()">
+            </app-action-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6">
+        <!-- Selection Form -->
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-6">
+          <div class="flex items-center space-x-2 mb-4">
+            <i class="fas fa-cogs text-primary"></i>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Sayfa ve Komponent Seçimi</h3>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Page Selection -->
+            <div >
+              <app-api-select-input 
+                [nameOfFormGroup]="formGroup" 
+                [controlName]="'page'" 
+                [isRequired]="false"
+                [title]="'Sayfa Listesi'" 
+                [apiUrl]="'Security/Page/GetList'"
+                [key]="'menuTree'" 
+                [compareKey]="'eid'"
+                [placeHolder]="'Sayfa seçiniz...'" 
+                (selectChangeEvent)="GetWidgetListByPageDto($event)">
+              </app-api-select-input>
+            </div>
+
+            <!-- Widget Selection -->
+            <div>
+              <app-api-select-input 
+                [nameOfFormGroup]="formGroup" 
+                [controlName]="'widget'" 
+                [isRequired]="false"
+                [title]="'Komponent Listesi'" 
+                [apiUrl]="widgetApiUrl"
+                [apiParam]="widgetApiParam"
+                [key]="'name'" 
+                [compareKey]="'eid'"
+                [placeHolder]="!formGroup.get('page')?.value ? 'Önce sayfa seçiniz...' : 'Komponent seçiniz...'" 
+                [isDisabled]="!formGroup.get('page')?.value || !widgetApiUrl"
+                (selectChangeEvent)="GetWidgetPermissionByWidgetDto($event)">
+              </app-api-select-input>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controller Filter -->
+        <div *ngIf="availableControllers.length > 0" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-6">
+          <div class="flex items-center space-x-2 mb-4">
+            <i class="fas fa-filter text-primary"></i>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Controller Filtresi</h3>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Controller Seçimi</label>
+              <select 
+                [(ngModel)]="selectedController"
+                (ngModelChange)="onControllerFilterChange($event)"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-800 dark:text-white">
+                <option value="">Tüm Controller'lar</option>
+                <option *ngFor="let controller of availableControllers" [value]="controller">
+                  {{controller}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+    <!-- Permissions Table -->
+    <div filteredPermissions.length 
+         class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+      
+      <div class="flex items-center space-x-2 p-4 border-b bg-gray-50">
+        <i class="fas fa-lock text-primary"></i>
+        <h3 class="text-lg font-semibold">API Yetki Listesi</h3>
+        <p class="text-sm text-gray-600 ml-auto">Komponent için kullanılabilir API yetkilerini seçin</p>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="widgetPermissionService.isLoading$ | async" class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+      </div>
+
+      <!-- Permissions Table -->
+      <div *ngIf="!(widgetPermissionService.isLoading$ | async)" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-primary text-white">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                <div class="flex items-center">
+                  <input type="checkbox" 
+                         
+                         [indeterminate]="isIndeterminate()"
+                         [checked]="isAllSelected()"
+                         (change)="toggleAllPermissions($any($event.target).checked)"
+                         class="rounded border-gray-300 text-primary focus:ring-primary">
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Area</th>
+              <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Controller</th>
+              <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Action</th>
+              <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Name</th>
+              <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">URL</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let permission of filteredPermissions; let i = index"
+                [class.bg-gray-50]="i % 2 === 0"
+                class="hover:bg-blue-50 transition-colors duration-200">
+              <td class="px-4 py-3 whitespace-nowrap">
+                <input type="checkbox"
+                       
+                       [disabled]="(widgetPermissionService.isLoading$|async)!"
+                       [(ngModel)]="permission.isWidgetPermission"
+                       (change)="Set(permission)"
+                       class="rounded border-gray-300 text-primary focus:ring-primary">
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                  {{permission.area}}
+                </span>
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                <span class="font-medium">{{permission.controller}}</span>
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                  {{permission.action}}
+                </span>
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                {{permission.name}}
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 font-mono text-xs">
+                {{permission.url}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!(widgetPermission$|async)?.permissionListDto?.length" 
+         class="text-center py-12 bg-white rounded-lg border">
+      <i class="fas fa-lock-open text-6xl text-gray-300 mb-4"></i>
+      <p class="text-lg font-medium mb-2 text-gray-600">Henüz yetki bulunamadı</p>
+      <p class="text-sm text-gray-500">Önce sayfa ve komponent seçimi yapınız</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,274 @@
+# Cursor Rules - İstanbul Üniversitesi Mobil Admin Panel
+
+<thinking_protocol>
+Bu proje hakkında düşünürken şu adımları izle:
+
+1. **Bağlamı Anla**: Kullanıcının ne istediğini, hangi modülde çalıştığını ve mevcut kod yapısını analiz et.
+
+2. **Mimariyi Düşün**: 
+   - Bu bir Angular 19+ projesi, Standalone Components kullanılıyor
+   - Fuse Admin Template ve Angular Material tabanlı
+   - RxJS ile reaktif programlama yapılıyor
+   - HttpService merkezi API katmanı
+
+3. **Kısıtları Hatırla**:
+   - ASLA `HttpClient` direkt kullanma
+   - ASLA `any` tipi kullanma
+   - ASLA hard-coded değerler kullanma
+   - Shared bileşenler varsa onları kullan
+
+4. **Çözümü Planla**:
+   - Hangi dosyalar etkilenecek?
+   - Hangi servisler kullanılacak?
+   - Hangi bileşenler import edilecek?
+
+5. **Doğrula**:
+   - TypeScript tip güvenliği sağlandı mı?
+   - OnPush change detection uygulandı mı?
+   - Reactive Forms kullanıldı mı?
+</thinking_protocol>
+
+## Proje Bilgisi
+
+- **Proje Adı:** İstanbul Üniversitesi Mobil Admin Panel
+- **Framework:** Angular 19.0.5
+- **UI:** Fuse Theme + Angular Material 19.0.4 + Tailwind CSS 3.4.17
+- **Dil:** TypeScript 5.6.3
+- **Stil:** SCSS
+- **State:** RxJS (BehaviorSubject pattern)
+
+## Persona
+
+Sen **Kıdemli Angular Mimarı** ve **Enterprise Yazılım Uzmanı**sın. Görevin:
+- Güvenli, performanslı ve bakımı kolay kod üretmek
+- Proje standartlarına %100 uyum sağlamak
+- SOLID prensiplerini uygulamak
+
+## Kritik Kurallar (Kırmızı Çizgiler)
+
+### ❌ ASLA Yapma
+1. `any` tipi kullanma - her zaman açık tip tanımla
+2. `HttpClient`'ı direkt kullanma - `HttpService.Post<T>()` kullan
+3. Hard-coded URL veya config değeri kullanma - `environment.ts` kullan
+4. Template-driven forms kullanma - Reactive Forms zorunlu
+5. Shared bileşenler varken manuel HTML tablo/form oluşturma
+6. Interface'lere `I` prefix'i ekleme (IUser değil User)
+7. İstenmeden `.spec.ts` dosyası oluşturma
+8. `ChangeDetectionStrategy.Default` kullanma - OnPush tercih et
+
+### ✅ Her Zaman Yap
+1. Yeni bileşenleri `standalone: true` ile oluştur
+2. `ChangeDetectionStrategy.OnPush` kullan
+3. Observable değişkenlere `$` suffix ekle (`users$`)
+4. `ServiceResponseModel.isSuccess` kontrolü yap
+5. Modelleri `BaseModel`'den türet
+6. `FormValidationService` ile form doğrulama yap
+
+## Dosya Yapısı ve İsimlendirme
+
+```yaml
+# Dosya isimleri: kebab-case
+user-profile.component.ts
+user-profile.component.html
+user-profile.component.scss
+
+# Sınıflar: PascalCase
+UserProfileComponent
+UserService
+UserModel
+
+# Değişkenler/Fonksiyonlar: camelCase
+getUserData()
+isLoading
+currentUser
+
+# Sabitler: UPPER_SNAKE_CASE
+MAX_RETRY_COUNT
+API_TIMEOUT
+
+# Observable: camelCase$
+users$
+loading$
+error$
+```
+
+## Klasör Kuralları
+
+```yaml
+# src/app/base/**
+- Altyapı servisleri (HttpService, AuthService, LocalStorageService)
+- Entity modelleri (BaseModel'den türetilmeli)
+- Guards ve Interceptors
+- Burada değişiklik yaparken dikkatli ol
+
+# src/app/shared/**
+- Yeniden kullanılabilir bileşenler
+- Önce burada uygun bileşen var mı kontrol et
+- data-table, form-controls, action-button vb.
+
+# src/app/modules/**
+- Özellik modülleri (lazy-loaded)
+- Her modül kendi routes dosyasına sahip
+- Standalone components kullan
+
+# src/@fuse/**
+- Fuse framework dosyaları
+- Mümkünse değiştirme, extend et
+- fuse-alert, fuse-card, fuse-drawer vb.
+```
+
+## UI Bileşen Önceliği
+
+Yeni UI oluştururken bu sırayı takip et:
+
+1. **Shared Components** (`src/app/shared/components/`)
+   - `app-data-table` - Tablolar için
+   - `app-action-button` - Aksiyon butonları
+   - `app-shared-button` - Genel butonlar
+   - Form kontrolleri: `app-text-input`, `app-select-input`, `app-api-select-input`, `app-datepicker-input`, `app-checkbox-input`
+
+2. **Fuse Components** (`@fuse/components/`)
+   - `fuse-alert` - Uyarılar
+   - `fuse-card` - Kartlar
+   - `fuse-drawer` - Çekmeceler
+   - `fuse-loading-bar` - Yükleme
+
+3. **Angular Material** - Yukarıdakiler yoksa
+
+4. **HTML + Tailwind** - Son çare
+
+## Kod Şablonları
+
+### Yeni Component
+```typescript
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+
+@Component({
+    selector: 'app-feature',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './feature.component.html',
+    styleUrls: ['./feature.component.scss']
+})
+export class FeatureComponent {
+    form = new FormGroup({
+        name: new FormControl('', { nonNullable: true })
+    });
+}
+```
+
+### Servis ile API Çağrısı
+```typescript
+import { Injectable } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { HttpService } from 'app/base/services/http.service';
+
+@Injectable({ providedIn: 'root' })
+export class FeatureService {
+    constructor(private httpService: HttpService) {}
+
+    getData(): Observable<FeatureModel[]> {
+        return this.httpService.Post<FeatureModel[]>('Feature/GetAll', {}).pipe(
+            map(response => response.isSuccess ? response.data : [])
+        );
+    }
+}
+```
+
+### Model Tanımı
+```typescript
+import { BaseModel } from 'app/base/models/general/base.model';
+
+export class FeatureModel extends BaseModel {
+    name: string;
+    description: string;
+    isActive: boolean;
+}
+```
+
+## Glob Patterns
+
+```yaml
+# TypeScript/Angular dosyaları
+**/*.component.ts    # Component mantığı
+**/*.service.ts      # Servis dosyaları
+**/*.model.ts        # Model tanımları
+**/*.routes.ts       # Route tanımları
+**/*.guard.ts        # Route guards
+
+# Stil dosyaları
+**/*.component.scss  # Component stilleri
+**/*.scss            # Global stiller
+
+# Template dosyaları
+**/*.component.html  # Component template'leri
+
+# Config dosyaları
+angular.json         # Angular CLI config
+tsconfig*.json       # TypeScript config
+tailwind.config.js   # Tailwind config
+package.json         # Dependencies
+```
+
+## Sık Kullanılan Import Path'leri
+
+```typescript
+// Base services
+import { HttpService } from 'app/base/services/http.service';
+import { LocalStorageService } from 'app/base/services/local-storage.service';
+import { SweetAlertService } from 'app/base/services/sweet-alert.service';
+import { FormValidationService } from 'app/base/services/form-validation.service';
+
+// Base models
+import { BaseModel } from 'app/base/models/general/base.model';
+import { ServiceResponseModel } from 'app/base/models/general/service-response.model';
+
+// Shared components
+import { DataTableComponent } from 'app/shared/components/data-table/data-table.component';
+import { ActionButtonComponent } from 'app/shared/components/action-button/action-button.component';
+
+// Fuse
+import { FuseAlertComponent } from '@fuse/components/alert';
+import { FuseCardComponent } from '@fuse/components/card';
+
+// Environment
+import { environment } from 'environments/environment';
+```
+
+## Hata Yönetimi Pattern
+
+```typescript
+// ✅ DOĞRU: ServiceResponseModel kontrolü
+this.featureService.getData().subscribe(response => {
+    if (response.isSuccess) {
+        this.data = response.data;
+    } else {
+        // Hata HttpService tarafından merkezi olarak handle edilir
+        console.error(response.error_message);
+    }
+});
+
+// ❌ YANLIŞ: subscribe error callback
+this.featureService.getData().subscribe({
+    next: (data) => { ... },
+    error: (err) => { ... } // Bunu kullanma
+});
+```
+
+## Teknoloji Yığını Referansı
+
+| Kategori | Teknoloji | Versiyon |
+|----------|-----------|----------|
+| Framework | Angular | 19.0.5 |
+| UI | Angular Material | 19.0.4 |
+| CSS | Tailwind CSS | 3.4.17 |
+| Template | Fuse Admin | - |
+| i18n | Transloco | 7.5.1 |
+| State | RxJS | 7.8.1 |
+| Charts | ApexCharts | 4.3.0 |
+| Rich Text | Froala / Quill | 4.6.2 / 2.0.3 |
+| Date | Luxon | 3.5.0 |
+| Alerts | SweetAlert2 | 11.22.5 |

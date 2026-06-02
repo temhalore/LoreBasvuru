@@ -1,0 +1,21 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <!-- API TreeList Example -->
+    <div class="mb-8 p-6">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            🗂️ Menü Yönetimi
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400">
+            Menüleri ekleyin, düzenleyin veya silin. Tüm işlemler güvenli API ile gerçekleştirilir.
+          </p>
+        </div>
+        <div class="p-6">
+          <app-tree-list [config]="menuTreeConfig"></app-tree-list>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- *ngIf="authService.checkWidgetAccess('superadmin-rolewidget-gorolewidgettorole')
+KJoponent bazlı Yetki Örneği -->

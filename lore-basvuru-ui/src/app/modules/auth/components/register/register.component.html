@@ -1,0 +1,292 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+  <div class="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-10">
+
+    <!-- Başlık + Logolar -->
+    <div class="flex items-center justify-between mb-8">
+      <img src="images/logo/iu_logo.jpg" alt="İstanbul Üniversitesi" class="h-16 w-auto object-contain flex-shrink-0" />
+      <div class="text-center flex-1 px-4">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Hesap Oluştur</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Etik Kurul Başvuru Sistemi</p>
+      </div>
+      <img src="images/logo/logo.svg" alt="Etik Kurul" class="h-16 w-auto object-contain flex-shrink-0" />
+    </div>
+
+    <!-- Stepper -->
+    <mat-stepper [linear]="true" #stepper labelPosition="bottom" class="register-stepper">
+
+      <!-- ADIM 1: Bilgi Girişi -->
+      <mat-step [stepControl]="infoForm" label="Bilgi Girişi">
+        <form [formGroup]="infoForm" class="flex flex-col gap-4 mt-6">
+
+          <!-- Uyruk -->
+          <app-api-select-input
+            [nameOfFormGroup]="infoForm"
+            controlName="uyruk"
+            title="Uyruk"
+            placeHolder="Ülke seçiniz"
+            apiUrl="Common/Country/GetList"
+            displayField="name"
+            [isRequired]="true"
+            (dataLoaded)="onCountryDataLoaded($event)">
+          </app-api-select-input>
+
+          <!-- Kimlik No / Pasaport No + Doğum Tarihi -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <app-text-input
+              [formGroup]="infoForm"
+              controlName="kimlikNo"
+              [label]="kimlikNoLabel"
+              [placeholder]="kimlikNoPlaceholder"
+              [isRequired]="true"
+              [maxLength]="kimlikNoMaxLength"
+              (input)="onKimlikNoInput($event)">
+            </app-text-input>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                Doğum Tarihi
+                <span *ngIf="!testModu" class="text-red-500 ml-0.5">*</span>
+              </label>
+              <app-datepicker-input
+                [formGroup]="infoForm"
+                controlName="dogumTarihi"
+                label=""
+                placeholder="GG/AA/YYYY"
+                appearance="outline"
+                [isRequired]="!testModu"
+                [hideRequiredMarker]="true"
+                [showControlStatus]="false"
+                [maxDate]="today">
+              </app-datepicker-input>
+            </div>
+          </div>
+
+          <!-- Ad + Soyad -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <app-text-input
+              [formGroup]="infoForm"
+              controlName="ad"
+              label="Ad"
+              placeholder="Ad"
+              [isRequired]="true">
+            </app-text-input>
+
+            <app-text-input
+              [formGroup]="infoForm"
+              controlName="soyad"
+              label="Soyad"
+              placeholder="Soyad"
+              [isRequired]="true">
+            </app-text-input>
+          </div>
+
+          <!-- Telefon tekrar alanı talep gereği pasife alındı; eski blok aşağıda yorumda tutuluyor. -->
+          <div class="grid grid-cols-1 gap-4">
+            <app-phone-input
+              [formGroup]="infoForm"
+              controlName="telefon"
+              label="Telefon"
+              placeholder="5XX XXX XX XX"
+              [isRequired]="!testModu"
+              [noPaste]="true"
+              [hideCountrySelector]="true">
+            </app-phone-input>
+          </div>
+
+          <!--
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <app-phone-input
+              [formGroup]="infoForm"
+              controlName="telefon"
+              label="Telefon"
+              placeholder="5XX XXX XX XX"
+              [isRequired]="!testModu"
+              [noPaste]="true"
+              [hideCountrySelector]="true">
+            </app-phone-input>
+
+            <app-phone-input
+              [formGroup]="infoForm"
+              controlName="telefonTekrar"
+              label="Telefon Tekrar"
+              placeholder="5XX XXX XX XX"
+              [isRequired]="!testModu"
+              [noPaste]="true"
+              [hideCountrySelector]="true">
+            </app-phone-input>
+          </div>
+          -->
+
+          <!-- Telefon uyuşmazlığı uyarısı tekrar alanı ile birlikte pasife alındı. -->
+          <!--
+          <div *ngIf="telefonMismatch" class="text-red-500 text-sm -mt-2">
+            Telefon numaraları eşleşmiyor.
+          </div>
+          -->
+
+          <!-- E-posta tekrar alanı talep gereği pasife alındı; eski blok aşağıda yorumda tutuluyor. -->
+          <div class="grid grid-cols-1 gap-4">
+            <div (paste)="onPastePrevent($event)" (copy)="onPastePrevent($event)">
+              <app-text-input
+                [formGroup]="infoForm"
+                controlName="email"
+                label="E-Posta"
+                placeholder="E-Posta"
+                type="email"
+                autocomplete="off"
+                [isRequired]="!testModu">
+              </app-text-input>
+            </div>
+          </div>
+
+          <!--
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div (paste)="onPastePrevent($event)" (copy)="onPastePrevent($event)">
+              <app-text-input
+                [formGroup]="infoForm"
+                controlName="email"
+                label="E-Posta"
+                placeholder="E-Posta"
+                type="email"
+                autocomplete="off"
+                [isRequired]="!testModu">
+              </app-text-input>
+            </div>
+
+            <div (paste)="onPastePrevent($event)" (copy)="onPastePrevent($event)">
+              <app-text-input
+                [formGroup]="infoForm"
+                controlName="emailTekrar"
+                label="E-Posta Tekrar"
+                placeholder="E-Posta adresini tekrar giriniz"
+                type="email"
+                autocomplete="off"
+                [isRequired]="!testModu">
+              </app-text-input>
+            </div>
+          </div>
+          -->
+
+          <!-- E-posta uyuşmazlığı uyarısı tekrar alanı ile birlikte pasife alındı. -->
+          <!--
+          <div *ngIf="emailMismatch" class="text-red-500 text-sm -mt-2">
+            E-Posta adresleri eşleşmiyor.
+          </div>
+          -->
+
+          <!-- Şifre + Şifre Tekrar -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="password-input-wrapper">
+              <app-text-input
+                [formGroup]="infoForm"
+                controlName="password"
+                label="Şifre"
+                placeholder="Şifre"
+                [type]="showPassword ? 'text' : 'password'"
+                autocomplete="new-password"
+                [isRequired]="true">
+              </app-text-input>
+              <button type="button" class="password-toggle" (click)="showPassword = !showPassword" tabindex="-1">
+                <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </div>
+
+            <div class="password-input-wrapper">
+              <app-text-input
+                [formGroup]="infoForm"
+                controlName="passwordConfirm"
+                label="Şifre Tekrar"
+                placeholder="Şifre Tekrar"
+                [type]="showPasswordConfirm ? 'text' : 'password'"
+                autocomplete="new-password"
+                [isRequired]="true">
+              </app-text-input>
+              <button type="button" class="password-toggle" (click)="showPasswordConfirm = !showPasswordConfirm" tabindex="-1">
+                <mat-icon>{{ showPasswordConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Şifre uyuşmazlığı uyarısı -->
+          <div *ngIf="passwordMismatch" class="text-red-500 text-sm -mt-2">
+            Şifreler eşleşmiyor.
+          </div>
+
+          <!-- Bilgileri Doğruluyorum -->
+          <app-checkbox-input
+            [formGroup]="infoForm"
+            controlName="bilgileriDogruluyorum"
+            label="Bilgilerimin Doğruluğunu Onaylıyorum"
+            [showControlStatus]="false"
+            [showErrorMessages]="false"
+            [showControlStatusOnlyWhenTouched]="false"
+            [isRequired]="true">
+          </app-checkbox-input>
+
+          <!-- Devam Et Butonu -->
+          <div class="flex justify-end mt-2">
+            <button mat-flat-button color="primary"
+                    [disabled]="isLoading"
+                    (click)="onInfoSubmit()"
+                    class="px-8 py-2">
+              <mat-icon *ngIf="isLoading" class="animate-spin mr-2">autorenew</mat-icon>
+              Kayıt Ol
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- ADIM 2: Kayıt Tamamlama -->
+      <mat-step label="Tamamlandı">
+        <div class="flex flex-col items-center gap-6 mt-6 py-8">
+
+          <!-- Loading -->
+          <ng-container *ngIf="isLoading">
+            <mat-spinner [diameter]="48"></mat-spinner>
+            <p class="text-gray-500 dark:text-gray-400">Kayıt işlemi tamamlanıyor...</p>
+          </ng-container>
+
+          <!-- Başarılı -->
+          <ng-container *ngIf="!isLoading && registrationSuccess">
+            <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+              <mat-icon class="text-4xl text-green-600 dark:text-green-400">check_circle</mat-icon>
+            </div>
+            <div class="text-center">
+              <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Kayıt Başarıyla Tamamlandı!</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                Hesabınız başarıyla oluşturuldu. Giriş sayfasına yönlendiriliyorsunuz.
+                Giriş yaptıktan sonra e-posta ve telefon doğrulamanızı tamamlamanız gerekmektedir.
+              </p>
+            </div>
+            <button mat-flat-button color="primary" (click)="navigateToLogin()" class="px-8 py-2 mt-2">
+              Giriş Yap
+            </button>
+          </ng-container>
+
+          <!-- Hata -->
+          <ng-container *ngIf="!isLoading && registrationError">
+            <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
+              <mat-icon class="text-4xl text-red-600 dark:text-red-400">error</mat-icon>
+            </div>
+            <div class="text-center">
+              <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Kayıt Başarısız</h3>
+              <p class="text-sm text-red-500 mt-2">{{ registrationError }}</p>
+            </div>
+            <button mat-flat-button color="warn" (click)="retryRegistration()" class="px-8 py-2 mt-2">
+              Tekrar Dene
+            </button>
+          </ng-container>
+
+        </div>
+      </mat-step>
+
+    </mat-stepper>
+
+    <!-- Alt linkler -->
+    <div class="text-center mt-6 text-sm text-gray-500 dark:text-gray-400">
+      Hesabınız var mı?
+      <a (click)="navigateToLogin()" class="text-primary-500 hover:underline font-medium ml-1 cursor-pointer">Giriş Yap</a>
+    </div>
+
+  </div>
+</div>

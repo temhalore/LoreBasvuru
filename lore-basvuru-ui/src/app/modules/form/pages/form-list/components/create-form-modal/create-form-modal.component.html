@@ -1,0 +1,99 @@
+<div class="create-form-modal rounded-[28px] bg-white dark:bg-slate-900">
+    <div class="modal-header px-6 py-6 text-white sm:px-8">
+        <div class="flex items-start justify-between gap-4">
+            <div class="space-y-3">
+                <span class="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em]">
+                    İlk Taslak
+                </span>
+
+                <div>
+                    <h2 class="text-2xl font-semibold sm:text-[2rem]">Yeni Form Oluştur</h2>
+                    <p class="mt-2 max-w-2xl text-sm leading-6 text-cyan-50/90">
+                        Formun ilk taslağını başlatmak için temel bilgileri girin. Başlık zorunlu, açıklama isteğe bağlıdır.
+                    </p>
+                </div>
+            </div>
+
+            <button
+                type="button"
+                class="close-button inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition"
+                [disabled]="formListService.isLoading$ | async"
+                (click)="close()"
+                aria-label="Modalı kapat">
+                <span class="text-2xl leading-none">&times;</span>
+            </button>
+        </div>
+    </div>
+
+    <div mat-dialog-content class="space-y-6 px-6 py-6 sm:px-8 sm:py-7">
+        <form [formGroup]="formGroup" class="space-y-6">
+            <div class="grid gap-5">
+                <app-text-input
+                    [formGroup]="formGroup"
+                    controlName="baslik"
+                    label="Form Başlığı"
+                    placeholder="Örn. Akademik Etkinlik Geri Bildirim Formu"
+                    icon="title"
+                    [isRequired]="true"
+                    [maxLength]="200"
+                    tooltip="Bu alan zorunludur ve en fazla 200 karakter olabilir">
+                </app-text-input>
+
+                <app-textarea-input
+                    [formGroup]="formGroup"
+                    controlName="aciklama"
+                    label="Açıklama"
+                    placeholder="Formun kullanım amacı, hedef kitlesi veya kısa bir not ekleyebilirsiniz"
+                    icon="description"
+                    [rows]="4"
+                    [maxLength]="1000"
+                    [showCharacterCount]="true"
+                    [enableClearButton]="true"
+                    tooltip="Bu alan isteğe bağlıdır">
+                </app-textarea-input>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/70">
+                <app-checkbox-input
+                    [formGroup]="formGroup"
+                    controlName="isPublic"
+                    label="Herkese Açık Form"
+                    description="Aktif olduğunda form, açık paylaşım senaryoları için uygun şekilde işaretlenir."
+                    checkboxType="toggle"
+                    [showStatusText]="true"
+                    trueText="Açık"
+                    falseText="Kapalı">
+                </app-checkbox-input>
+            </div>
+        </form>
+    </div>
+
+    <div mat-dialog-actions class="border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-800 dark:bg-slate-950/60 sm:px-8">
+        <div class="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm text-slate-600 dark:text-slate-300">
+                Başlık zorunludur. Taslak oluştuktan sonra açıklama ve görünürlük ayarı güncellenebilir.
+            </p>
+
+            <div class="flex flex-col gap-3 sm:flex-row">
+                <app-action-button
+                    label="Vazgeç"
+                    icon="times"
+                    variant="secondary"
+                    [outline]="true"
+                    [disabled]="formListService.isLoading$ | async"
+                    (onClick)="close()">
+                </app-action-button>
+
+                <app-action-button
+                    label="Formu Oluştur"
+                    icon="plus"
+                    variant="primary"
+                    [loading]="formListService.isLoading$ | async"
+                    loadingText="Form oluşturuluyor..."
+                    [disabled]="formGroup.invalid || (formListService.isLoading$ | async)"
+                    (onClick)="save()">
+                </app-action-button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -208,10 +208,10 @@ Agent'ı çalıştırmadan önce hangi klasörde olduğunu kontrol et:
 
 ```bash
 # .NET solution için
-cd D:\LoreBasvuru\service
+cd D:\development\ozel\LoreBasvuru\service
 
 # Angular için
-cd D:\LoreBasvuru\lore-basvuru-ui
+cd D:\development\ozel\LoreBasvuru\lore-basvuru-ui
 ```
 
 ---
@@ -223,7 +223,7 @@ cd D:\LoreBasvuru\lore-basvuru-ui
 Agent'a ver:
 ```
 hazirlik/01-MIMARI-GENEL.md, 03-ENTITY-VE-POCO.md, 04-DTO-VE-BASE-YAPILAR.md dosyalarını oku.
-D:\LoreBasvuru\service klasöründe LoreBasvuru.sln solution dosyası ve 4 projeyi oluştur:
+D:\development\ozel\LoreBasvuru\service klasöründe LoreBasvuru.sln solution dosyası ve 4 projeyi oluştur:
 - Lore.Basvuru.Common (.NET 8 Class Library)
 - Lore.Basvuru.Dal (.NET 8 Class Library) → references Lore.Basvuru.Common
 - Lore.Basvuru.Bal (.NET 8 Class Library) → references Lore.Basvuru.Dal, Lore.Basvuru.Common
@@ -237,7 +237,7 @@ Agent'a ver:
 ```
 hazirlik/02-VERITABANI-SEMA.md ve hazirlik/17-YETKILENDIRME.md dosyalarını oku.
 Tüm tabloları içeren migrate.sql dosyası yaz. SQL Server syntax kullan.
-Dosyayı D:\LoreBasvuru\service\migrate.sql konumuna kaydet.
+Dosyayı D:\development\ozel\LoreBasvuru\service\migrate.sql konumuna kaydet.
 ```
 
 **Sen:** `migrate.sql`'i SSMS'te çalıştır.
@@ -359,7 +359,7 @@ POST /Api/Yetki/ControllerMethodleriTara endpoint'ini çağır (Swagger üzerind
 
 ```bash
 # Proje çalıştır
-cd D:\LoreBasvuru\service
+cd D:\development\ozel\LoreBasvuru\service
 dotnet run --project Lore.Basvuru.Service
 
 # Build
@@ -375,7 +375,7 @@ dotnet publish Lore.Basvuru.Service -c Release -o publish/api
 ### Frontend
 
 ```bash
-cd D:\LoreBasvuru\lore-basvuru-ui
+cd D:\development\ozel\LoreBasvuru\lore-basvuru-ui
 
 # Geliştirme sunucusu
 ng serve

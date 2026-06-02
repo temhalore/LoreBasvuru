@@ -1,0 +1,182 @@
+<div [formGroup]="formGroup" [ngClass]="containerClass">
+    <!-- Tag Input Field -->
+    <mat-form-field class="tag-input-field" appearance="outline">
+        <mat-label>
+            {{ label }}
+            <span *ngIf="showRequiredMarker" class="text-red-500 ml-1">*</span>
+        </mat-label>
+
+        <!-- Tags Display and Input -->
+        <mat-chip-grid #chipGrid aria-label="Tag selection" [formControlName]="controlName">
+            <!-- Existing Tags -->
+            <mat-chip-row
+                *ngFor="let tag of value"
+                [editable]="editable && !isControlDisabled"
+                [removable]="removable && !isControlDisabled"
+                [aria-description]="getTagTooltip(tag)"
+                [matTooltip]="getTagTooltip(tag)"
+                [color]="tagColor"
+                (removed)="removeTag(tag)"
+                (edited)="editTag(tag, $event)"
+                class="tag-chip">
+                
+                {{ getTagDisplayValue(tag) }}
+                
+                <button 
+                    *ngIf="removable && !isControlDisabled"
+                    matChipRemove 
+                    [attr.aria-label]="'Remove ' + tag"
+                    class="tag-remove-button">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </mat-chip-row>
+
+            <!-- Tag Input -->
+            <input
+                #tagInput
+                placeholder="{{ canAddMoreTags ? placeholder : 'Maksimum tag sayısına ulaşıldı' }}"
+                [matChipInputFor]="chipGrid"
+                [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+                [matChipInputAddOnBlur]="addOnBlur"
+                [disabled]="isControlDisabled || !canAddMoreTags"
+                (matChipInputTokenEnd)="addTag($event)"
+                (input)="onInputChange($event.target.value)"
+                (blur)="onInputBlur()"
+                [matAutocomplete]="auto"
+                class="tag-input" />
+        </mat-chip-grid>
+
+        <!-- Autocomplete for Suggestions -->
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectSuggestion($event.option.value)">
+            <mat-option 
+                *ngFor="let suggestion of filteredSuggestions.slice(0, 8)" 
+                [value]="suggestion">
+                <mat-icon class="mr-2">label</mat-icon>
+                {{ suggestion }}
+            </mat-option>
+        </mat-autocomplete>
+
+        <!-- Hint Text -->
+        <mat-hint *ngIf="description || showTagCount">
+            <span *ngIf="description">{{ description }}</span>
+            <span *ngIf="description && showTagCount"> • </span>
+            <span *ngIf="showTagCount">{{ tagCount }}/{{ maxTags }} tag</span>
+        </mat-hint>
+
+        <!-- Tooltip -->
+        <mat-icon 
+            *ngIf="hasTooltip" 
+            matSuffix 
+            [matTooltip]="tooltip"
+            class="cursor-help text-gray-400">
+            help_outline
+        </mat-icon>
+    </mat-form-field>
+
+    <!-- Quick Add Suggestions -->
+    <div *ngIf="predefinedTags.length > 0" class="predefined-tags mt-2">
+        <p class="text-sm font-medium text-gray-700 mb-2">Önerilen Tags:</p>
+        <div class="flex flex-wrap gap-2">
+            <button
+                *ngFor="let tag of predefinedTags.slice(0, 6)"
+                mat-stroked-button
+                size="small"
+                [disabled]="isControlDisabled || !canAddTag(tag)"
+                (click)="addPredefinedTag(tag)"
+                class="predefined-tag-button text-xs">
+                <mat-icon class="mr-1 text-sm">add</mat-icon>
+                {{ tag }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div *ngIf="showClearAll || showAddButton" class="flex items-center gap-2 mt-2">
+        <!-- Add Button -->
+        <button 
+            *ngIf="showAddButton"
+            mat-stroked-button
+            type="button"
+            [disabled]="isControlDisabled || !currentInput.trim() || !canAddTag(currentInput.trim())"
+            (click)="addTagFromInput()"
+            class="text-sm">
+            <mat-icon class="mr-1 text-base">add</mat-icon>
+            Tag Ekle
+        </button>
+
+        <!-- Clear All Button -->
+        <button 
+            *ngIf="showClearAll && tagCount > 0"
+            mat-stroked-button
+            type="button"
+            [disabled]="isControlDisabled"
+            (click)="clearAllTags()"
+            class="text-sm">
+            <mat-icon class="mr-1 text-base">clear_all</mat-icon>
+            Tümünü Temizle
+        </button>
+
+        <!-- Tag Count Display -->
+        <span *ngIf="showTagCount" class="text-sm text-gray-500 ml-auto">
+            <mat-icon class="text-sm mr-1">label</mat-icon>
+            {{ tagCount }} tag
+        </span>
+    </div>
+
+    <!-- Error Messages -->
+    <div *ngIf="isControlInvalid && isControlTouched" class="error-messages mt-2">
+        <div *ngFor="let error of getAllErrors()" class="error-message text-red-600 text-sm">
+            {{ getErrorMessage(error.errorName) }}
+        </div>
+    </div>
+
+    <!-- Status Indicators -->
+    <div *ngIf="isControlTouched" class="flex items-center gap-2 mt-2 text-xs">
+        <!-- Valid Indicator -->
+        <div *ngIf="isControlValid" class="flex items-center gap-1 text-green-600">
+            <mat-icon class="text-sm">check_circle</mat-icon>
+            <span>Geçerli</span>
+        </div>
+
+        <!-- Invalid Indicator -->
+        <div *ngIf="isControlInvalid" class="flex items-center gap-1 text-red-600">
+            <mat-icon class="text-sm">error</mat-icon>
+            <span>Geçersiz</span>
+        </div>
+
+        <!-- Tag Statistics -->
+        <div class="text-gray-500 ml-auto flex items-center gap-2">
+            <span class="font-medium">Tags:</span>
+            <span>{{ tagCount }}/{{ maxTags }}</span>
+            
+            <span *ngIf="!allowDuplicates" class="text-xs">
+                • Duplicate izin verilmiyor
+            </span>
+        </div>
+    </div>
+
+    <!-- Advanced Status Display -->
+    <div *ngIf="tagCount > 0" class="status-display mt-2 p-2 bg-gray-50 rounded border">
+        <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-700">Seçili Tags:</span>
+            <div class="flex flex-wrap gap-1">
+                <span 
+                    *ngFor="let tag of value.slice(0, 5)" 
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                    {{ tag }}
+                </span>
+                <span 
+                    *ngIf="tagCount > 5" 
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
+                    +{{ tagCount - 5 }} daha
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Text -->
+    <div *ngIf="!isControlTouched" class="help-text mt-2 text-xs text-gray-500">
+        <mat-icon class="text-sm mr-1">info</mat-icon>
+        Tag eklemek için yazıp Enter veya virgül kullanın. Önerilerden seçebilirsiniz.
+    </div>
+</div>

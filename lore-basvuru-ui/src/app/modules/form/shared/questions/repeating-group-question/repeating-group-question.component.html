@@ -1,0 +1,57 @@
+@if (isAnswerOnly) {
+    @if (staticShellItems.length) {
+        <div class="space-y-4">
+            @for (item of staticShellItems; track item.key) {
+                <div class="question-group-summary-panel">
+                    <div class="question-group-summary-label">Kayıt {{ item.order }}</div>
+                    <div class="question-group-summary-list">
+                        @for (child of schema.children; track child.eid) {
+                            <div
+                                class="question-group-summary-item"
+                                [class.question-group-summary-item--full-span]="isWideQuestion(child)">
+                                <app-question-type-renderer
+                                    [schema]="child"
+                                    [state]="buildStaticChildState(asGroupInstance(item), child)">
+                                </app-question-type-renderer>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    } @else {
+        <div class="question-answer-box question-answer-box--secondary">Yanıt verilmedi</div>
+    }
+} @else {
+    <app-repeating-group-shell
+        [items]="showSchemaPreview ? schemaPreviewShellItems : ((dynamicShellItems$ | async) ?? [])"
+        [emptyMessage]="emptyMessage"
+        [showAddButton]="canModify"
+        [showDeleteButton]="canModify"
+        (add)="onAdd()"
+        (delete)="onDelete($event)">
+        <ng-template let-item>
+            @if (showSchemaPreview) {
+                @for (child of schema.children; track child.eid) {
+                    <app-question-type-renderer
+                        [schema]="child"
+                        [state]="buildSchemaPreviewChildState(child)">
+                    </app-question-type-renderer>
+                }
+            } @else {
+                @for (child of schema.children; track child.eid) {
+                    @let ctx = getChildContext(item.key, child);
+                    @if (ctx) {
+                        @if (ctx.renderState$ | async; as childState) {
+                            <app-question-type-renderer
+                                [schema]="child"
+                                [state]="childState"
+                                (answerChange)="ctx.onAnswerChange($event)">
+                            </app-question-type-renderer>
+                        }
+                    }
+                }
+            }
+        </ng-template>
+    </app-repeating-group-shell>
+}

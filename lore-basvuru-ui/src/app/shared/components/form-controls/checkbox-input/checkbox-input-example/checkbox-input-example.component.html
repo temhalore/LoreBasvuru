@@ -1,0 +1,676 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <!-- Page Header -->
+    <div class="mb-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Checkbox Input Components</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">
+            Checkbox Input kontrolleri örnekleri
+        </p>
+    </div>
+
+    <!-- Checkbox Input Examples -->
+    <div class="mb-12 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+            <!-- Header -->
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    📝 Checkbox Input Examples
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Angular Checkbox Input kontrolleri kullanım örnekleri
+                </p>
+            </div>
+
+            <mat-tab-group class="example-tabs">
+                <!-- Basic Checkbox Examples -->
+                <mat-tab label="Basic Checkbox">
+            <div class="tab-content p-6">
+                <mat-card class="example-card">
+                    <mat-card-header>
+                        <mat-card-title>Basic Checkbox Examples</mat-card-title>
+                        <mat-card-subtitle>Standard checkbox implementations</mat-card-subtitle>
+                    </mat-card-header>
+                    
+                    <mat-card-content>
+                        <form [formGroup]="basicForm" (ngSubmit)="onBasicFormSubmit()" class="space-y-4">
+                            <!-- Simple Checkbox -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Simple Checkbox</h3>
+                                <app-checkbox-input
+                                    [formGroup]="basicForm"
+                                    controlName="simpleCheckbox"
+                                    label="I agree to the terms and conditions"
+                                    checkboxType="checkbox">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Required Checkbox -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Required Checkbox</h3>
+                                <app-checkbox-input
+                                    [formGroup]="basicForm"
+                                    controlName="requiredCheckbox"
+                                    label="Accept privacy policy"
+                                    description="This field is required to proceed"
+                                    checkboxType="checkbox"
+                                    [isRequired]="true">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Pre-checked Checkbox -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Pre-checked Checkbox</h3>
+                                <app-checkbox-input
+                                    [formGroup]="basicForm"
+                                    controlName="checkedCheckbox"
+                                    label="Subscribe to newsletter"
+                                    description="Receive updates about new features"
+                                    checkboxType="checkbox">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Disabled Checkbox -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Disabled Checkbox</h3>
+                                <app-checkbox-input
+                                    [formGroup]="basicForm"
+                                    controlName="disabledCheckbox"
+                                    label="Admin privileges"
+                                    description="This option is currently disabled"
+                                    checkboxType="checkbox">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- With Description -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">With Description</h3>
+                                <app-checkbox-input
+                                    [formGroup]="basicForm"
+                                    controlName="withDescription"
+                                    label="Enable notifications"
+                                    description="You will receive email notifications about important updates and changes to your account"
+                                    checkboxType="checkbox">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- With Icon -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">With Icon</h3>
+                                <app-checkbox-input
+                                    [formGroup]="basicForm"
+                                    controlName="withIcon"
+                                    label="Remember my choice"
+                                    description="This setting will be saved for future visits"
+                                    checkboxType="checkbox"
+                                    [showIcon]="true"
+                                    checkedIcon="verified"
+                                    uncheckedIcon="help_outline">
+                                </app-checkbox-input>
+                            </div>
+                        </form>
+                    </mat-card-content>
+                    
+                    <mat-card-actions class="flex gap-2 p-4">
+                        <button mat-raised-button color="primary" (click)="onBasicFormSubmit()">
+                            <mat-icon class="mr-2">check</mat-icon>
+                            Submit Form
+                        </button>
+                        <button mat-stroked-button (click)="resetBasicForm()">
+                            <mat-icon class="mr-2">refresh</mat-icon>
+                            Reset Form
+                        </button>
+                    </mat-card-actions>
+
+                    <!-- Form Status Display -->
+                    <mat-card-footer class="p-4 bg-gray-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Status:</h4>
+                                <p class="text-sm text-gray-600">{{ getFormStatus(basicForm) }}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Values:</h4>
+                                <pre class="text-xs bg-white p-2 rounded border overflow-auto">{{ getFormValues(basicForm) }}</pre>
+                            </div>
+                        </div>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <!-- Toggle/Switch Examples -->
+        <mat-tab label="Toggle & Switch">
+            <div class="tab-content p-6">
+                <mat-card class="example-card">
+                    <mat-card-header>
+                        <mat-card-title>Toggle & Switch Examples</mat-card-title>
+                        <mat-card-subtitle>Toggle switches and slide controls</mat-card-subtitle>
+                    </mat-card-header>
+                    
+                    <mat-card-content>
+                        <form [formGroup]="toggleForm" (ngSubmit)="onToggleFormSubmit()" class="space-y-4">
+                            <!-- Basic Toggle -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Basic Toggle</h3>
+                                <app-checkbox-input
+                                    [formGroup]="toggleForm"
+                                    controlName="basicToggle"
+                                    label="Enable feature"
+                                    checkboxType="toggle">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Switch Control -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Switch Control</h3>
+                                <app-checkbox-input
+                                    [formGroup]="toggleForm"
+                                    controlName="switchControl"
+                                    label="Dark mode"
+                                    description="Switch between light and dark theme"
+                                    checkboxType="switch">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- With Status Text -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">With Status Text</h3>
+                                <app-checkbox-input
+                                    [formGroup]="toggleForm"
+                                    controlName="withStatusText"
+                                    label="Auto-save documents"
+                                    description="Automatically save changes every 30 seconds"
+                                    checkboxType="toggle"
+                                    [showStatusText]="true"
+                                    trueText="Enabled"
+                                    falseText="Disabled">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Disabled Toggle -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Disabled Toggle</h3>
+                                <app-checkbox-input
+                                    [formGroup]="toggleForm"
+                                    controlName="disabledToggle"
+                                    label="Premium feature"
+                                    description="This feature requires a premium subscription"
+                                    checkboxType="toggle">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- With Action Buttons -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">With Action Buttons</h3>
+                                <app-checkbox-input
+                                    [formGroup]="toggleForm"
+                                    controlName="toggleWithActions"
+                                    label="Experimental features"
+                                    description="Enable experimental features (may be unstable)"
+                                    checkboxType="toggle"
+                                    [enableToggleButton]="true"
+                                    [enableReset]="true"
+                                    [showStatusText]="true"
+                                    trueText="Active"
+                                    falseText="Inactive">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- With Icon -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">With Icon</h3>
+                                <app-checkbox-input
+                                    [formGroup]="toggleForm"
+                                    controlName="indeterminateToggle"
+                                    label="Sound effects"
+                                    description="Play sound effects during interactions"
+                                    checkboxType="toggle"
+                                    [showIcon]="true"
+                                    checkedIcon="volume_up"
+                                    uncheckedIcon="volume_off">
+                                </app-checkbox-input>
+                            </div>
+                        </form>
+                    </mat-card-content>
+                    
+                    <mat-card-actions class="flex gap-2 p-4">
+                        <button mat-raised-button color="primary" (click)="onToggleFormSubmit()">
+                            <mat-icon class="mr-2">check</mat-icon>
+                            Submit Form
+                        </button>
+                        <button mat-stroked-button (click)="resetToggleForm()">
+                            <mat-icon class="mr-2">refresh</mat-icon>
+                            Reset Form
+                        </button>
+                    </mat-card-actions>
+
+                    <!-- Form Status Display -->
+                    <mat-card-footer class="p-4 bg-gray-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Status:</h4>
+                                <p class="text-sm text-gray-600">{{ getFormStatus(toggleForm) }}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Values:</h4>
+                                <pre class="text-xs bg-white p-2 rounded border overflow-auto">{{ getFormValues(toggleForm) }}</pre>
+                            </div>
+                        </div>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <!-- Validation Examples -->
+        <mat-tab label="Validation">
+            <div class="tab-content p-6">
+                <mat-card class="example-card">
+                    <mat-card-header>
+                        <mat-card-title>Validation Examples</mat-card-title>
+                        <mat-card-subtitle>Form validation and error handling</mat-card-subtitle>
+                    </mat-card-header>
+                    
+                    <mat-card-content>
+                        <form [formGroup]="validationForm" (ngSubmit)="onValidationFormSubmit()" class="space-y-4">
+                            <!-- Required Terms -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Required Terms Acceptance</h3>
+                                <app-checkbox-input
+                                    [formGroup]="validationForm"
+                                    controlName="acceptTerms"
+                                    label="I accept the terms and conditions"
+                                    description="You must accept the terms to continue"
+                                    checkboxType="checkbox"
+                                    [isRequired]="true">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Required Policy -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Required Privacy Policy</h3>
+                                <app-checkbox-input
+                                    [formGroup]="validationForm"
+                                    controlName="agreePolicy"
+                                    label="I agree to the privacy policy"
+                                    description="This is required for account creation"
+                                    checkboxType="checkbox"
+                                    [isRequired]="true">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Optional Newsletter -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Optional Newsletter</h3>
+                                <app-checkbox-input
+                                    [formGroup]="validationForm"
+                                    controlName="newsletter"
+                                    label="Subscribe to newsletter"
+                                    description="Receive weekly updates (optional)"
+                                    checkboxType="checkbox">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Notifications Toggle -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Notifications</h3>
+                                <app-checkbox-input
+                                    [formGroup]="validationForm"
+                                    controlName="notifications"
+                                    label="Enable notifications"
+                                    description="Receive app notifications"
+                                    checkboxType="toggle"
+                                    [showStatusText]="true">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Marketing Toggle -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Marketing Communications</h3>
+                                <app-checkbox-input
+                                    [formGroup]="validationForm"
+                                    controlName="marketing"
+                                    label="Marketing emails"
+                                    description="Receive promotional emails and offers"
+                                    checkboxType="toggle"
+                                    [enableToggleButton]="true">
+                                </app-checkbox-input>
+                            </div>
+                        </form>
+
+                        <!-- Bulk Actions -->
+                        <div class="flex gap-2 mt-6 pt-4 border-t">
+                            <button mat-stroked-button (click)="toggleAllValidationControls()">
+                                <mat-icon class="mr-2">select_all</mat-icon>
+                                Toggle All
+                            </button>
+                        </div>
+                    </mat-card-content>
+                    
+                    <mat-card-actions class="flex gap-2 p-4">
+                        <button mat-raised-button color="primary" (click)="onValidationFormSubmit()">
+                            <mat-icon class="mr-2">check</mat-icon>
+                            Submit Form
+                        </button>
+                        <button mat-stroked-button (click)="resetValidationForm()">
+                            <mat-icon class="mr-2">refresh</mat-icon>
+                            Reset Form
+                        </button>
+                    </mat-card-actions>
+
+                    <!-- Form Status Display -->
+                    <mat-card-footer class="p-4 bg-gray-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Status:</h4>
+                                <p class="text-sm text-gray-600">{{ getFormStatus(validationForm) }}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Values:</h4>
+                                <pre class="text-xs bg-white p-2 rounded border overflow-auto">{{ getFormValues(validationForm) }}</pre>
+                            </div>
+                        </div>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <!-- Size Examples -->
+        <mat-tab label="Sizes">
+            <div class="tab-content p-6">
+                <mat-card class="example-card">
+                    <mat-card-header>
+                        <mat-card-title>Size Examples</mat-card-title>
+                        <mat-card-subtitle>Different sizes for checkboxes and toggles</mat-card-subtitle>
+                    </mat-card-header>
+                    
+                    <mat-card-content>
+                        <form [formGroup]="sizeForm" (ngSubmit)="onSizeFormSubmit()" class="space-y-6">
+                            <!-- Checkbox Sizes -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-4">Checkbox Sizes</h3>
+                                
+                                <div class="space-y-4">
+                                    <app-checkbox-input
+                                        [formGroup]="sizeForm"
+                                        controlName="smallCheckbox"
+                                        label="Small checkbox"
+                                        description="Compact size for dense layouts"
+                                        checkboxType="checkbox"
+                                        size="small">
+                                    </app-checkbox-input>
+
+                                    <app-checkbox-input
+                                        [formGroup]="sizeForm"
+                                        controlName="mediumCheckbox"
+                                        label="Medium checkbox (default)"
+                                        description="Standard size for most use cases"
+                                        checkboxType="checkbox"
+                                        size="medium">
+                                    </app-checkbox-input>
+
+                                    <app-checkbox-input
+                                        [formGroup]="sizeForm"
+                                        controlName="largeCheckbox"
+                                        label="Large checkbox"
+                                        description="Larger size for accessibility or emphasis"
+                                        checkboxType="checkbox"
+                                        size="large">
+                                    </app-checkbox-input>
+                                </div>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Toggle Sizes -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-4">Toggle Sizes</h3>
+                                
+                                <div class="space-y-4">
+                                    <app-checkbox-input
+                                        [formGroup]="sizeForm"
+                                        controlName="smallToggle"
+                                        label="Small toggle"
+                                        description="Compact toggle for mobile or dense UI"
+                                        checkboxType="toggle"
+                                        size="small"
+                                        [showStatusText]="true">
+                                    </app-checkbox-input>
+
+                                    <app-checkbox-input
+                                        [formGroup]="sizeForm"
+                                        controlName="mediumToggle"
+                                        label="Medium toggle (default)"
+                                        description="Standard size toggle for most applications"
+                                        checkboxType="toggle"
+                                        size="medium"
+                                        [showStatusText]="true">
+                                    </app-checkbox-input>
+
+                                    <app-checkbox-input
+                                        [formGroup]="sizeForm"
+                                        controlName="largeToggle"
+                                        label="Large toggle"
+                                        description="Prominent toggle for important settings"
+                                        checkboxType="toggle"
+                                        size="large"
+                                        [showStatusText]="true"
+                                        [enableToggleButton]="true">
+                                    </app-checkbox-input>
+                                </div>
+                            </div>
+                        </form>
+                    </mat-card-content>
+                    
+                    <mat-card-actions class="flex gap-2 p-4">
+                        <button mat-raised-button color="primary" (click)="onSizeFormSubmit()">
+                            <mat-icon class="mr-2">check</mat-icon>
+                            Submit Form
+                        </button>
+                        <button mat-stroked-button (click)="resetSizeForm()">
+                            <mat-icon class="mr-2">refresh</mat-icon>
+                            Reset Form
+                        </button>
+                    </mat-card-actions>
+
+                    <!-- Form Status Display -->
+                    <mat-card-footer class="p-4 bg-gray-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Status:</h4>
+                                <p class="text-sm text-gray-600">{{ getFormStatus(sizeForm) }}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Values:</h4>
+                                <pre class="text-xs bg-white p-2 rounded border overflow-auto">{{ getFormValues(sizeForm) }}</pre>
+                            </div>
+                        </div>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-tab>
+
+        <!-- Advanced Examples -->
+        <mat-tab label="Advanced">
+            <div class="tab-content p-6">
+                <mat-card class="example-card">
+                    <mat-card-header>
+                        <mat-card-title>Advanced Examples</mat-card-title>
+                        <mat-card-subtitle>Complex scenarios and advanced features</mat-card-subtitle>
+                    </mat-card-header>
+                    
+                    <mat-card-content>
+                        <form [formGroup]="advancedForm" (ngSubmit)="onAdvancedFormSubmit()" class="space-y-4">
+                            <!-- Feature Toggle with Actions -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Feature Management</h3>
+                                <app-checkbox-input
+                                    [formGroup]="advancedForm"
+                                    controlName="featureEnabled"
+                                    label="Beta feature access"
+                                    description="Enable access to experimental features"
+                                    checkboxType="toggle"
+                                    [showStatusText]="true"
+                                    [enableToggleButton]="true"
+                                    [enableReset]="true"
+                                    [showIcon]="true"
+                                    checkedIcon="new_releases"
+                                    uncheckedIcon="block"
+                                    trueText="Beta Active"
+                                    falseText="Beta Disabled">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Debug Mode -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Debug Settings</h3>
+                                <app-checkbox-input
+                                    [formGroup]="advancedForm"
+                                    controlName="debugMode"
+                                    label="Debug mode"
+                                    description="Show debug information and console logs"
+                                    checkboxType="checkbox"
+                                    [showStatusText]="true"
+                                    [enableToggleButton]="true"
+                                    [showIcon]="true"
+                                    checkedIcon="bug_report"
+                                    uncheckedIcon="code"
+                                    color="warn">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- Auto-save -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">Data Management</h3>
+                                <app-checkbox-input
+                                    [formGroup]="advancedForm"
+                                    controlName="autoSave"
+                                    label="Auto-save"
+                                    description="Automatically save changes every 30 seconds"
+                                    checkboxType="toggle"
+                                    [showStatusText]="true"
+                                    [showIcon]="true"
+                                    checkedIcon="save"
+                                    uncheckedIcon="save_as"
+                                    trueText="Auto-saving"
+                                    falseText="Manual save">
+                                </app-checkbox-input>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <!-- UI Preferences -->
+                            <div class="example-section">
+                                <h3 class="font-medium text-gray-800 mb-2">UI Preferences</h3>
+                                
+                                <div class="space-y-4">
+                                    <app-checkbox-input
+                                        [formGroup]="advancedForm"
+                                        controlName="darkMode"
+                                        label="Dark mode"
+                                        description="Switch to dark theme"
+                                        checkboxType="toggle"
+                                        [showStatusText]="true"
+                                        [showIcon]="true"
+                                        checkedIcon="dark_mode"
+                                        uncheckedIcon="light_mode">
+                                    </app-checkbox-input>
+
+                                    <app-checkbox-input
+                                        [formGroup]="advancedForm"
+                                        controlName="soundEffects"
+                                        label="Sound effects"
+                                        description="Play sounds for UI interactions"
+                                        checkboxType="toggle"
+                                        [showStatusText]="true"
+                                        [enableToggleButton]="true"
+                                        [showIcon]="true"
+                                        checkedIcon="volume_up"
+                                        uncheckedIcon="volume_off">
+                                    </app-checkbox-input>
+
+                                    <app-checkbox-input
+                                        [formGroup]="advancedForm"
+                                        controlName="animations"
+                                        label="Animations"
+                                        description="Enable smooth transitions and animations"
+                                        checkboxType="toggle"
+                                        [showStatusText]="true"
+                                        [showIcon]="true"
+                                        checkedIcon="animation"
+                                        uncheckedIcon="motion_photos_off">
+                                    </app-checkbox-input>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Bulk Actions -->
+                        <div class="flex gap-2 mt-6 pt-4 border-t">
+                            <button mat-stroked-button (click)="toggleAllAdvancedControls()">
+                                <mat-icon class="mr-2">tune</mat-icon>
+                                Toggle All Settings
+                            </button>
+                        </div>
+                    </mat-card-content>
+                    
+                    <mat-card-actions class="flex gap-2 p-4">
+                        <button mat-raised-button color="primary" (click)="onAdvancedFormSubmit()">
+                            <mat-icon class="mr-2">settings</mat-icon>
+                            Save Settings
+                        </button>
+                        <button mat-stroked-button (click)="resetAdvancedForm()">
+                            <mat-icon class="mr-2">settings_backup_restore</mat-icon>
+                            Reset to Defaults
+                        </button>
+                    </mat-card-actions>
+
+                    <!-- Form Status Display -->
+                    <mat-card-footer class="p-4 bg-gray-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Status:</h4>
+                                <p class="text-sm text-gray-600">{{ getFormStatus(advancedForm) }}</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Form Values:</h4>
+                                <pre class="text-xs bg-white p-2 rounded border overflow-auto">{{ getFormValues(advancedForm) }}</pre>
+                            </div>
+                        </div>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

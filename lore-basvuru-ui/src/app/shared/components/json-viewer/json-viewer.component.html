@@ -1,0 +1,81 @@
+<div class="json-viewer">
+    <!-- Header -->
+    <div class="json-viewer-header" *ngIf="title || nodes.length > 0">
+        <span class="json-viewer-title" *ngIf="title">{{ title }}</span>
+        <div class="json-viewer-actions">
+            <button mat-icon-button 
+                    (click)="toggleAll()" 
+                    [matTooltip]="isAllExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
+                    class="action-btn">
+                <mat-icon>{{ isAllExpanded ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+            </button>
+            <button mat-icon-button 
+                    (click)="copyToClipboard()" 
+                    [matTooltip]="copied ? 'Kopyalandı!' : 'JSON Kopyala'"
+                    class="action-btn"
+                    [class.copied]="copied">
+                <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="json-viewer-empty" *ngIf="!json || nodes.length === 0">
+        <mat-icon>code_off</mat-icon>
+        <span>Veri bulunamadı</span>
+    </div>
+
+    <!-- JSON Tree -->
+    <div class="json-tree" *ngIf="nodes.length > 0">
+        <ng-container *ngFor="let node of nodes">
+            <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: node, level: 0 }"></ng-container>
+        </ng-container>
+    </div>
+</div>
+
+<!-- Node Template (Recursive) -->
+<ng-template #nodeTemplate let-node="node" let-level="level">
+    <div class="json-node" [style.paddingLeft.px]="level * 20">
+        <!-- Expandable Node -->
+        <div class="node-line" *ngIf="isExpandable(node)">
+            <button class="expand-btn" (click)="toggleNode(node)">
+                <mat-icon class="expand-icon" [class.expanded]="node.expanded">
+                    chevron_right
+                </mat-icon>
+            </button>
+            <span class="node-key">{{ node.key }}</span>
+            <span class="node-colon">:</span>
+            <span class="node-bracket" *ngIf="node.type === 'object'">
+                {{ node.expanded ? '{' : '{...}' }}
+                <span class="node-count" *ngIf="!node.expanded">({{ getObjectKeys(node.value) }} keys)</span>
+            </span>
+            <span class="node-bracket" *ngIf="node.type === 'array'">
+                {{ node.expanded ? '[' : '[...]' }}
+                <span class="node-count" *ngIf="!node.expanded">({{ getArrayLength(node.value) }} items)</span>
+            </span>
+        </div>
+
+        <!-- Primitive Node -->
+        <div class="node-line" *ngIf="!isExpandable(node)">
+            <span class="expand-placeholder"></span>
+            <span class="node-key">{{ node.key }}</span>
+            <span class="node-colon">:</span>
+            <span class="node-value" [ngClass]="'value-' + node.type">
+                {{ formatValue(node.value, node.type) }}
+            </span>
+        </div>
+
+        <!-- Children -->
+        <div class="node-children" *ngIf="node.expanded && node.children">
+            <ng-container *ngFor="let child of node.children">
+                <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: child, level: level + 1 }"></ng-container>
+            </ng-container>
+            
+            <!-- Closing bracket -->
+            <div class="node-line closing-bracket" [style.paddingLeft.px]="(level + 1) * 20">
+                <span class="node-bracket">{{ node.type === 'object' ? '}' : ']' }}</span>
+            </div>
+        </div>
+    </div>
+</ng-template>
+

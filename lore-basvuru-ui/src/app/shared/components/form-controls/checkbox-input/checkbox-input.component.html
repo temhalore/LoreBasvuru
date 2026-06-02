@@ -1,0 +1,167 @@
+<div [formGroup]="formGroup" [ngClass]="containerClass">
+    <!-- Standard Checkbox -->
+    <div *ngIf="checkboxType === 'checkbox'" class="checkbox-container">
+        <mat-checkbox
+            [formControlName]="controlName"
+            [color]="color"
+            [labelPosition]="labelPosition"
+            [indeterminate]="indeterminate"
+            [matTooltip]="tooltip"
+            [matTooltipDisabled]="!hasTooltip"
+            [class]="checkboxSize"
+            (change)="onCheckboxChange($event)">
+            
+            <span class="checkbox-label">
+                {{ label }}
+                <span *ngIf="showRequiredMarker" class="text-red-500 ml-1">*</span>
+            </span>
+            
+            <span *ngIf="description" class="checkbox-description">
+                {{ description }}
+            </span>
+        </mat-checkbox>
+
+        <!-- Icon display -->
+        <div *ngIf="showIcon" class="checkbox-icon ml-2">
+            <mat-icon [class]="value ? 'text-green-600' : 'text-gray-400'">
+                {{ value ? checkedIcon : uncheckedIcon }}
+            </mat-icon>
+        </div>
+    </div>
+
+    <!-- Toggle/Switch -->
+    <div *ngIf="checkboxType === 'toggle' || checkboxType === 'switch'" class="toggle-container">
+        <div class="toggle-content">
+            <div class="toggle-label-section">
+                <span class="toggle-label">
+                    {{ label }}
+                    <span *ngIf="showRequiredMarker" class="text-red-500 ml-1">*</span>
+                </span>
+                
+                <span *ngIf="description" class="toggle-description">
+                    {{ description }}
+                </span>
+                
+                <span *ngIf="showStatusText" class="toggle-status" [class]="value ? 'text-green-600' : 'text-gray-500'">
+                    {{ statusText }}
+                </span>
+            </div>
+
+            <mat-slide-toggle
+                [formControlName]="controlName"
+                [color]="color"
+                [matTooltip]="tooltip"
+                [matTooltipDisabled]="!hasTooltip"
+                [class]="checkboxSize"
+                (change)="onToggleChange($event)">
+            </mat-slide-toggle>
+        </div>
+
+        <!-- Icon display for toggle -->
+        <div *ngIf="showIcon" class="toggle-icon">
+            <mat-icon [class]="value ? 'text-green-600' : 'text-gray-400'">
+                {{ value ? checkedIcon : uncheckedIcon }}
+            </mat-icon>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div *ngIf="enableToggleButton || enableReset" class="flex items-center gap-2 mt-2">
+        <!-- Toggle Button -->
+        <button 
+            *ngIf="enableToggleButton"
+            mat-stroked-button
+            type="button"
+            [disabled]="isControlDisabled"
+            matTooltip="Değeri tersine çevir"
+            (click)="toggleValue()"
+            class="text-sm">
+            <mat-icon class="mr-1 text-base">swap_horiz</mat-icon>
+            Değiştir
+        </button>
+
+        <!-- Set True Button -->
+        <button 
+            *ngIf="enableToggleButton && !value"
+            mat-stroked-button
+            type="button"
+            [disabled]="isControlDisabled"
+            matTooltip="Aktif yap"
+            (click)="setTrue()"
+            class="text-sm">
+            <mat-icon class="mr-1 text-base">check</mat-icon>
+            {{ trueText }}
+        </button>
+
+        <!-- Set False Button -->
+        <button 
+            *ngIf="enableToggleButton && value"
+            mat-stroked-button
+            type="button"
+            [disabled]="isControlDisabled"
+            matTooltip="Pasif yap"
+            (click)="setFalse()"
+            class="text-sm">
+            <mat-icon class="mr-1 text-base">close</mat-icon>
+            {{ falseText }}
+        </button>
+
+        <!-- Reset Button -->
+        <button 
+            *ngIf="enableReset"
+            mat-stroked-button
+            type="button"
+            [disabled]="isControlDisabled"
+            matTooltip="Sıfırla (false)"
+            (click)="resetValue()"
+            class="text-sm">
+            <mat-icon class="mr-1 text-base">refresh</mat-icon>
+            Sıfırla
+        </button>
+    </div>
+
+    <!-- Error Messages -->
+    <div *ngIf="showErrorMessages && isControlInvalid && (!showControlStatusOnlyWhenTouched || isControlTouched)" class="error-messages mt-2">
+        <div *ngFor="let error of getAllErrors()" class="error-message text-red-600 text-sm">
+            {{ getErrorMessage(error.errorName) }}
+        </div>
+    </div>
+
+    <!-- Status Indicators -->
+    <div *ngIf="showControlStatus && (!showControlStatusOnlyWhenTouched || isControlTouched)" class="flex items-center gap-2 mt-2 text-xs">
+        <!-- Valid Indicator -->
+        <div *ngIf="isControlValid" class="flex items-center gap-1 text-green-600">
+            <mat-icon class="text-sm">check_circle</mat-icon>
+            <span *ngIf='isValid'>Geçerli</span>
+        </div>
+
+        <!-- Invalid Indicator -->
+        <div *ngIf="isControlInvalid" class="flex items-center gap-1 text-red-600">
+            <mat-icon class="text-sm">error</mat-icon>
+            <span *ngIf='isValid'>Geçersiz</span>
+        </div>
+
+        <!-- Current Value Display -->
+        <div class="text-gray-500 ml-auto">
+            <span class="font-medium">Değer:</span>
+            <span [class]="value ? 'text-green-600' : 'text-gray-400'">
+                {{ statusText }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Advanced Status Display -->
+    <div *ngIf="showStatusText && (checkboxType === 'checkbox')" class="status-display mt-2 p-2 bg-gray-50 rounded border">
+        <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-700">Durum:</span>
+            <div class="flex items-center gap-2">
+                <mat-icon *ngIf='isValid' [class]="value ? 'text-green-600' : 'text-red-500'" class="text-sm">
+                    {{ value ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+                <span [class]="value ? 'text-green-600 font-medium' : 'text-red-500'">
+                    {{ statusText }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+<!-- bıunu kullanmayalımm yaa bizim için hiç uygun değil ae  -->
+
+<!-- Loading bar -->
+<fuse-loading-bar></fuse-loading-bar>
+
+<!-- Navigation -->
+<fuse-vertical-navigation
+    class="ek-theme-nav bg-card dark:bg-gray-900 print:hidden"
+    [appearance]="'thin'"
+    [mode]="isScreenSmall ? 'over' : 'side'"
+    [name]="'mainNavigation'"
+    [navigation]="flatNavigation"
+    [opened]="!isScreenSmall"
+>
+    <!-- Navigation header hook -->
+    <ng-container fuseVerticalNavigationContentHeader>
+        <!-- Logo -->
+        <div class="flex h-20 items-center justify-center">
+            <img class="w-8 ek-theme-logo" [ngClass]="logoThemeClass" src="images/logo/logo.svg" alt="Logo image" />
+        </div>
+    </ng-container>
+</fuse-vertical-navigation>
+
+<!-- Wrapper -->
+<div class="flex w-full min-w-0 flex-auto flex-col">
+    <!-- Header -->
+    <div
+        class="bg-card relative z-49 flex h-16 w-full flex-0 items-center px-4 shadow dark:border-b dark:bg-transparent dark:shadow-none md:px-6 print:hidden"
+    >
+        <!-- Navigation toggle button -->
+        <button
+            class="mr-2"
+            mat-icon-button
+            (click)="toggleNavigation('mainNavigation')"
+        >
+            <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+        </button>
+        <!-- Components -->
+        <div class="ml-auto flex items-center space-x-0.5 pl-2 sm:space-x-2">
+            @if (showEtikKurulSelector) {
+                <button mat-button [matMenuTriggerFor]="etikKurulMenu"
+                    class="mr-1 inline-flex h-9 max-w-[70vw] items-center gap-1.5 rounded-lg px-2.5 sm:max-w-[48vw]"
+                    [ngClass]="selectedEtikKurulThemeClass">
+                    <mat-icon class="!h-4 !w-4 flex-none text-current" [svgIcon]="'heroicons_solid:chevron-down'"></mat-icon>
+                    <span class="min-w-0 flex-1 truncate text-sm font-semibold leading-5 sm:text-base">{{ selectedEtikKurulDisplayName }}</span>
+                </button>
+                <mat-menu [xPosition]="'before'" [overlapTrigger]="false" class="ek-etik-kurul-menu-panel" #etikKurulMenu="matMenu">
+                    @for (item of etikKurulOptions; track trackByEtikKurul($index, item)) {
+                        <button mat-menu-item (click)="onEtikKurulChange(item)" class="ek-etik-kurul-menu-item rounded-lg py-2" [ngClass]="getEtikKurulItemClass(item)">
+                            <span class="block w-full whitespace-normal break-words text-sm font-medium leading-6 sm:text-base">{{ item.name }}</span>
+                        </button>
+                    }
+                </mat-menu>
+            }
+            @if (config?.headerButtons?.showLanguages !== false) {
+                <languages></languages>
+            }
+            @if (config?.headerButtons?.showFullscreen !== false) {
+                <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
+            }
+            @if (config?.headerButtons?.showSearch !== false) {
+                <search [appearance]="'bar'"></search>
+            }
+            @if (config?.headerButtons?.showShortcuts !== false) {
+                <shortcuts></shortcuts>
+            }
+            @if (config?.headerButtons?.showMessages !== false) {
+                <messages></messages>
+            }
+            @if (config?.headerButtons?.showNotifications !== false) {
+                <notifications></notifications>
+            }
+            @if (config?.headerButtons?.showQuickChat !== false) {
+                <button
+                    class="lg:hidden"
+                    mat-icon-button
+                    (click)="quickChat.toggle()"
+                >
+                    <mat-icon
+                        [svgIcon]="'heroicons_outline:chat-bubble-left-right'"
+                    ></mat-icon>
+                </button>
+            }
+            @if (config?.headerButtons?.showUser !== false) {
+                <user></user>
+            }
+            @if (config?.headerButtons?.showSettings && config?.settingsConfig?.buttonPosition === 'header') {
+                <button mat-icon-button matTooltip="Görünüm Ayarları" (click)="toggleSettings()">
+                    <mat-icon [svgIcon]="'heroicons_outline:cog-8-tooth'"></mat-icon>
+                </button>
+            }
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex flex-auto flex-col">
+        <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
+             Otherwise, layout changes won't be registered and the view won't be updated! -->
+        @if (true) {
+            <router-outlet></router-outlet>
+        }
+    </div>
+
+    <!-- Footer -->
+    <div
+        class="bg-card relative z-49 flex h-14 w-full flex-0 items-center justify-start border-t px-4 dark:bg-transparent md:px-6 print:hidden"
+    >
+        <span class="text-secondary font-medium"
+            >İstanbul Üniversitesi Bilgi İşlem Daire Başlanlığı &copy; {{ currentYear }}</span
+        >
+    </div>
+</div>
+
+<!-- Quick chat -->
+@if (config?.headerButtons?.showQuickChat !== false) {
+    <quick-chat #quickChat="quickChat"></quick-chat>
+}

@@ -1,0 +1,51 @@
+<ng-container *ngIf="!isAnswerOnly; else answerOnlyTemplate">
+    <div class="question-option-grid question-option-grid--2">
+        <label
+            class="question-option"
+            *ngFor="let option of schema.options; trackBy: trackByEid"
+            [class.question-option--selected]="value === option.eid"
+            [class.question-option--disabled]="isInputDisabled"
+            [class.question-option--readonly]="isInputReadonly && !isInputDisabled">
+            <input
+                class="question-option__control"
+                type="radio"
+                [name]="schema.eid"
+                [disabled]="isInputDisabled || isInputReadonly"
+                [checked]="value === option.eid"
+                (change)="selectOption(option.eid)">
+            <div class="question-option__label">
+                <app-rich-text-view
+                    [html]="option.label"
+                    [compact]="true">
+                </app-rich-text-view>
+            </div>
+        </label>
+    </div>
+
+    <div *ngIf="isOtherSelected(value)">
+        <label class="question-aux-label">Açıklama</label>
+        <input
+            class="question-input"
+            [class.question-control--readonly]="isInputReadonly && !isInputDisabled"
+            [readonly]="isInputReadonly"
+            [disabled]="isInputDisabled"
+            [value]="extraTextControl.value"
+            placeholder="Lütfen belirtiniz..."
+            (input)="onExtraTextInput($event)">
+    </div>
+</ng-container>
+
+<ng-template #answerOnlyTemplate>
+    <div class="question-answer-stack">
+        <div class="question-answer-box" [class.question-answer-box--secondary]="selectedOptionLabel === 'Yanıt verilmedi'">
+            <app-rich-text-view
+                [html]="selectedOptionLabel"
+                fallback="Yanit verilmedi"
+                [compact]="true">
+            </app-rich-text-view>
+        </div>
+        @if (value && extraTextControl.value) {
+            <div class="question-answer-box question-answer-box--secondary">{{ extraTextControl.value }}</div>
+        }
+    </div>
+</ng-template>

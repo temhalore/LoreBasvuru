@@ -1,0 +1,204 @@
+@if (state.ruleState.visible) {
+    <section
+        [class.question-card]="state.mode !== 'answer-only'"
+        [class.question-card--disabled]="state.mode !== 'answer-only' && state.ruleState.disabled"
+        [class.question-answer-card]="state.mode === 'answer-only'">
+        <div
+            [class.question-header]="state.mode !== 'answer-only'"
+            [class.question-answer-header]="state.mode === 'answer-only'"
+            class="question-type-renderer__header">
+            @if (state.mode === 'editor') {
+                <span class="editor-question-type-badge">{{ questionTypeLabel }}</span>
+            }
+
+            <div class="question-type-renderer__header-main">
+                <div class="question-title question-type-renderer__title" role="heading" aria-level="3">
+                    @if (questionOrder) {
+                        <span class="question-type-renderer__order">{{ questionOrder }}</span>
+                    }
+
+                    <app-rich-text-view
+                        [html]="schema.label"
+                        fallback="Adsız soru">
+                    </app-rich-text-view>
+                </div>
+
+                @if (showMetaArea) {
+                    <div class="question-type-renderer__meta">
+                        @if (hasHelpText) {
+                            <button
+                                #helpBadgeTrigger="cdkOverlayOrigin"
+                                cdkOverlayOrigin
+                                type="button"
+                                class="question-type-renderer__meta-chip question-type-renderer__meta-chip--help"
+                                [attr.aria-controls]="helpCardOpen ? helpCardId : null"
+                                [attr.aria-expanded]="helpCardOpen"
+                                [attr.aria-label]="helpBadgeAriaLabel"
+                                (mouseenter)="onHelpBadgeMouseEnter()"
+                                (mouseleave)="onHelpBadgeMouseLeave()"
+                                (click)="onHelpBadgeClick($event)">
+                                <span class="question-type-renderer__meta-chip-icon" aria-hidden="true">i</span>
+                            </button>
+
+                            <ng-template
+                                cdkConnectedOverlay
+                                [cdkConnectedOverlayOrigin]="helpBadgeTrigger"
+                                [cdkConnectedOverlayOpen]="helpCardOpen"
+                                [cdkConnectedOverlayPositions]="helpCardPositions"
+                                [cdkConnectedOverlayPush]="true"
+                                [cdkConnectedOverlayViewportMargin]="16">
+                                <div
+                                    #helpCardPanel
+                                    class="question-type-renderer__help-card"
+                                    [id]="helpCardId"
+                                    role="tooltip"
+                                    (mouseenter)="onHelpCardMouseEnter()"
+                                    (mouseleave)="onHelpCardMouseLeave()"
+                                    (click)="onHelpCardClick($event)">
+                                    <app-rich-text-view
+                                        [html]="schema.helpText"
+                                        [compact]="true">
+                                    </app-rich-text-view>
+                                </div>
+                            </ng-template>
+                        }
+
+                        @if (state.ruleState.required) {
+                            <span class="question-type-renderer__required-indicator" aria-label="Zorunlu soru">
+                                <mat-icon aria-hidden="true">emergency</mat-icon>
+                            </span>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div
+            *ngIf="!isDescriptionQuestion"
+            [class.question-content]="state.mode !== 'answer-only'"
+            [class.question-answer-content]="state.mode === 'answer-only'">
+            <ng-container [ngSwitch]="schema.questionTypeId">
+                <app-text-question
+                    *ngSwitchCase="QuestionTypeId.KISA_METIN"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-text-question>
+
+                <app-text-question
+                    *ngSwitchCase="QuestionTypeId.UZUN_METIN"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-text-question>
+
+                <app-number-question
+                    *ngSwitchCase="QuestionTypeId.SAYI"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-number-question>
+
+                <app-date-question
+                    *ngSwitchCase="QuestionTypeId.TARIH"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-date-question>
+
+                <app-time-question
+                    *ngSwitchCase="QuestionTypeId.SAAT"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-time-question>
+
+                <app-file-upload-question
+                    *ngSwitchCase="QuestionTypeId.DOSYA_YUKLEME"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-file-upload-question>
+
+                <app-single-choice-question
+                    *ngSwitchCase="QuestionTypeId.TEK_SECIM"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-single-choice-question>
+
+                <app-dropdown-question
+                    *ngSwitchCase="QuestionTypeId.ACILIR_LISTE"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-dropdown-question>
+
+                <app-multi-choice-question
+                    *ngSwitchCase="QuestionTypeId.COK_SECIM"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-multi-choice-question>
+
+                <app-scale-question
+                    *ngSwitchCase="QuestionTypeId.OLCEK"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-scale-question>
+
+                <app-rating-question
+                    *ngSwitchCase="QuestionTypeId.DERECELENDIRME"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-rating-question>
+
+                <app-ranking-question
+                    *ngSwitchCase="QuestionTypeId.SIRALAMA"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-ranking-question>
+
+                <app-matrix-single-question
+                    *ngSwitchCase="QuestionTypeId.MATRIS_TEK_SECIM"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-matrix-single-question>
+
+                <app-matrix-multi-question
+                    *ngSwitchCase="QuestionTypeId.MATRIS_COK_SECIM"
+                    [schema]="schema"
+                    [state]="state"
+                    (answerChange)="onAnswerChange($event)">
+                </app-matrix-multi-question>
+
+                <app-repeating-group-question
+                    *ngSwitchCase="QuestionTypeId.TEKRARLI_GRUP"
+                    [schema]="schema"
+                    [state]="state">
+                </app-repeating-group-question>
+
+                <div class="question-type-renderer__unsupported" *ngSwitchDefault>
+                    Bu soru tipi icin shared question renderer henuz tanimlanmadi.
+                </div>
+            </ng-container>
+        </div>
+
+        @if (issues.length) {
+            <div class="question-type-renderer__issues">
+                @for (issue of issues; track trackIssue($index, issue)) {
+                    <div class="question-type-renderer__issue">
+                        <mat-icon class="question-type-renderer__issue-icon" aria-hidden="true">cancel</mat-icon>
+                        <span class="question-type-renderer__issue-text">
+                            {{ issue.message || issue.details }}
+                        </span>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+}

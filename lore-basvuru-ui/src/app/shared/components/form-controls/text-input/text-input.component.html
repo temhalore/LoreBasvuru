@@ -1,0 +1,99 @@
+<div class="text-input-container" [class.disabled]="isControlDisabled" [ngClass]="customClass" [formGroup]="formGroup">
+    
+    <!-- Simple Clean Form Field -->
+    <div class="form-field-wrapper">
+        
+        <!-- Label -->
+        <label *ngIf="label" class="form-label">
+            {{ label }}
+            <span *ngIf="showRequiredMarker" class="required-asterisk">*</span>
+        </label>
+
+        <!-- Input Container -->
+        <div class="input-wrapper">
+            <!-- Prefix Icon -->
+            <mat-icon *ngIf="icon" class="prefix-icon">{{ icon }}</mat-icon>
+
+            <!-- Prefix Text -->
+            <span *ngIf="prefix" class="prefix-text">{{ prefix }}</span>
+
+            <!-- Input Field -->
+            <input
+                *ngIf="type !== 'textarea'"
+                class="clean-input"
+                [type]="inputType"
+                [formControlName]="controlName"
+                [placeholder]="placeholder"
+                [attr.maxlength]="maxLength || null"
+                [attr.autocomplete]="autocomplete || null">
+
+            <!-- Textarea Field -->
+            <textarea
+                *ngIf="type === 'textarea'"
+                class="clean-input"
+                [formControlName]="controlName"
+                [placeholder]="placeholder"
+                [rows]="rows">
+            </textarea>
+
+            <!-- Tooltip Icon -->
+            <mat-icon 
+                *ngIf="hasTooltip" 
+                class="suffix-icon"
+                [matTooltip]="tooltip">
+                info_outline
+            </mat-icon>
+        </div>
+
+        <!-- Error Messages -->
+        <div *ngIf="hasError('required')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>{{ label || 'Bu alan' }} zorunludur</span>
+            </div>
+        </div>
+
+        <div *ngIf="hasError('email')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>Geçerli bir email adresi giriniz</span>
+            </div>
+        </div>
+
+        <div *ngIf="hasError('minlength')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>En az {{ getFormControlValidationErrors('minlength')?.error_value?.requiredLength }} karakter olmalıdır</span>
+            </div>
+        </div>
+
+        <div *ngIf="hasError('maxlength')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>En fazla {{ getFormControlValidationErrors('maxlength')?.error_value?.requiredLength }} karakter olabilir</span>
+            </div>
+        </div>
+
+        <div *ngIf="hasError('pattern')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>Geçerli bir format giriniz</span>
+            </div>
+        </div>
+
+        <div *ngIf="hasError('min')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>En az {{ getFormControlValidationErrors('min')?.error_value?.min }} olmalıdır</span>
+            </div>
+        </div>
+
+        <div *ngIf="hasError('max')" class="error-messages">
+            <div class="error-item">
+                <mat-icon class="error-icon">error_outline</mat-icon>
+                <span>En fazla {{ getFormControlValidationErrors('max')?.error_value?.max }} olabilir</span>
+            </div>
+        </div>
+        
+    </div>
+</div>

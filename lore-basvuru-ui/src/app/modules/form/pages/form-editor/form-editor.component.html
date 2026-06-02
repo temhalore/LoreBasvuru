@@ -1,0 +1,158 @@
+<div class="form-editor-page">
+    <app-question-editor-styles-host></app-question-editor-styles-host>
+
+    <div
+        class="form-editor-shell"
+        [ngClass]="vm.shellClassMap"
+        *ngIf="shellVm$ | async as vm">
+        <app-form-editor-header
+            class="form-editor-shell__header"
+            [title]="vm.viewModel.title"
+            [statusLabel]="vm.viewModel.statusLabel"
+            [saveState]="vm.viewModel.saveState"
+            [actionFeedback]="vm.viewModel.actionFeedback"
+            [actions]="vm.viewModel.headerActions"
+            [canUndo]="vm.viewModel.canUndo"
+            [canRedo]="vm.viewModel.canRedo"
+            [activePageIndex]="vm.activePageIndex"
+            [pageCount]="vm.pageCount"
+            [pageNavigationLocked]="vm.isGroupWorkspaceOpen"
+            (back)="goBack()"
+            (titleChange)="updateTitle($event)"
+            (prevPage)="onPrevPage(vm.activePage, vm.form, vm.isGroupWorkspaceOpen)"
+            (nextPage)="onNextPage(vm.activePage, vm.form, vm.isGroupWorkspaceOpen)"
+            (action)="onHeaderAction($event)"></app-form-editor-header>
+
+        <div class="form-editor-shell__workspace">
+            <app-form-editor-panel
+                class="form-editor-shell__left"
+                side="left"
+                [tabs]="leftPanelTabs"
+                [activeTabId]="vm.leftPanelState.activeTabId"
+                [isOpen]="vm.leftPanelState.isOpen"
+                [contentTemplate]="leftPanelContent"
+                [headerActionsTemplate]="leftPanelActions"
+                (tabChange)="onPanelTabChange('left', $event)"
+                (closePanel)="closePanel('left')"></app-form-editor-panel>
+
+            <app-form-editor-canvas
+                class="form-editor-shell__canvas"
+                [form]="vm.form"
+                [activePage]="vm.activePage"
+                [activePageIndex]="vm.activePageIndex"
+                [pageCount]="vm.pageCount"
+                [selectedNodeEid]="vm.selectedNodeEid"
+                [activeQuestionSurface]="vm.activeQuestionSurface"
+                [editingQuestionDraft]="vm.editingQuestionDraft"
+                [pageEditDraft]="vm.pageEditDraft"
+                [isQuestionDraftSaving]="vm.isQuestionDraftSaving"
+                [questionDraftError]="vm.questionDraftError"
+                [validationSession]="vm.validationSession"
+                [validationEditorConfig]="vm.validationEditorConfig"
+                [isValidationLoading]="vm.isValidationLoading"
+                [isValidationSaving]="vm.isValidationSaving"
+                [validationError]="vm.validationError"
+                [isLoading]="vm.isLoading"
+                [loadError]="vm.loadError"
+                [groupWorkspaceStack]="vm.workspaceStack"
+                (nodeSelect)="onCanvasNodeSelect($event)"
+                (questionAction)="onQuestionAction($event)"
+                (questionSurfaceClose)="stopQuestionSurface($event)"
+                (questionDraftSave)="saveQuestionDraft($event)"
+                (questionDraftDirtyChange)="setQuestionDraftDirty($event)"
+                (validationSessionSave)="saveValidationSession($event)"
+                (groupWorkspaceBack)="onGroupWorkspaceBack()"
+                (prevPage)="onPrevPage(vm.activePage, vm.form, vm.isGroupWorkspaceOpen)"
+                (nextPage)="onNextPage(vm.activePage, vm.form, vm.isGroupWorkspaceOpen)"
+                (pageEditStart)="startPageEdit($event)"
+                (pageEditPatch)="patchPageEditDraft($event)"
+                (pageEditCommit)="commitPageEdit()"
+                (pageEditCancel)="cancelPageEdit($event)"
+                (questionReorder)="onQuestionReorder($event)"
+                (paletteDrop)="onPaletteDrop($event)"
+                (questionDragStart)="onQuestionDragStart()"
+                (backgroundClick)="onCanvasBackgroundClick(vm.isGroupWorkspaceOpen)"></app-form-editor-canvas>
+
+            <app-form-editor-panel
+                class="form-editor-shell__right"
+                side="right"
+                [tabs]="rightPanelTabs"
+                [activeTabId]="vm.rightPanelState.activeTabId"
+                [isOpen]="vm.rightPanelState.isOpen"
+                [contentTemplate]="rightPanelContent"
+                (tabChange)="onPanelTabChange('right', $event)"
+                (closePanel)="closePanel('right')"></app-form-editor-panel>
+
+            <ng-container *ngFor="let side of launcherSides; trackBy: trackByPanelSide">
+                <div
+                    class="form-editor-shell__launcher-stack"
+                    [class.form-editor-shell__launcher-stack--left]="side === 'left'"
+                    [class.form-editor-shell__launcher-stack--right]="side === 'right'"
+                    *ngIf="side === 'left' ? !vm.leftPanelState.isOpen : !vm.rightPanelState.isOpen">
+                    <button
+                        *ngFor="let launcher of launchersForSide(side); trackBy: trackByLauncher"
+                        type="button"
+                        class="form-editor-shell__launcher-button"
+                        [class.form-editor-shell__launcher-button--left]="side === 'left'"
+                        [disabled]="launcher.disabled"
+                        (click)="openPanelLauncher(launcher)"
+                        [title]="launcher.disabledReason || launcher.tooltip">
+                        <mat-icon class="form-editor-shell__launcher-icon" aria-hidden="true">{{ launcher.icon }}</mat-icon>
+                        <span class="form-editor-shell__launcher-label">{{ launcher.label }}</span>
+                    </button>
+                </div>
+            </ng-container>
+        </div>
+
+        <ng-template #leftPanelActions>
+            <button
+                type="button"
+                class="editor-panel__header-action"
+                (click)="collapseStructureTree(vm.form)"
+                aria-label="Tumunu daralt">
+                <mat-icon>unfold_less</mat-icon>
+            </button>
+            <button
+                type="button"
+                class="editor-panel__header-action"
+                (click)="expandStructureTree()"
+                aria-label="Tumunu genislet">
+                <mat-icon>unfold_more</mat-icon>
+            </button>
+        </ng-template>
+
+        <ng-template #leftPanelContent>
+            <app-form-editor-structure-tree
+                [form]="vm.form"
+                [activePageEid]="vm.activePage?.eid ?? null"
+                [selectedNodeEid]="vm.selectedNodeEid"
+                [collapsedPageEids]="vm.collapsedPageEids"
+                [collapsedQuestionEids]="vm.collapsedQuestionEids"
+                [revealNodeEid]="vm.revealNodeEid"
+                [revealRevision]="vm.revealRevision"
+                (nodeSelect)="onStructureNodeSelect($event)"
+                (pageToggle)="onStructurePageToggle($event)"
+                (questionToggle)="onStructureQuestionToggle($event)"></app-form-editor-structure-tree>
+        </ng-template>
+
+        <ng-template #rightPanelContent let-tab>
+            <ng-container [ngSwitch]="tab.id">
+                <app-form-editor-palette
+                    *ngSwitchCase="'add'"
+                    [paletteItems]="vm.paletteItems"
+                    [isLoading]="vm.isPaletteLoading"
+                    [paletteError]="vm.paletteError"
+                    [connectedTo]="vm.paletteConnectedTo"
+                    (itemSelect)="selectPaletteItem($event)"></app-form-editor-palette>
+
+                <app-form-editor-diagnostics
+                    *ngSwitchCase="'diagnostics'"
+                    [diagnostics]="vm.diagnostics"></app-form-editor-diagnostics>
+
+                <div class="editor-panel__scroll editor-panel__placeholder" *ngSwitchDefault>
+                    {{ tab.placeholder || 'Bu panel icin henuz gosterilecek icerik yok.' }}
+                </div>
+            </ng-container>
+        </ng-template>
+    </div>
+</div>

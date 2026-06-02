@@ -1,0 +1,345 @@
+<!-- Modal Header -->
+<div class="modal-header bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 rounded-t-lg">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="bg-white/20 p-3 rounded-xl">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold">{{ modalTitle }}</h2>
+        <p class="text-blue-100 text-sm mt-1">
+          {{ isEditMode ? 'Kural duzenlemesi' : 'Yeni kural tanimi' }} yapin
+        </p>
+      </div>
+    </div>
+    <button type="button" (click)="dialogRef.close()"
+      class="text-white hover:bg-white/20 transition-colors duration-200 p-2 rounded">
+      <i class="fas fa-times text-lg"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Modal Body -->
+<div mat-dialog-content [formGroup]="formGroup"
+  class="p-6 bg-white dark:bg-gray-900 max-h-[70vh] overflow-y-auto">
+  <div class="space-y-5">
+    <app-api-select-input
+      [nameOfFormGroup]="formGroup"
+      controlName="formKokEIdDto"
+      title="Form *"
+      placeHolder="Form seciniz..."
+      apiUrl="FormBuild/Form/GetYayindaList"
+      displayField="baslik"
+      [isRequired]="true">
+    </app-api-select-input>
+
+    <app-code-select-input
+      [nameOfFormGroup]="formGroup"
+      controlName="kuralTipKodDto"
+      title="Kural Tipi *"
+      placeHolder="Kural tipi seciniz..."
+      [code]="KURAL_TIPI_KOD_ID"
+      [isMultiple]="false"
+      [isRequired]="true">
+    </app-code-select-input>
+
+    <app-api-select-input
+      *ngIf="kuralCase.showSoruSecimi && formKokEid"
+      [nameOfFormGroup]="formGroup"
+      controlName="formSoruKokEIdDto"
+      title="Soru *"
+      placeHolder="Soru seciniz..."
+      apiUrl="FormBuild/Soru/GetSoruListByFormKokId"
+      displayField="soruMetni"
+      [apiParam]="soruApiParam"
+      [isRequired]="true">
+    </app-api-select-input>
+
+    <app-api-select-input
+      *ngIf="kuralCase.showSayfaSecimi && formKokEid"
+      [nameOfFormGroup]="formGroup"
+      controlName="hedefSayfaEIdDto"
+      title="Hedef Sayfa *"
+      placeHolder="Hedef sayfayi seciniz..."
+      apiUrl="FormBuild/Sayfa/GetSayfaListByFormKokId"
+      [displayFields]="['sayfaNo', 'sayfaBaslik']"
+      displaySeparator=" - "
+      [apiParam]="sayfaApiParam"
+      [isRequired]="true">
+    </app-api-select-input>
+
+    <app-api-select-input
+      *ngIf="kuralCase.showHedefSoruSecimi && formKokEid"
+      [nameOfFormGroup]="formGroup"
+      controlName="hedefSoruKokEIdDto"
+      title="Hedef Soru *"
+      placeHolder="Hedef soruyu seciniz..."
+      apiUrl="FormBuild/Soru/GetSoruListByFormKokId"
+      displayField="soruMetni"
+      [apiParam]="soruApiParam"
+      [isRequired]="true">
+    </app-api-select-input>
+
+    <div *ngIf="kuralCase.showKosullar" class="border border-blue-200 dark:border-blue-800 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+      <div class="flex items-center justify-between mb-3">
+        <h4 class="font-semibold text-blue-800 dark:text-blue-300 text-sm">
+          <i class="fas fa-list-check mr-2"></i>Kosullar
+        </h4>
+        <button type="button"
+          class="px-3 py-1 text-xs rounded transition-colors ek-kural-action-btn"
+          (click)="kosulEkle()">
+          <i class="fas fa-plus mr-1"></i> Kosul Ekle
+        </button>
+      </div>
+
+      <div formArrayName="kosullar" class="space-y-4">
+        <div *ngFor="let kosul of kosullarArray.controls; let i = index"
+          [formGroupName]="i"
+          class="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Kosul {{ i + 1 }}</span>
+            <button type="button"
+              class="transition-colors text-xs ek-kural-remove-btn"
+              (click)="kosulKaldir(i)">
+              <i class="fas fa-trash mr-1"></i> Kaldir
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3">
+            <div *ngIf="kuralCase.kosulCases[i]?.showKuralDesteklenmezUyarisi"
+              class="flex items-start gap-2 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 text-yellow-800 dark:text-yellow-300 text-xs">
+              <i class="fas fa-exclamation-triangle mt-0.5 flex-shrink-0"></i>
+              <span>{{ kuralCase.kosulCases[i]?.kuralDesteklenmezMesaj }}</span>
+            </div>
+
+            <app-api-select-input
+              *ngIf="formKokEid && kuralCase.showKosulKaynakSoru"
+              [nameOfFormGroup]="kosul"
+              controlName="soruKokEIdDto"
+              title="Kaynak Soru"
+              placeHolder="Kosul uygulanacak soru..."
+              apiUrl="FormBuild/Soru/GetSoruListByFormKokId"
+              displayField="soruMetni"
+              [apiParam]="soruApiParam"
+              [isRequired]="false">
+            </app-api-select-input>
+
+            <app-code-select-input
+              *ngIf="!kuralCase.kosulCases[i]?.showKuralDesteklenmezUyarisi"
+              [nameOfFormGroup]="kosul"
+              controlName="kosulTipKodDto"
+              title="Kosul Tipi"
+              placeHolder="Kosul tipi seciniz..."
+              [code]="KOSUL_TIPI_KOD_ID"
+              [isMultiple]="false"
+              [isRequired]="false"
+              [includeIds]="kuralCase.kosulCases[i]?.izinVerilenKosulTipIdleri || []">
+            </app-code-select-input>
+
+            <div *ngIf="kuralCase.kosulCases[i]?.showMatrisNotu"
+              class="flex items-start gap-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-300 text-xs">
+              <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
+              <span>Matris sorular icin secenek secimi sonraki fazda satir ve sutun bazli ayri bir combo ile zenginlestirilecektir.</span>
+            </div>
+
+            <app-api-select-input
+              *ngIf="kuralCase.kosulCases[i]?.showSecenek"
+              [nameOfFormGroup]="kosul"
+              controlName="secenekEIdDto"
+              title="Secenek"
+              placeHolder="Secenek seciniz..."
+              apiUrl="FormBuild/Secenek/GetSecenekListBySoruKokId"
+              displayField="secenekMetni"
+              [apiParam]="secenekApiParamForKosul(i)"
+              [isRequired]="false">
+            </app-api-select-input>
+
+            <div *ngIf="kuralCase.kosulCases[i]?.showMatris" class="grid grid-cols-2 gap-3">
+              <app-api-select-input
+                [nameOfFormGroup]="kosul"
+                controlName="matrisSatirEIdDto"
+                title="Matris Satiri"
+                placeHolder="Satir seciniz..."
+                apiUrl="FormBuild/Soru/GetMatrisBySoruKokId"
+                displayField="baslik"
+                [isRequired]="false">
+              </app-api-select-input>
+              <app-api-select-input
+                [nameOfFormGroup]="kosul"
+                controlName="matrisSutunEIdDto"
+                title="Matris Sutunu"
+                placeHolder="Sutun seciniz..."
+                apiUrl="FormBuild/Soru/GetMatrisBySoruKokId"
+                displayField="baslik"
+                [isRequired]="false">
+              </app-api-select-input>
+            </div>
+
+            <div *ngIf="kuralCase.kosulCases[i]?.showDosyaKisitAlanlari" class="space-y-3">
+              <div class="grid grid-cols-3 gap-3">
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Max Boyut (MB)</mat-label>
+                  <input matInput type="number" formControlName="maxDosyaBoyutuMB" placeholder="Orn: 5">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Min Dosya Sayisi</mat-label>
+                  <input matInput type="number" formControlName="minDosyaSayisi" placeholder="Orn: 1">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Max Dosya Sayisi</mat-label>
+                  <input matInput type="number" formControlName="maxDosyaSayisi" placeholder="Orn: 5">
+                </mat-form-field>
+              </div>
+
+              <app-code-select-input
+                [nameOfFormGroup]="kosul"
+                controlName="izinVerilenDosyaTipleri"
+                title="Izin Verilen Dosya Uzantilari"
+                placeHolder="Uzanti seciniz (coklu)..."
+                [code]="DOSYA_UZANTI_TIPI_KOD_ID"
+                [isMultiple]="true"
+                [isRequired]="false">
+              </app-code-select-input>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <app-code-select-input
+                *ngIf="kuralCase.kosulCases[i]?.showOperator !== false"
+                [nameOfFormGroup]="kosul"
+                controlName="operatorKodDto"
+                title="Operator"
+                placeHolder="Operator seciniz..."
+                [code]="OPERATOR_KOD_ID"
+                [isMultiple]="false"
+                [includeIds]="kuralCase.kosulCases[i]?.izinVerilenOperatorIdleri || []"
+                [isRequired]="false">
+              </app-code-select-input>
+
+              <app-code-select-input
+                *ngIf="kuralCase.kosulCases[i]?.showDegerTipi !== false"
+                [nameOfFormGroup]="kosul"
+                controlName="degerTipiKodDto"
+                title="Deger Tipi"
+                placeHolder="Deger tipi seciniz..."
+                [code]="DEGER_TIPI_KOD_ID"
+                [isMultiple]="false"
+                [includeIds]="kuralCase.kosulCases[i]?.izinVerilenDegerTipiIdleri || []"
+                [isRequired]="false">
+              </app-code-select-input>
+            </div>
+
+            <ng-container *ngIf="kuralCase.kosulCases[i]?.showDeger">
+              <mat-form-field *ngIf="kuralCase.kosulCases[i]?.degerInputTip === 'sayi'" appearance="outline" class="w-full">
+                <mat-label>{{ kuralCase.kosulCases[i]?.degerLabel || 'Deger' }}</mat-label>
+                <input matInput type="number" formControlName="deger" [placeholder]="kuralCase.kosulCases[i]?.degerLabel || 'Sayisal deger'">
+              </mat-form-field>
+
+              <app-datepicker-input
+                *ngIf="kuralCase.kosulCases[i]?.degerInputTip === 'tarih'"
+                [formGroup]="kosulAsFormGroup(i)"
+                controlName="deger"
+                [label]="kuralCase.kosulCases[i]?.degerLabel || 'Tarih'"
+                dateType="date">
+              </app-datepicker-input>
+
+              <mat-form-field *ngIf="kuralCase.kosulCases[i]?.degerInputTip === 'metin' || !kuralCase.kosulCases[i]?.degerInputTip" appearance="outline" class="w-full">
+                <mat-label>{{ kuralCase.kosulCases[i]?.degerLabel || 'Deger' }}</mat-label>
+                <input matInput type="text" formControlName="deger" [placeholder]="kuralCase.kosulCases[i]?.degerLabel || 'Karsilastirma degeri'">
+              </mat-form-field>
+            </ng-container>
+
+            <ng-container *ngIf="kuralCase.kosulCases[i]?.showDeger2">
+              <mat-form-field *ngIf="kuralCase.kosulCases[i]?.degerInputTip === 'sayi'" appearance="outline" class="w-full">
+                <mat-label>{{ kuralCase.kosulCases[i]?.deger2Label || 'Deger 2' }}</mat-label>
+                <input matInput type="number" formControlName="deger2" [placeholder]="kuralCase.kosulCases[i]?.deger2Label || 'Ikinci sayisal deger'">
+              </mat-form-field>
+
+              <app-datepicker-input
+                *ngIf="kuralCase.kosulCases[i]?.degerInputTip === 'tarih'"
+                [formGroup]="kosulAsFormGroup(i)"
+                controlName="deger2"
+                [label]="kuralCase.kosulCases[i]?.deger2Label || 'Bitis Tarihi'"
+                dateType="date">
+              </app-datepicker-input>
+
+              <mat-form-field *ngIf="kuralCase.kosulCases[i]?.degerInputTip === 'metin' || !kuralCase.kosulCases[i]?.degerInputTip" appearance="outline" class="w-full">
+                <mat-label>{{ kuralCase.kosulCases[i]?.deger2Label || 'Deger 2' }}</mat-label>
+                <input matInput type="text" formControlName="deger2" [placeholder]="kuralCase.kosulCases[i]?.deger2Label || 'Ikinci deger'">
+              </mat-form-field>
+            </ng-container>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Kosul Hata Mesaji <span class="text-gray-400 text-xs">(opsiyonel)</span></mat-label>
+              <input matInput formControlName="hataMesaji" placeholder="Bu kosul ihlalinde gosterilecek ek mesaj">
+            </mat-form-field>
+
+            <app-code-select-input
+              [nameOfFormGroup]="kosul"
+              controlName="joinKodDto"
+              title="Baglanti (VE / VEYA)"
+              placeHolder="Sonraki kosula baglanti..."
+              [code]="JOIN_KOD_ID"
+              [isMultiple]="false"
+              [isRequired]="false">
+            </app-code-select-input>
+          </div>
+        </div>
+
+        <div *ngIf="kosullarArray.length === 0"
+          class="text-center text-gray-400 dark:text-gray-500 text-sm py-3">
+          Henuz kosul eklenmedi. "Kosul Ekle" butonuna tiklayin.
+        </div>
+      </div>
+    </div>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Hata Mesaji</mat-label>
+      <input matInput formControlName="hataMesaji"
+        placeholder="Kural ihlali durumunda gosterilecek mesaj">
+    </mat-form-field>
+
+    <mat-checkbox formControlName="isZorunlu" class="block">
+      Zorunlu Kural (engelleyici)
+    </mat-checkbox>
+
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Sira *</mat-label>
+        <input matInput type="number" formControlName="sira" placeholder="0">
+        <mat-error>Sira 0'dan kucuk olamaz</mat-error>
+      </mat-form-field>
+
+      <div class="flex items-center">
+        <mat-checkbox formControlName="isAktif">Kural Aktif</mat-checkbox>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Footer -->
+<div mat-dialog-actions
+  class="bg-gray-50 dark:bg-gray-800 px-6 py-4 rounded-b-lg border-t border-gray-200 dark:border-gray-700">
+  <div class="flex items-center justify-between w-full">
+    <div class="text-sm text-gray-500 dark:text-gray-400">
+      <i class="fas fa-info-circle text-xs mr-1"></i>* ile isaretli alanlar zorunludur
+    </div>
+    <div class="flex space-x-3">
+      <button type="button"
+        class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+        (click)="dialogRef.close()">
+        <i class="fas fa-times mr-2"></i>Iptal
+      </button>
+      <button type="button"
+        class="px-6 py-2 rounded-lg bg-primary text-white hover:bg-primary-700 transition-colors disabled:opacity-50"
+        (click)="Save()"
+        [disabled]="formGroup.invalid">
+        <i class="fas fa-save mr-2"></i>
+        {{ isEditMode ? 'Guncelle' : 'Kaydet' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="relative flex items-center gap-2">
+
+    @if (isSaving) {
+        <mat-icon class="animate-spin !text-base leading-none text-[color:var(--form-view-primary)]">
+            sync
+        </mat-icon>
+    }
+
+    @if (progress) {
+        <button
+            type="button"
+            class="flex flex-col items-end gap-1 text-right"
+            (click)="togglePopover($event)">
+            <p class="text-xs font-bold uppercase tracking-wider text-[color:var(--form-view-text)]">
+                %{{ progress.yuzdeOrani }} Tamamlandı
+            </p>
+            <div class="h-2 w-32 overflow-hidden rounded-full bg-slate-200">
+                <div
+                    class="h-full bg-[color:var(--form-view-primary)] transition-all duration-500"
+                    [style.width.%]="progress.yuzdeOrani">
+                </div>
+            </div>
+        </button>
+
+        @if (isPopoverOpen) {
+            <div class="absolute right-0 top-full z-50 mt-2 w-72 rounded-lg border border-default bg-card p-3 shadow-lg">
+                @if (issues.length === 0) {
+                    <p class="text-sm text-secondary">Tüm cevaplarınız kaydedildi.</p>
+                } @else {
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-warn">
+                        Eksik veya hatalı alanlar
+                    </p>
+                    <ul class="space-y-1 text-left">
+                        @for (issue of issues; track issue.targetKey) {
+                            <li class="text-xs text-secondary">{{ issue.message }}</li>
+                        }
+                    </ul>
+                }
+            </div>
+        }
+    }
+
+</div>

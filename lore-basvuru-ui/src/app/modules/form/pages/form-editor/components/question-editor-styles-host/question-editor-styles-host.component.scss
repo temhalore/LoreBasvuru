@@ -1,0 +1,15 @@
+@use '../question-editors/question-editor-outlet/question-editor-outlet.component' as *;
+@use '../question-editors/common-question-editor/common-question-editor.component' as *;
+@use '../question-editors/option-list-editor/option-list-editor.component' as *;
+@use '../question-editors/matrix-list-editor/matrix-list-editor.component' as *;
+@use '../../../../../../shared/components/form-controls/text-input/text-input.component' as *;
+@use '../../../../../../shared/components/form-controls/checkbox-input/checkbox-input.component' as *;
+@use '../../../../../../shared/components/form-controls/froala-textarea-input/froala-textarea-input.component' as *;
+@use '../../../../../../shared/components/form-controls/textarea-input/textarea-input.component' as *;
+
+app-question-editor-outlet,
+app-common-question-editor,
+app-option-list-editor,
+app-matrix-list-editor {
+    display: block;
+}

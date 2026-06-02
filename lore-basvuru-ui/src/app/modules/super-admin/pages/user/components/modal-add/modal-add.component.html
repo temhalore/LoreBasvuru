@@ -1,0 +1,48 @@
+<div mat-dialog-content [formGroup]="formGroup" class="p-6">
+  <div class="mb-6">
+    <h2 mat-dialog-title class="text-2xl font-semibold text-gray-900 dark:text-white">Add Page</h2>
+  </div>
+
+  <div class="space-y-4">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter page name" required>
+      <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Router Link</mat-label>
+      <input matInput formControlName="routerLink" placeholder="Enter router link" required>
+      <mat-error *ngIf="formGroup.get('routerLink')?.hasError('required')">
+        Router Link is required
+      </mat-error>
+    </mat-form-field>
+  </div>
+</div>
+<label><i>
+    title="Specify a target name for future usage and reference"></i>
+</label>
+<!--end::Label-->
+
+<div>
+  <input name="routerLink" class="form-control form-control-lg form-control-solid" formControlName="routerLink"
+    placeholder="routerLink" autocomplete="off"
+    [class.is-invalid]="formValidationService.isControlInvalid(formGroup,'routerLink')"
+    [class.is-valid]="formValidationService.isControlValid(formGroup,'routerLink')" />
+
+</div>
+
+
+<!-- <div mat-dialog-actions align="end" class="px-6 py-4 bg-gray-50 dark:bg-gray-800">
+  <button mat-button (click)="dialogRef.close()" class="mr-2">
+    <mat-icon>close</mat-icon>
+    <span>İptal</span>
+  </button>
+  <button mat-raised-button color="primary" (click)="Add()"
+    [disabled]="formGroup.invalid || (pageService.isLoading$ | async)">
+    <mat-icon>add</mat-icon>
+    <span>Add Page</span>
+  </button>
+</div> -->

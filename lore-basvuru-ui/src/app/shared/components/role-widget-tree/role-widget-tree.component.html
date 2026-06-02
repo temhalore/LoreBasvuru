@@ -1,0 +1,106 @@
+<div class="role-widget-tree-container">
+  <!-- Header -->
+  <div class="tree-header">
+    <div class="flex items-center space-x-3 mb-4">
+      <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
+        <i class="fas fa-sitemap text-blue-600 dark:text-blue-300 text-xl"></i>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ title }}</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">{{ subtitle }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span class="text-gray-600 dark:text-gray-400 ml-4">Veriler yükleniyor...</span>
+  </div>
+
+  <!-- Tree Content -->
+  <div *ngIf="!loading" class="tree-content">
+    <!-- Empty State -->
+    <div *ngIf="data.length === 0" class="empty-state">
+      <i class="fas fa-info-circle text-4xl text-gray-400 mb-4"></i>
+      <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">Henüz veri bulunamadı</h3>
+      <p class="text-gray-500 dark:text-gray-500">
+        Rol seçildikten sonra komponent yetkileri bu alana yüklenecektir.
+      </p>
+    </div>
+
+    <!-- Page Nodes -->
+    <div *ngIf="data.length > 0" class="page-nodes">
+      <div *ngFor="let pageNode of getPageNodes(); trackBy: trackByPageNode" 
+           class="page-node">
+        
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-info">
+            <div class="page-icon">
+              <i class="fas fa-file-alt text-xl"></i>
+            </div>
+            <div class="page-details">
+              <h4 class="page-title">{{ getPageName(pageNode) }}</h4>
+              <p *ngIf="getPageRouterLink(pageNode)" class="page-route">
+                <i class="fas fa-link text-xs mr-1"></i>
+                {{ getPageRouterLink(pageNode) }}
+              </p>
+            </div>
+          </div>
+          
+          <!-- Page Master Checkbox -->
+          <div class="page-checkbox">
+            <mat-checkbox 
+              [checked]="getPageCheckboxState(pageNode).checked"
+              [indeterminate]="getPageCheckboxState(pageNode).indeterminate"
+              (change)="onPageCheckboxChange(pageNode, $event.checked)"
+              color="primary">
+              <span class="checkbox-label">Tümü</span>
+            </mat-checkbox>
+          </div>
+        </div>
+
+        <!-- Widget List -->
+        <div class="widget-list">
+          <div *ngFor="let widgetNode of getWidgetNodes(pageNode); trackBy: trackByWidgetNode"
+               class="widget-item">
+            
+            <div class="widget-content">
+              <!-- Widget Icon -->
+              <div class="widget-icon">
+                <i class="fas fa-puzzle-piece"></i>
+              </div>
+              
+              <!-- Widget Info -->
+              <div class="widget-info">
+                <h5 class="widget-name">{{ getWidgetName(widgetNode) }}</h5>
+                <p *ngIf="getWidgetSelector(widgetNode)" class="widget-selector">
+                  {{ getWidgetSelector(widgetNode) }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Widget Checkbox -->
+            <div class="widget-checkbox">
+              <mat-checkbox 
+                [checked]="isWidgetAuthorized(widgetNode)"
+                (change)="toggleWidgetPermission(widgetNode)"
+                color="primary">
+                <span class="checkbox-label">
+                  {{ isWidgetAuthorized(widgetNode) ? 'Yetkili' : 'Yetkisiz' }}
+                </span>
+              </mat-checkbox>
+            </div>
+          </div>
+
+          <!-- No Widgets -->
+          <div *ngIf="getWidgetNodes(pageNode).length === 0" class="no-widgets">
+            <i class="fas fa-info-circle text-gray-400 mr-2"></i>
+            <span class="text-gray-500 dark:text-gray-400">Bu sayfada henüz komponent tanımlanmamış</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

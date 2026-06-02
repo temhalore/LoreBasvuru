@@ -1,0 +1,38 @@
+<ng-container *ngIf="!isAnswerOnly; else answerOnlyTemplate">
+    <select
+        class="question-select"
+        [class.question-control--readonly]="isInputReadonly && !isInputDisabled"
+        [disabled]="isInputDisabled || isInputReadonly"
+        [value]="value || ''"
+        (change)="emitValue($event)">
+        <option value="">{{ schema.placeholder || 'Seçiniz' }}</option>
+        <option *ngFor="let option of schema.options; trackBy: trackByEid" [value]="option.eid">{{ plainOptionLabel(option.label) }}</option>
+    </select>
+
+    <div *ngIf="isOtherSelected(value)" class="mt-3">
+        <label class="question-aux-label">Açıklama</label>
+        <input
+            class="question-input"
+            [class.question-control--readonly]="isInputReadonly && !isInputDisabled"
+            [readonly]="isInputReadonly"
+            [disabled]="isInputDisabled"
+            [value]="extraTextControl.value"
+            placeholder="Lütfen belirtiniz..."
+            (input)="onExtraTextInput($event)">
+    </div>
+</ng-container>
+
+<ng-template #answerOnlyTemplate>
+    <div class="question-answer-stack">
+        <div class="question-answer-box" [class.question-answer-box--secondary]="selectedOptionLabel === 'Yanıt verilmedi'">
+            <app-rich-text-view
+                [html]="selectedOptionLabel"
+                fallback="Yanit verilmedi"
+                [compact]="true">
+            </app-rich-text-view>
+        </div>
+        @if (value && extraTextControl.value) {
+            <div class="question-answer-box question-answer-box--secondary">{{ extraTextControl.value }}</div>
+        }
+    </div>
+</ng-template>

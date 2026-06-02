@@ -1,0 +1,18 @@
+<div class="flex min-w-0 flex-auto flex-col">
+  <div class="mb-8 p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        Soru Yönetimi
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400">
+          Sistem kodlarını ekleyin, düzenleyin veya silin.
+        </p>
+      </div>
+
+      <div class="p-6">
+            <app-data-table [config]="tableConfig"></app-data-table>
+      </div>
+    </div>
+  </div>
+</div>

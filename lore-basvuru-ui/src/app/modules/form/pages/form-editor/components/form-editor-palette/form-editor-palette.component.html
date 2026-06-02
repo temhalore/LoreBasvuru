@@ -1,0 +1,89 @@
+<div class="editor-panel__scroll editor-panel__scroll--content">
+    <div class="editor-panel__placeholder editor-panel__placeholder--inline" *ngIf="isLoading">
+        Ekleme secenekleri yukleniyor.
+    </div>
+
+    <div class="editor-panel__placeholder editor-panel__placeholder--inline" *ngIf="!isLoading && paletteError">
+        {{ paletteError }}
+    </div>
+
+    <div
+        class="editor-question-type-list"
+        *ngIf="!isLoading && !paletteError && paletteGroups.length"
+        cdkDropList
+        [cdkDropListSortingDisabled]="true"
+        [cdkDropListEnterPredicate]="noReturnPredicate"
+        [cdkDropListConnectedTo]="connectedTo">
+        <section
+            class="editor-question-type-group"
+            *ngFor="let group of paletteGroups; trackBy: trackByPaletteGroup">
+            <h3 class="editor-question-type-group__title">{{ group.title }}</h3>
+
+            <button
+                type="button"
+                class="editor-question-type-card"
+                *ngFor="let item of group.items; trackBy: trackByPaletteItem"
+                [disabled]="!item.isAktif"
+                [class.editor-question-type-card--draggable]="item.isAktif"
+                cdkDrag
+                [cdkDragData]="item"
+                [cdkDragDisabled]="!item.isAktif"
+                (click)="selectItem(item)">
+                <mat-icon class="editor-question-type-card__icon" aria-hidden="true">{{ item.icon }}</mat-icon>
+                <span class="editor-question-type-card__content">
+                    <span class="editor-question-type-card__title">{{ item.title }}</span>
+                    <span class="editor-question-type-card__description">{{ item.description }}</span>
+                </span>
+
+                <ng-template cdkDragPreview>
+                    <div class="palette-drag-ghost">
+                        <mat-icon class="palette-drag-ghost__icon" aria-hidden="true">{{ item.icon }}</mat-icon>
+                        <span class="palette-drag-ghost__content">
+                            <span class="palette-drag-ghost__title">{{ item.title }}</span>
+                            <span class="palette-drag-ghost__description">{{ item.description }}</span>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template cdkDragPlaceholder>
+                    <div class="palette-drag-placeholder"></div>
+                </ng-template>
+            </button>
+
+            <ng-container *ngFor="let subGroup of group.subGroups; trackBy: trackByPaletteGroup">
+                <h4 class="editor-question-type-group__title">{{ subGroup.title }}</h4>
+
+                <button
+                    type="button"
+                    class="editor-question-type-card"
+                    *ngFor="let item of subGroup.items; trackBy: trackByPaletteItem"
+                    [disabled]="!item.isAktif"
+                    [class.editor-question-type-card--draggable]="item.isAktif"
+                    cdkDrag
+                    [cdkDragData]="item"
+                    [cdkDragDisabled]="!item.isAktif"
+                    (click)="selectItem(item)">
+                    <mat-icon class="editor-question-type-card__icon" aria-hidden="true">{{ item.icon }}</mat-icon>
+                    <span class="editor-question-type-card__content">
+                        <span class="editor-question-type-card__title">{{ item.title }}</span>
+                        <span class="editor-question-type-card__description">{{ item.description }}</span>
+                    </span>
+
+                    <ng-template cdkDragPreview>
+                        <div class="palette-drag-ghost">
+                            <mat-icon class="palette-drag-ghost__icon" aria-hidden="true">{{ item.icon }}</mat-icon>
+                            <span class="palette-drag-ghost__label">{{ item.title }}</span>
+                        </div>
+                    </ng-template>
+                    <ng-template cdkDragPlaceholder>
+                        <div class="palette-drag-placeholder"></div>
+                    </ng-template>
+                </button>
+            </ng-container>
+        </section>
+    </div>
+
+    <div class="editor-panel__placeholder editor-panel__placeholder--inline"
+        *ngIf="!isLoading && !paletteError && !paletteGroups.length">
+        Gosterilecek ekleme secenegi bulunmuyor.
+    </div>
+</div>

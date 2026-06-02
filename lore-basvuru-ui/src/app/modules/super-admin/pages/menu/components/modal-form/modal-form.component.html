@@ -1,0 +1,216 @@
+<!-- Modern Modal Header -->
+<div class="modal-header bg-gradient-to-r from-purple-600 to-violet-700 text-white p-6 rounded-t-lg">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="bg-white/20 p-3 rounded-xl">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold">{{ modalTitle }}</h2>
+        <p class="text-purple-100 text-sm mt-1">
+          Sisteme {{ isEditMode ? 'menü düzenlemesi' : 'yeni menü tanımlaması' }} yapın
+        </p>
+      </div>
+    </div>
+    <button type="button" (click)="dialogRef.close()"
+      class="text-white hover:bg-white/20 transition-colors duration-200 p-2 rounded">
+      <i class="fas fa-times text-lg"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Modern Modal Content -->
+<div mat-dialog-content [formGroup]="formGroup" class="p-6 bg-white dark:bg-gray-900">
+
+  <!-- Menu Form -->
+  <div class="space-y-6">
+
+    <!-- Menu Title Field -->
+    <app-text-input [formGroup]="formGroup" controlName="title" label="Menü Başlığı" placeholder="Menü başlığını girin"
+      icon="menu" [isRequired]="true">
+    </app-text-input>
+
+    <!-- Icon Field -->
+    <app-text-input [formGroup]="formGroup" controlName="icon" label="İkon" placeholder="Menü ikonu (örn: fa-users)"
+      icon="palette">
+    </app-text-input>
+
+    <!-- Menu Type Field -->
+    <div class="form-field">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <i class="fas fa-layer-group text-purple-600 mr-2"></i>
+        Menü Tipi *
+      </label>
+      <select 
+        [formControlName]="'type'" 
+        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+        required>
+        <option value="basic">Temel Menü (Basic)</option>
+        <option value="collapsable">Daraltılabilir Menü (Collapsable)</option>
+        <option value="group">Menü Grubu (Group)</option>
+        <option value="divider">Ayırıcı (Divider)</option>
+        <option value="spacer">Boşluk (Spacer)</option>
+      </select>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        Menünün nasıl görüntüleneceğini belirler: Temel (tıklanabilir), Daraltılabilir (alt menüler), Grup (başlık), Ayırıcı (çizgi), Boşluk (alan)
+      </p>
+    </div>
+
+    <!-- Order Field -->
+    <app-text-input [formGroup]="formGroup" controlName="orderNo" label="Sıra Numarası" placeholder="Menü sıra numarası (örn: 1, 2, 3...)"
+      icon="hashtag" type="number" [isRequired]="true">
+    </app-text-input>
+
+    <!-- Active Status -->
+    <div class="form-field bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+      <label class="flex items-center space-x-3 cursor-pointer">
+        <input 
+          type="checkbox" 
+          [formControlName]="'isActive'" 
+          class="w-4 h-4 rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700"
+        />
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <i class="fas fa-toggle-on text-purple-600 mr-2"></i>
+          Menü Aktif
+        </span>
+      </label>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 ml-7">Menü aktif değilse sistem menüsünde görünmez</p>
+    </div>
+
+    <!-- Tooltip Field -->
+    <app-text-input [formGroup]="formGroup" controlName="tooltip" label="Araç İpucu" placeholder="Menü üzerine gelindiğinde gösterilecek açıklama"
+      icon="info-circle">
+    </app-text-input>
+
+    <!-- Target Field -->
+    <div class="form-field">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <i class="fas fa-external-link-alt text-purple-600 mr-2"></i>
+        Hedef Pencere
+      </label>
+      <select 
+        [formControlName]="'target'" 
+        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+        <option value="_self">Aynı Pencere (_self)</option>
+        <option value="_blank">Yeni Pencere (_blank)</option>
+        <option value="_parent">Üst Pencere (_parent)</option>
+        <option value="_top">En Üst Pencere (_top)</option>
+      </select>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Menü tıklandığında sayfanın nerede açılacağını belirler</p>
+    </div>
+
+    <!-- Parent Menu Selection -->
+        <app-api-select-input 
+            [nameOfFormGroup]="formGroup" 
+            controlName="parentMenuDto" 
+            title="Üst Menü Seçimi"
+            placeHolder="Üst menü seçin (boş bırakırsanız ana menü olur)"
+            apiUrl="Security/Menu/GetList"
+            [displayFields]="['tree']"
+            [isRequired]="false">
+          </app-api-select-input>
+
+
+
+    <!-- Page Selection -->
+      <app-api-select-input 
+            [nameOfFormGroup]="formGroup" 
+            controlName="pageDto" 
+            title="Sayfa Seçimi"
+            placeHolder="Sayfa seçin (boş bırakırsanız sadece grup menü olur)"
+            apiUrl="Security/Page/GetList"
+            [displayFields]="['name']"
+            [isRequired]="false">
+          </app-api-select-input>
+
+
+    <!-- Form Preview Card -->
+    <div
+      class="bg-gradient-to-r from-purple-50 to-violet-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 border border-purple-200 dark:border-gray-600"
+      *ngIf="formGroup.get('title')?.value || formGroup.get('icon')?.value || formGroup.get('orderNo')?.value || formGroup.get('parentMenuDto')?.value || formGroup.get('pageDto')?.value">
+      <div class="flex items-center space-x-3">
+        <div class="bg-purple-100 dark:bg-purple-900 p-2 rounded-full">
+          <svg class="w-5 h-5 text-purple-600 dark:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-semibold text-gray-900 dark:text-white">Menü Önizleme</h3>
+          <div class="mt-2 space-y-1">
+            <div class="flex items-center" *ngIf="formGroup.get('title')?.value">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">Başlık:</span>
+              <span class="text-sm font-medium text-purple-600 dark:text-purple-300">{{ formGroup.get('title')?.value }}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">Tip:</span>
+              <span class="text-sm text-purple-600 dark:text-purple-300 font-medium">{{ getMenuTypeLabel(formGroup.get('type')?.value) }}</span>
+            </div>
+            <div class="flex items-center" *ngIf="formGroup.get('icon')?.value">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">İkon:</span>
+              <span class="text-sm text-purple-600 dark:text-purple-300">{{ formGroup.get('icon')?.value }}</span>
+            </div>
+            <div class="flex items-center" *ngIf="formGroup.get('orderNo')?.value">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">Sıra:</span>
+              <span class="text-sm text-purple-600 dark:text-purple-300">{{ formGroup.get('orderNo')?.value }}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">Durum:</span>
+              <span class="text-sm font-medium" [class]="formGroup.get('isActive')?.value ? 'text-green-600' : 'text-red-600'">
+                {{ formGroup.get('isActive')?.value ? 'Aktif' : 'Pasif' }}
+              </span>
+            </div>
+            <div class="flex items-center" *ngIf="formGroup.get('parentMenuDto')?.value">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">Üst Menü:</span>
+              <span class="text-sm text-purple-600 dark:text-purple-300">{{ formGroup.get('parentMenuDto')?.value?.tree || formGroup.get('parentMenuDto')?.value?.title || formGroup.get('parentMenuDto')?.value?.name }}</span>
+            </div>
+            <div class="flex items-center" *ngIf="formGroup.get('pageDto')?.value">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">Sayfa:</span>
+              <span class="text-sm text-purple-600 dark:text-purple-300">{{ formGroup.get('pageDto')?.value?.name || formGroup.get('pageDto')?.value?.title }}</span>
+            </div>
+            <div class="flex items-center" *ngIf="formGroup.get('tooltip')?.value">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">İpucu:</span>
+              <span class="text-sm text-purple-600 dark:text-purple-300">{{ formGroup.get('tooltip')?.value }}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-sm text-gray-600 dark:text-gray-400 w-20">Hedef:</span>
+              <span class="text-sm text-purple-600 dark:text-purple-300">{{ formGroup.get('target')?.value || '_self' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modern Modal Actions -->
+<div mat-dialog-actions
+  class="bg-gray-50 dark:bg-gray-800 px-6 py-4 rounded-b-lg border-t border-gray-200 dark:border-gray-700">
+  <div class="flex items-center justify-between w-full">
+    <div class="text-sm text-gray-500 dark:text-gray-400">
+      <i class="fas fa-info-circle text-xs mr-1"></i>
+      Menü başlığı, tipi ve sıra numarası zorunludur
+    </div>
+    <div class="flex space-x-3">
+      <app-action-button 
+        label="İptal"
+        icon="times"
+        variant="secondary"
+        [outline]="true"
+        (onClick)="dialogRef.close()">
+      </app-action-button>
+      
+      <app-action-button 
+        [label]="isEditMode ? 'Menü Güncelle' : 'Menü Ekle'"
+        icon="menu"
+        variant="primary"
+        [loading]="menuService.isLoading$ | async"
+        [loadingText]="isEditMode ? 'Güncelleniyor...' : 'Ekleniyor...'"
+        [disabled]="formGroup.invalid"
+        (onClick)="onSave()">
+      </app-action-button>
+    </div>
+  </div>
+</div>

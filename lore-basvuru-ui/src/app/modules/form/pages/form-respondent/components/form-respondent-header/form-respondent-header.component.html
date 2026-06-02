@@ -1,0 +1,20 @@
+<div class="form-view-header-frame flex w-full items-center justify-between gap-3 px-3 py-4 md:px-6 md:py-5"
+     [class.form-view-header-frame--centered]="!stretchContent">
+    <div class="flex min-w-0 items-start gap-4">
+        <div class="form-view-brand-mark">
+            {{ (baslik || 'F').slice(0, 1).toUpperCase() }}
+        </div>
+        <div class="min-w-0">
+            <h1 class="form-view-title truncate md:whitespace-normal">{{ baslik }}</h1>
+            @if (aciklama) {
+                <p class="form-view-description">{{ aciklama }}</p>
+            }
+        </div>
+    </div>
+
+    <app-form-respondent-progress
+        [progress]="progress"
+        [isSaving]="isSaving"
+        [issues]="issues">
+    </app-form-respondent-progress>
+</div>

@@ -1,0 +1,34 @@
+<ng-container *ngIf="!isAnswerOnly; else answerOnlyTemplate">
+    <div cdkDropList class="question-rank-list" (cdkDropListDropped)="onDrop($event)">
+        <div class="question-rank-item" *ngFor="let item of items; index as index" cdkDrag [cdkDragDisabled]="isInputDisabled || isInputReadonly">
+            <div class="question-rank-order">{{ index + 1 }}</div>
+            <div class="question-rank-content">
+                <app-rich-text-view
+                    [html]="item.label"
+                    [compact]="true">
+                </app-rich-text-view>
+            </div>
+            <button type="button" class="question-rank-handle" [disabled]="isInputDisabled || isInputReadonly" aria-label="Sırala">
+                <mat-icon>drag_indicator</mat-icon>
+            </button>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #answerOnlyTemplate>
+    @if (answerOnlyItems.length) {
+        <div class="question-answer-stack">
+            <div class="question-answer-box question-answer-box--ranked" *ngFor="let item of answerOnlyItems; index as index">
+                <span class="question-answer-order">{{ index + 1 }}</span>
+                <span>
+                    <app-rich-text-view
+                        [html]="item.label"
+                        [compact]="true">
+                    </app-rich-text-view>
+                </span>
+            </div>
+        </div>
+    } @else {
+        <div class="question-answer-box question-answer-box--secondary">Yanıt verilmedi</div>
+    }
+</ng-template>

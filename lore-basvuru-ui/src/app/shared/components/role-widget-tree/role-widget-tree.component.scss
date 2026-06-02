@@ -1,0 +1,262 @@
+.role-widget-tree-container {
+  width: 100%;
+}
+
+/* Header Styles */
+.tree-header {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+  border-radius: 0.5rem;
+  border: 1px solid #bfdbfe;
+}
+
+.dark .tree-header {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  border-color: #4b5563;
+}
+
+/* Loading Styles */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  border: 2px dashed #d1d5db;
+}
+
+.dark .empty-state {
+  background-color: #1f2937;
+  border-color: #4b5563;
+}
+
+/* Page Nodes */
+.page-nodes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.page-node {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.dark .page-node {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.page-node:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Page Header */
+.page-header {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.page-icon {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.page-details {
+  flex: 1;
+}
+
+.page-title {
+  font-weight: bold;
+  font-size: 1.125rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.page-route {
+  color: #d1fae5;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  font-family: monospace;
+  margin-bottom: 0;
+}
+
+.page-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+/* Widget List */
+.widget-list {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.widget-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.dark .widget-item {
+  background-color: #4b5563;
+  border-color: #6b7280;
+}
+
+.widget-item:hover {
+  background-color: #f3f4f6;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dark .widget-item:hover {
+  background-color: #6b7280;
+}
+
+.widget-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.widget-icon {
+  background-color: #ede9fe;
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.dark .widget-icon {
+  background-color: #581c87;
+}
+
+.widget-icon i {
+  color: #7c3aed;
+}
+
+.dark .widget-icon i {
+  color: #c4b5fd;
+}
+
+.widget-info {
+  flex: 1;
+}
+
+.widget-name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 1rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.dark .widget-name {
+  color: white;
+}
+
+.widget-selector {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-family: monospace;
+  margin: 0;
+}
+
+.dark .widget-selector {
+  color: #9ca3af;
+}
+
+.widget-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+/* No Widgets */
+.no-widgets {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  color: #6b7280;
+}
+
+.dark .no-widgets {
+  color: #9ca3af;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .page-checkbox {
+    align-self: flex-end;
+  }
+  
+  .widget-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .widget-checkbox {
+    align-self: flex-end;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-node {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.widget-item {
+  animation: fadeIn 0.2s ease-out;
+}

@@ -1,0 +1,17 @@
+.ek-kural-action-btn {
+	background: var(--ek-btn-primary-bg);
+	color: var(--ek-btn-primary-text);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ek-kural-action-btn:hover {
+	filter: brightness(1.05);
+}
+
+.ek-kural-remove-btn {
+	color: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 55%, #b42318);
+}
+
+.ek-kural-remove-btn:hover {
+	color: color-mix(in srgb, var(--fuse-primary, #1d4ed8) 45%, #991b1b);
+}

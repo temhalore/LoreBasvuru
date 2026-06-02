@@ -1,0 +1,16 @@
+<ng-container *ngIf="!isAnswerOnly; else answerOnlyTemplate">
+    <input
+        class="question-input"
+        type="date"
+        [class.question-control--readonly]="isInputReadonly && !isInputDisabled"
+        [disabled]="isInputDisabled"
+        [readonly]="isInputReadonly"
+        [value]="value || ''"
+        (input)="emitValue($event)">
+</ng-container>
+
+<ng-template #answerOnlyTemplate>
+    <div class="question-answer-box" [class.question-answer-box--secondary]="!value">
+        {{ summaryText }}
+    </div>
+</ng-template>

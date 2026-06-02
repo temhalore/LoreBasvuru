@@ -1,0 +1,14 @@
+<div class="form-view-page-frame" [class.form-view-page-frame--centered]="!stretchContent">
+    <section class="form-view-section">
+        @if (page.title || page.description) {
+            <app-form-view-page-header
+                [title]="page.title"
+                [description]="page.description">
+            </app-form-view-page-header>
+        }
+
+        @for (soru of page.questions; track soru.eid) {
+            <app-question-host [schema]="soru" [sessionEid]="sessionEid" [readonly]="readonly"></app-question-host>
+        }
+    </section>
+</div>

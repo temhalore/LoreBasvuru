@@ -1,0 +1,237 @@
+<div class="editor-canvas">
+    <div class="editor-canvas__scroll" #scrollViewport>
+        <div class="editor-canvas__surface" (click)="onSurfaceClick($event)">
+            <div class="editor-canvas__state" *ngIf="isLoading">Form taslagi yukleniyor...</div>
+            <div class="editor-canvas__state editor-canvas__state--error" *ngIf="!isLoading && loadError">{{ loadError }}</div>
+
+            <div class="editor-canvas__form" *ngIf="!isLoading && !loadError && form">
+                <div class="editor-canvas__page-workspace" *ngIf="activePageViews.length; else emptyPageState">
+                    <div class="editor-canvas__page-stage">
+                        <ng-container *ngFor="let pageView of activePageViews; trackBy: trackByPageView">
+                            <section
+                                class="editor-canvas__page-window"
+                                [class.editor-canvas__page-window--enter]="pageView.phase === 'enter'"
+                                [class.editor-canvas__page-window--leave]="pageView.phase === 'leave'"
+                                [class.editor-canvas__page-window--next]="pageTransitionDirection === 'next'"
+                                [class.editor-canvas__page-window--prev]="pageTransitionDirection === 'prev'"
+                                [attr.data-page-eid]="pageView.page.eid">
+
+                                <div
+                                    class="editor-canvas__page-window-card"
+                                    [class.editor-canvas__page-window-card--workspace-muted]="hasGroupWorkspaceOpen">
+                                    <div class="editor-canvas__page-header-host"
+                                         [class.editor-canvas__page-header-host--selected]="selectedNodeEid === pageView.page.eid"
+                                         [class.editor-canvas__page-header-host--editing]="isPageEditing(pageView.page.eid)">
+
+                                        <ng-container *ngIf="!isPageEditing(pageView.page.eid)">
+                                            <app-form-view-page-header
+                                                [title]="pageView.page.sayfaBaslik"
+                                                [description]="pageView.page.sayfaAciklama"
+                                                titleFallback="Adsiz sayfa"
+                                                descriptionFallback="Sayfa aciklamasi henuz girilmedi."
+                                                [nodeEid]="pageView.page.eid"
+                                                (select)="selectNode($event)">
+                                            </app-form-view-page-header>
+
+                                            <div class="editor-canvas__page-toolbar">
+                                                <button
+                                                    type="button"
+                                                    mat-icon-button
+                                                    class="editor-canvas__page-action"
+                                                    aria-label="Sayfayi duzenle"
+                                                    matTooltip="Sayfayi duzenle"
+                                                    (click)="startPageEdit(pageView.page); $event.stopPropagation()">
+                                                    <mat-icon aria-hidden="true">edit</mat-icon>
+                                                </button>
+                                            </div>
+                                        </ng-container>
+
+                                        <div class="editor-canvas__page-edit"
+                                             *ngIf="isPageEditing(pageView.page.eid)"
+                                             (click)="$event.stopPropagation()">
+                                            <div class="editor-canvas__page-edit-body">
+                                                <input
+                                                    class="editor-canvas__page-edit-title"
+                                                    type="text"
+                                                    [value]="pageEditDraft?.sayfaBaslik ?? ''"
+                                                    (input)="updatePageTitle($event)"
+                                                    placeholder="Sayfa basligi">
+                                                <textarea
+                                                    class="editor-canvas__page-edit-desc"
+                                                    [value]="pageEditDraft?.sayfaAciklama ?? ''"
+                                                    (input)="updatePageDescription($event)"
+                                                    placeholder="Sayfa aciklamasi"
+                                                    rows="3">
+                                                </textarea>
+                                            </div>
+                                            <div class="editor-canvas__page-edit-actions">
+                                                <button
+                                                    type="button"
+                                                    mat-flat-button
+                                                    color="primary"
+                                                    (click)="savePageEdit()">
+                                                    Kaydet
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    mat-stroked-button
+                                                    (click)="cancelPageEdit(pageView.page)">
+                                                    Iptal
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="editor-canvas__window-body">
+                                        <div
+                                            class="editor-canvas__question-stack-host"
+                                            [class.editor-canvas__question-stack-host--muted]="hasGroupWorkspaceOpen">
+                                            <ng-container
+                                                *ngTemplateOutlet="questionStackTemplate; context: {
+                                                    questions: pageView.schema.questions || [],
+                                                    dragEnabled: !hasGroupWorkspaceOpen,
+                                                    listId: containerDropListId(pageView.page.eid),
+                                                    dropDisabled: isPageQuestionsDropDisabled(pageView),
+                                                    containerEid: pageView.page.eid,
+                                                    emptyTitle: 'Bu sayfada henuz soru yok',
+                                                    emptyText: 'Sag panelden bir soru tipini buraya surukleyin veya tiklayarak ekleyin.'
+                                                }">
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </ng-container>
+
+                        <section
+                            *ngFor="let workspaceView of groupWorkspaceViews; trackBy: trackByGroupWorkspace"
+                            class="editor-canvas__group-window"
+                            [class.editor-canvas__group-window--active]="workspaceView.isActive">
+                            <div
+                                class="editor-canvas__group-window-card"
+                                [@groupWorkspaceCardEnter]
+                                [style.--workspace-stack-offset]="workspaceView.stackOffset">
+                                <div class="editor-canvas__group-window-header">
+                                    <button
+                                        type="button"
+                                        mat-stroked-button
+                                        class="editor-canvas__group-window-back"
+                                        aria-label="Bir seviye geri git"
+                                        (click)="onGroupWorkspaceBack($event)">
+                                        <mat-icon aria-hidden="true">arrow_back</mat-icon>
+                                        <span>Geri</span>
+                                    </button>
+
+                                    <div class="editor-canvas__group-window-heading">
+                                        <p class="editor-canvas__group-window-eyebrow">Alt soru calisma alani</p>
+                                        <h2 class="editor-canvas__group-window-title">{{ workspaceView.title }}</h2>
+                                        <div class="editor-canvas__group-window-breadcrumb">
+                                            <ng-container *ngFor="let breadcrumb of workspaceView.breadcrumbLabels; let isLast = last">
+                                                <span
+                                                    class="editor-canvas__group-window-crumb"
+                                                    [class.editor-canvas__group-window-crumb--active]="isLast">
+                                                    {{ breadcrumb }}
+                                                </span>
+                                                <span
+                                                    *ngIf="!isLast"
+                                                    class="editor-canvas__group-window-separator"
+                                                    aria-hidden="true">
+                                                    /
+                                                </span>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="editor-canvas__window-body">
+                                    <ng-container
+                                        *ngTemplateOutlet="questionStackTemplate; context: {
+                                            questions: workspaceView.questions,
+                                            dragEnabled: workspaceView.isActive,
+                                            listId: workspaceView.isActive ? containerDropListId(workspaceView.containerEid) : '',
+                                            dropDisabled: !workspaceView.isActive,
+                                            containerEid: workspaceView.containerEid,
+                                            emptyTitle: 'Bu grupta henuz alt soru yok',
+                                            emptyText: 'Sag panelden bir soru tipini buraya surukleyin veya tiklayarak ekleyin.'
+                                        }">
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <ng-template #emptyPageState>
+                    <div class="editor-canvas__empty-panel">
+                        <p class="editor-canvas__empty-title">Formda goruntulenecek sayfa bulunamadi</p>
+                        <p class="editor-canvas__empty-text">Yeni sayfa ekleme akisi bu bos durumu yonetebilir hale gelecek.</p>
+                    </div>
+                </ng-template>
+            </div>
+
+            <ng-template
+                #questionStackTemplate
+                let-questions="questions"
+                let-dragEnabled="dragEnabled"
+                let-listId="listId"
+                let-dropDisabled="dropDisabled"
+                let-containerEid="containerEid"
+                let-emptyTitle="emptyTitle"
+                let-emptyText="emptyText">
+                <div
+                    class="editor-canvas__question-stack"
+                    cdkDropList
+                    [id]="listId"
+                    [cdkDropListData]="questions || []"
+                    [cdkDropListDisabled]="dropDisabled"
+                    (cdkDropListDropped)="containerEid ? onQuestionDrop($event, containerEid) : null">
+
+                    <ng-container *ngIf="(questions?.length || 0) > 0; else emptyQuestionState">
+                        <div
+                            *ngFor="let question of questions || []; trackBy: trackByEid"
+                            class="editor-canvas__question-drag-item"
+                            cdkDrag
+                            [cdkDragData]="question"
+                            [cdkDragDisabled]="!dragEnabled"
+                            (mousedown)="dragEnabled ? preMeasureDragItemHeight($event) : null"
+                            (cdkDragStarted)="dragEnabled ? onQuestionDragStarted($event) : null">
+
+                            <app-question-editor-host
+                                [schema]="question"
+                                [question]="resolveQuestion(question.eid)"
+                                [selectedNodeEid]="selectedNodeEid"
+                                [activeSurface]="activeQuestionSurface"
+                                [editingQuestionDraft]="editingQuestionDraft"
+                                [isQuestionDraftSaving]="isQuestionDraftSaving"
+                                [questionDraftError]="questionDraftError"
+                                [validationSession]="validationSession"
+                                [validationEditorConfig]="validationEditorConfig"
+                                [isValidationLoading]="isValidationLoading"
+                                [isValidationSaving]="isValidationSaving"
+                                [validationError]="validationError"
+                                [showDragHandle]="dragEnabled"
+                                (select)="selectNode($event)"
+                                (action)="onQuestionAction($event)"
+                                (surfaceClose)="closeQuestionSurface($event)"
+                                (saveDraft)="saveQuestionDraft($event)"
+                                (questionDraftDirtyChange)="questionDraftDirtyChange.emit($event)"
+                                (saveValidation)="validationSessionSave.emit($event)">
+                            </app-question-editor-host>
+
+                            <ng-template cdkDragPlaceholder>
+                                <div class="editor-canvas__question-placeholder"></div>
+                            </ng-template>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <ng-template #emptyQuestionState>
+                    <div class="editor-canvas__empty-drop-zone">
+                        <p class="editor-canvas__empty-title">{{ emptyTitle }}</p>
+                        <p class="editor-canvas__empty-text">{{ emptyText }}</p>
+                    </div>
+                </ng-template>
+            </ng-template>
+        </div>
+    </div>
+</div>

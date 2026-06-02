@@ -1,0 +1,7 @@
+<ng-container *ngIf="renderState$ | async as state">
+    <app-question-type-renderer
+        [schema]="schema"
+        [state]="state"
+        (answerChange)="onAnswerChange($event)">
+    </app-question-type-renderer>
+</ng-container>
