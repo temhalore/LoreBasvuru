@@ -133,6 +133,47 @@ export class SweetAlertService {
       return this.result$.value;
     }))
   }
+  /**
+   * Backend DELETE endpoint için onaylı silme dialogu.
+   * @param name - Dialog başlığında gösterilecek kayıt adı
+   * @param queryUrl - Tam URL: örn. 'Yetki/EkranSil?eid=xyz'
+   */
+  showDeleteByQuery(name: string, queryUrl: string): Observable<ServiceResponseModel> {
+    return from(Swal.fire({
+      title: name + ' Silinecek?',
+      text: 'Silmek istiyor musunuz!',
+      icon: 'warning',
+      showConfirmButton: true,
+      showDenyButton: true,
+      confirmButtonColor: '#3085d6',
+      denyButtonColor: '#d33',
+      confirmButtonText: 'Evet, sil!',
+      denyButtonText: 'Hayır, silme!',
+      allowOutsideClick: false,
+      preConfirm: () => {
+        Swal.update({ showDenyButton: false, text: name + ' Siliniyor...' });
+        Swal.showLoading();
+        return this.httpService.Delete(queryUrl).pipe(tap(res => {
+          this.result$.next(res);
+        }));
+      },
+      preDeny: () => {
+        this.result$.next({ data: false } as ServiceResponseModel);
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (!this.result$.value.isSuccess) {
+          Swal.fire('Hata!', name + ' Silinemedi.' + '<br>' + this.result$.value.error_message?.message, 'error');
+        } else {
+          Swal.fire('Silindi!', name + ' Silindi.', 'success');
+        }
+      } else if (result.isDenied || result.isDismissed) {
+        Swal.fire('Vazgeçtiniz!', 'Kayıt Silinmedi.', 'info');
+      }
+      return this.result$.value;
+    }));
+  }
+
   showSave<T>(
     name: string,
     model: T,

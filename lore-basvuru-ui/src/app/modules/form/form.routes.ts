@@ -3,14 +3,6 @@ import { IsAuthGuard } from 'app/base/security/auth.guard';
 
 export default [
     {
-        path: 'list/:etikKurulEid',
-        canActivate: [IsAuthGuard],
-        loadComponent: () =>
-            import('./pages/form-list/form-list.component').then(
-                (m) => m.FormListComponent,
-            ),
-    },
-    {
         path: 'list',
         canActivate: [IsAuthGuard],
         loadComponent: () =>

@@ -27,6 +27,7 @@ export class HttpService {
     const appToken = loginResponse?.kisiTokenDto?.appToken ?? '';
     const headers: any = {
       'appToken': appToken,
+      'Authorization': appToken ? `Bearer ${appToken}` : '',
       'language': this.language
     };
     if (isJson) {
@@ -34,6 +35,16 @@ export class HttpService {
       headers['Accept'] = 'application/json';
     }
     return new HttpHeaders(headers);
+  }
+
+  Get<T>(ApiControllerAction: string): Observable<ServiceResponseModel> {
+    return this.http.get<ServiceResponseModel>(
+      this.API_URL + ApiControllerAction,
+      { headers: this.getHeaders() }
+    ).pipe(
+      catchError(err => this.errorHandler(err)),
+      tap(x => this.handleResponse(x))
+    );
   }
 
   Post<T>(ApiControllerAction: string, request: any): Observable<ServiceResponseModel> {
@@ -50,6 +61,16 @@ export class HttpService {
     return this.http.post<ServiceResponseModel>(
       this.API_URL + ApiControllerAction, formData,
       { headers: this.getHeaders(false) }
+    ).pipe(
+      catchError(err => this.errorHandler(err)),
+      tap(x => this.handleResponse(x))
+    );
+  }
+
+  Delete(ApiControllerAction: string): Observable<ServiceResponseModel> {
+    return this.http.delete<ServiceResponseModel>(
+      this.API_URL + ApiControllerAction,
+      { headers: this.getHeaders() }
     ).pipe(
       catchError(err => this.errorHandler(err)),
       tap(x => this.handleResponse(x))

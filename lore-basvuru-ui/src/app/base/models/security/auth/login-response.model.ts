@@ -1,19 +1,16 @@
-import { MenuModel } from "../menu/menu.model";
 import { PageModel } from "../page/page.model";
-import { PermissionModel } from "../permission/permission.model";
-import { WidgetModel } from "../widget/widget.model";
 import { KisiTokenModel } from "./kisi-token.model";
 
 export class LoginResponseModel {
-    kisiTokenDto:KisiTokenModel;
-    menuListDto: MenuModel[] = [];
-    widgetListDto: WidgetModel[] = [];
-    permissionListDto: PermissionModel[] = [];
-    pageListDto: PageModel[] = [];
-    ekranListDto: PageModel[] = [];  // LoreBaşvuru alias
+    kisiTokenDto: KisiTokenModel = new KisiTokenModel();
 
-    isDogrulamaGerekli: boolean = false;
-    isEmailDogrulandi: boolean = false;
-    isCepTelDogrulandi: boolean = false;
-    isEdevletDogrulandi: boolean = false;
+    // Kolaylık için proxy getter'lar
+    get ekranListDto(): PageModel[] { return this.kisiTokenDto?.ekranDtoList ?? []; }
+    get widgetKodlari(): string[] { return this.kisiTokenDto?.widgetKodlari ?? []; }
+
+    /**
+     * @deprecated Eski sistemden kalma uyumluluk getter'ları — ekranDtoList kullanın
+     */
+    get menuListDto(): PageModel[] { return this.ekranListDto; }
+    get pageListDto(): PageModel[] { return this.ekranListDto; }
   }

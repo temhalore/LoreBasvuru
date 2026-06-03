@@ -50,20 +50,32 @@ export class FormRespondentApiService {
 
     constructor(private httpService: HttpService) {}
 
-    startUserFormSession(kullaniciFormEid: string): Observable<UserFormSession | null> {
-        return this.httpService.Post<UserFormSession>('FormRespondent/Form/StartFormByUserFormId', { eid: kullaniciFormEid }).pipe(
+    /**
+     * Forma yeni başvuru başlat.
+     * POST api/FormRespondent/BasvuruBaslat?formEid={formEid}
+     */
+    startUserFormSession(formEid: string): Observable<UserFormSession | null> {
+        return this.httpService.Post<UserFormSession>(`FormRespondent/BasvuruBaslat?formEid=${formEid}`, {}).pipe(
             map(response => response.isSuccess ? response.data : null)
         );
     }
 
-    submitUserForm(kullaniciFormEid: string): Observable<UserFormSubmitResponse | null> {
-        return this.httpService.Post<UserFormSubmitResponse>('FormRespondent/Form/SubmitForm', { eid: kullaniciFormEid }).pipe(
+    /**
+     * Başvuruyu tamamla (gönder).
+     * POST api/FormRespondent/BasvuruTamamla?basvuruEid={basvuruEid}
+     */
+    submitUserForm(basvuruEid: string): Observable<UserFormSubmitResponse | null> {
+        return this.httpService.Post<UserFormSubmitResponse>(`FormRespondent/BasvuruTamamla?basvuruEid=${basvuruEid}`, {}).pipe(
             map(response => response.isSuccess ? response.data : null)
         );
     }
 
+    /**
+     * Sayfa cevaplarını kaydet.
+     * POST api/FormRespondent/CevapKaydet
+     */
     saveUserFormPage(request: UserFormSavePageRequest): Observable<UserFormSavePageResponse | null> {
-        return this.httpService.Post<UserFormSavePageResponse>('FormRespondent/Form/SaveFormPage', request).pipe(
+        return this.httpService.Post<UserFormSavePageResponse>('FormRespondent/CevapKaydet', request).pipe(
             map(response => response.isSuccess && response.data
                 ? {
                     ...response.data,
@@ -73,15 +85,16 @@ export class FormRespondentApiService {
         );
     }
 
-    uploadUserFormDosya(request: UserFormDosyaUploadRequest): Observable<UserFormDosyaUploadResponse | null> {
-        return this.httpService.Post<UserFormDosyaUploadResponse>('FormRespondent/Dosya/Yukle', request).pipe(
-            map(response => response.isSuccess && response.data
-                ? {
-                    ...response.data,
-                    hatalar: (response.data.hatalar ?? []).map((issue) => this.normalizeIssue(issue)),
-                }
-                : null)
-        );
+    /**
+     * Dosya yükle.
+     * TODO: Backend'de dosya yükleme endpoint'i eklendiğinde burası güncellenmeli.
+     */
+    uploadUserFormDosya(_request: UserFormDosyaUploadRequest): Observable<UserFormDosyaUploadResponse | null> {
+        // Backend'de FormRespondent dosya upload endpoint yok — şimdilik null döner
+        return new Observable(observer => {
+            observer.next(null);
+            observer.complete();
+        });
     }
 
     private normalizeIssue(issue: Partial<UserFormIssue> | null | undefined): UserFormIssue {

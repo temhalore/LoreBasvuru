@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    const kisi = this.authService.currentUserValue?.kisiTokenDto;
-    this.kullaniciAdi = kisi?.loginName ?? 'Kullanıcı';
+    const kisiDto = this.authService.currentUserValue?.kisiTokenDto?.kisiDto;
+    this.kullaniciAdi = kisiDto?.adSoyad || kisiDto?.ad || 'Kullanıcı';
   }
 }

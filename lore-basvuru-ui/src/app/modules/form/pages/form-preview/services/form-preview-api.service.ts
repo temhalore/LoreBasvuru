@@ -51,13 +51,15 @@ export class FormPreviewApiService {
     constructor(private httpService: HttpService) {}
 
     getDraftPreview(formKokEid: string): Observable<FormPreviewModel | null> {
-        return this.httpService.Post<DraftPreviewResponse>('FormBuild/Onizleme/Olustur', { eid: formKokEid }).pipe(
+        // GET api/FormBuild/FormGetir?eid={eid} — tam form yapısını döner, önizleme için kullanılır
+        return this.httpService.Get<DraftPreviewResponse>(`FormBuild/FormGetir?eid=${formKokEid}`).pipe(
             map(response => response.isSuccess ? this.mapDraftPreview(response.data) : null),
         );
     }
 
-    getSessionPreview(kullaniciFormEid: string): Observable<FormPreviewModel | null> {
-        return this.httpService.Post<Omit<FormPreviewModel, 'source'>>('FormRespondent/Session/PreviewForm', { eid: kullaniciFormEid }).pipe(
+    getSessionPreview(basvuruEid: string): Observable<FormPreviewModel | null> {
+        // GET api/FormRespondent/BasvuruDetayGetir?basvuruEid={eid}
+        return this.httpService.Get<Omit<FormPreviewModel, 'source'>>(`FormRespondent/BasvuruDetayGetir?basvuruEid=${basvuruEid}`).pipe(
             map(response => response.isSuccess && response.data
                 ? this.mapSessionPreview(response.data)
                 : null),

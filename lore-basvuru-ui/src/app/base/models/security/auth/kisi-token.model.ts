@@ -1,22 +1,21 @@
-import { KodModel } from "../../common/kod.model";
 import { KisiModel } from "../user/kisi.model";
+import { PageModel } from "../page/page.model";
 
 export class KisiTokenModel {
-  loginName: string
-  kisiDto: KisiModel;
   isLogin: boolean = false;
-  loginAraciUygulamaToken: string;
-  loginAraciUygulamaTipKodDto: KodModel;
-  appToken: string;
-  ip: string;
-  userTypes: string[];
+  appToken: string = '';
   expireDate: Date;
-  language: string;
-  yerineLoginAdminLoginName: string;
-  createdDate: Date;
-  updatedate: Date;
-  userAgent: string;
-  deleteReason: string;
+  kisiDto: KisiModel;
 
+  // Ekran (sayfa) yetkileri — backend: ekranDtoList
+  ekranDtoList: PageModel[] = [];
 
+  // Widget yetkileri — backend: widgetKodlari (sadece kod stringleri)
+  widgetKodlari: string[] = [];
+
+  /**
+   * @deprecated Eski layout bileşenleriyle TypeScript uyumluluğu için tutuldu.
+   */
+  userTypes?: string[];
+  language?: string;
 }

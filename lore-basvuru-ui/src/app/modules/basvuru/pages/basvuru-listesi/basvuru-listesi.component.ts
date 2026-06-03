@@ -8,9 +8,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatMenuModule } from '@angular/material/menu';
 import { BasvuruService } from '../../services/basvuru.service';
-import { UserBasvuruModel, BasvuruListeFiltresi } from '../../models/basvuru.model';
+import { UserBasvuruModel } from '../../models/basvuru.model';
 
 @Component({
   selector: 'app-basvuru-listesi',
@@ -18,14 +17,14 @@ import { UserBasvuruModel, BasvuruListeFiltresi } from '../../models/basvuru.mod
   imports: [
     CommonModule, RouterModule,
     MatButtonModule, MatIconModule, MatTableModule,
-    MatChipsModule, MatTooltipModule, MatProgressSpinnerModule, MatMenuModule,
+    MatChipsModule, MatTooltipModule, MatProgressSpinnerModule,
   ],
   templateUrl: './basvuru-listesi.component.html',
 })
 export class BasvuruListesiComponent implements OnInit, OnDestroy {
   basvurular: UserBasvuruModel[] = [];
   yukleniyor = false;
-  displayedColumns = ['formAdi', 'durum', 'tarih', 'islemler'];
+  displayedColumns = ['formAd', 'durum', 'baslamaTarihi', 'islemler'];
   private subs: Subscription[] = [];
 
   constructor(private basvuruService: BasvuruService) {}
@@ -36,28 +35,35 @@ export class BasvuruListesiComponent implements OnInit, OnDestroy {
 
   listeleGetir(): void {
     this.yukleniyor = true;
-    const filtre = new BasvuruListeFiltresi();
     this.subs.push(
-      this.basvuruService.Listele(filtre).subscribe({
+      this.basvuruService.Listele().subscribe({
         next: res => {
           if (res?.isSuccess) {
             this.basvurular = res.data ?? [];
           }
+          this.yukleniyor = false;
         },
-        complete: () => { this.yukleniyor = false; }
+        error: () => { this.yukleniyor = false; }
       })
     );
   }
 
-  durumRengi(durum: string): string {
-    const map: Record<string, string> = {
-      'Taslak': 'bg-gray-100 text-gray-700',
-      'Gonderildi': 'bg-blue-100 text-blue-700',
-      'Onayda': 'bg-yellow-100 text-yellow-700',
-      'Onaylandi': 'bg-green-100 text-green-700',
-      'Reddedildi': 'bg-red-100 text-red-700',
+  // Backend durum numaraları: 1=Taslak, 2=Gönderildi, 3=İncelemede, 4=Tamamlandı
+  durumRengi(durum: number): string {
+    const map: Record<number, string> = {
+      1: 'bg-gray-100 text-gray-700',
+      2: 'bg-blue-100 text-blue-700',
+      3: 'bg-yellow-100 text-yellow-700',
+      4: 'bg-green-100 text-green-700',
     };
     return map[durum] ?? 'bg-gray-100 text-gray-700';
+  }
+
+  durumAdi(durum: number): string {
+    const map: Record<number, string> = {
+      1: 'Taslak', 2: 'Gönderildi', 3: 'İncelemede', 4: 'Tamamlandı'
+    };
+    return map[durum] ?? 'Bilinmiyor';
   }
 
   ngOnDestroy(): void {

@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, map, Observable, of, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, finalize, Observable, of, switchMap } from 'rxjs';
 import { ServiceResponseModel } from 'app/base/models/general/service-response.model';
-import { PermissionModel } from 'app/base/models/security/permission/permission.model';
 import { HttpService } from 'app/base/services/http.service';
+
+export interface EkranYetkisiReqDTO {
+    rolId: number;
+    idler: number[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
@@ -14,26 +18,34 @@ export class PermissionService {
     ) {
         this.isLoadingSubject = new BehaviorSubject<boolean>(false);
         this.isLoading$ = this.isLoadingSubject.asObservable();
-
     }
 
-    GetList(): Observable<PermissionModel[]> {
+    /**
+     * Tüm ekranları getir (yetki atama için).
+     * GET api/Yetki/TumEkranlariGetir
+     */
+    GetList(): Observable<any[]> {
         this.isLoadingSubject.next(true);
-
-        return this.httpService.Post('security/permission/getlist', null).pipe(
-            switchMap((res: ServiceResponseModel) => {
-                return of((res.data as PermissionModel[]))
-            }),
+        return this.httpService.Get('Yetki/TumEkranlariGetir').pipe(
+            switchMap((res: ServiceResponseModel) => of(res.data as any[])),
             finalize(() => this.isLoadingSubject.next(false))
         );
     }
+
+    /**
+     * Role ekran yetkisi kaydet.
+     * POST api/Yetki/RolEkranYetkisiKaydet  body: { rolId, idler }
+     */
+    SetRolEkranYetkisi(req: EkranYetkisiReqDTO): Observable<boolean> {
+        this.isLoadingSubject.next(true);
+        return this.httpService.Post('Yetki/RolEkranYetkisiKaydet', req).pipe(
+            switchMap((res: ServiceResponseModel) => of(res.isSuccess ?? false)),
+            finalize(() => this.isLoadingSubject.next(false))
+        );
+    }
+
+    /** @deprecated Eski endpoint — yetki kontrolü artık backend'de */
     Check(): Observable<boolean> {
-        this.isLoadingSubject.next(true);
-        return this.httpService.Post('security/permission/check', null).pipe(
-            switchMap((res: ServiceResponseModel) => {
-                return of((res.data as boolean))
-            }),
-            finalize(() => this.isLoadingSubject.next(false))
-        );
+        return of(true);
     }
 }

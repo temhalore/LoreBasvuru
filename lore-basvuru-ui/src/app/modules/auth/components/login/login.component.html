@@ -23,9 +23,9 @@
                 <!-- Kullanıcı Adı -->
                 <mat-form-field class="w-full mb-4" appearance="outline">
                     <mat-label>Kullanıcı Adı</mat-label>
-                    <input matInput formControlName="loginName" autocomplete="username" placeholder="kullanici.adi">
+                    <input matInput formControlName="kullaniciAdi" autocomplete="username" placeholder="kullanici.adi">
                     <mat-icon matPrefix class="text-gray-400 mr-1">person_outline</mat-icon>
-                    <mat-error *ngIf="f['loginName'].hasError('required')">Kullanıcı adı zorunludur.</mat-error>
+                    <mat-error *ngIf="f['kullaniciAdi'].hasError('required')">Kullanıcı adı zorunludur.</mat-error>
                 </mat-form-field>
 
                 <!-- Şifre -->

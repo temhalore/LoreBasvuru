@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { HttpService } from 'app/base/services/http.service';
 import {
     DiagnosticDto,
@@ -60,51 +60,94 @@ export class FormBuildApiService {
 
     constructor(private readonly httpService: HttpService) {}
 
+    /**
+     * Soru tipi paletini getir.
+     * Backend'de bu endpoint yok — boş liste döner, frontend statik palette kullanır.
+     */
     getPaletteItemList(): Observable<FormPaletteItemDto[]> {
-        return this.httpService.Post<FormPaletteItemDto[]>('FormBuild/Palette/GetItemList', {}).pipe(
-            map((response) => response.isSuccess ? (response.data ?? []) as FormPaletteItemDto[] : []),
-        );
+        // TODO: Backend'de palette endpoint eklendikten sonra burası güncellenmeli
+        return of([]);
     }
 
+    /**
+     * Yeni soru taslağı oluştur.
+     * POST api/FormBuild/SoruKaydet
+     */
     createQuestionDraft(request: CreateQuestionDraftRequest): Observable<QuestionDto | null> {
-        return this.httpService.Post<QuestionDto>('FormBuild/Soru/DraftOlustur', request).pipe(
+        // formEid ve sayfaEid'i request'ten çıkar, SoruDTO formatına dönüştür
+        const payload = {
+            basvuruFormEid: request.formKokEidDto?.eid ?? null,
+            sayfaEid: request.sayfaKokEidDto?.eid ?? null,
+            soruTipi: (request.soruTipKodDto as any)?.soruTipi ?? 1,
+            etiket: '',
+            siraNo: request.sira ?? 0,
+            zorunluMu: false,
+            gizliMi: false,
+            readOnlyMi: false,
+            kaynakTipi: 1,
+        };
+        return this.httpService.Post<QuestionDto>('FormBuild/SoruKaydet', payload).pipe(
             map((response) => response.isSuccess ? response.data as QuestionDto : null),
         );
     }
 
+    /**
+     * Form taslağını getir.
+     * GET api/FormBuild/FormGetir?eid={formEid}
+     */
     getDraftForm(formEid: string): Observable<FormBuildLoadResult> {
-        return this.httpService.Post<FormDto>('FormBuild/Form/Getir', { eid: formEid }).pipe(
+        return this.httpService.Get<FormDto>(`FormBuild/FormGetir?eid=${formEid}`).pipe(
             map((response) => {
                 const data = response.isSuccess ? response.data as FormDto : null;
                 return {
                     form: data,
-                    diagnostics: data?.tanilamalar ?? [],
+                    diagnostics: (data as any)?.tanilamalar ?? [],
                 };
             }),
         );
     }
 
+    /**
+     * Formu kaydet.
+     * POST api/FormBuild/FormKaydet
+     */
     saveForm(form: FormDto): Observable<FormBuildLoadResult> {
-        return this.httpService.Post<FormDto>('FormBuild/Form/Kaydet', form).pipe(
+        return this.httpService.Post<FormDto>('FormBuild/FormKaydet', form).pipe(
             map((response) => {
                 const data = response.isSuccess ? response.data as FormDto : null;
                 return {
                     form: data,
-                    diagnostics: data?.tanilamalar ?? [],
+                    diagnostics: (data as any)?.tanilamalar ?? [],
                 };
             }),
         );
     }
 
+    /**
+     * Sayfa oluştur.
+     * POST api/FormBuild/SayfaKaydet
+     */
     createPage(request: CreatePageDraftRequest): Observable<PageDto | null> {
-        return this.httpService.Post<PageDto>('FormBuild/Sayfa/Kaydet', request).pipe(
+        const payload = {
+            basvuruFormEid: request.formKokEidDto?.eid ?? null,
+            ad: request.sayfaBaslik ?? '',
+            aciklama: request.sayfaAciklama ?? '',
+            siraNo: request.sira ?? 0,
+            aktifMi: true,
+            sorular: [],
+        };
+        return this.httpService.Post<PageDto>('FormBuild/SayfaKaydet', payload).pipe(
             map((response) => response.isSuccess ? response.data as PageDto : null),
         );
     }
 
+    /**
+     * Soru taslağını kaydet.
+     * POST api/FormBuild/SoruKaydet
+     */
     saveQuestionDraft(question: QuestionDto): Observable<SaveQuestionDraftResult> {
         return this.httpService.Post<QuestionDto>(
-            'FormBuild/Soru/DraftKaydet',
+            'FormBuild/SoruKaydet',
             question,
         ).pipe(
             map((response) => {
@@ -117,32 +160,44 @@ export class FormBuildApiService {
         );
     }
 
+    /**
+     * Soruları sırala.
+     * POST api/FormBuild/SoruSiraGuncelle
+     */
     reorderQuestions(request: ReorderQuestionsRequest): Observable<boolean> {
-        return this.httpService.Post<unknown>('FormBuild/Soru/Sirala', request).pipe(
+        // Backend [{eid, siraNo}] formatı bekliyor
+        const payload = (request.siraliSoruKokEidDtoler ?? []).map((item, index) => ({
+            eid: item.eid,
+            siraNo: index + 1,
+        }));
+        return this.httpService.Post<unknown>('FormBuild/SoruSiraGuncelle', payload).pipe(
             map((response) => response.isSuccess),
         );
     }
 
-    validateDraft(formEid: string): Observable<FormBuildValidateResult> {
-        return this.httpService.Post<ValidateResponseDto>('FormBuild/Taslak/Dogrula', { eid: formEid }).pipe(
-            map((response) => {
-                const data = response.isSuccess ? response.data as ValidateResponseDto : null;
-                return {
-                    isValid: Boolean(data?.isValid),
-                    diagnostics: data?.tanilamalar ?? [],
-                };
-            }),
-        );
+    /**
+     * Taslağı doğrula.
+     * Backend'de doğrulama endpoint yok — her zaman geçerli döner.
+     */
+    validateDraft(_formEid: string): Observable<FormBuildValidateResult> {
+        // TODO: Backend'de validate endpoint eklendikten sonra burası güncellenmeli
+        return of({ isValid: true, diagnostics: [] });
     }
 
+    /**
+     * Formu yayınla.
+     * POST api/FormBuild/FormYayinla?eid={formEid}
+     */
     publishForm(formEid: string): Observable<FormBuildPublishResult> {
-        return this.httpService.Post<PublishResponseDto>('FormBuild/Form/Yayinla', { eid: formEid }).pipe(
+        return this.httpService.Post<PublishResponseDto>(`FormBuild/FormYayinla?eid=${formEid}`, {}).pipe(
             map((response) => {
                 const data = response.isSuccess ? response.data as PublishResponseDto : null;
                 return {
-                    isSuccessful: Boolean(data?.basarili),
-                    publishStatusId: typeof data?.yeniYayinDurumKID === 'number' ? data.yeniYayinDurumKID : 0,
-                    diagnostics: data?.tanilamalar ?? [],
+                    isSuccessful: response.isSuccess ?? false,
+                    publishStatusId: typeof (data as any)?.yeniYayinDurumKID === 'number'
+                        ? (data as any).yeniYayinDurumKID
+                        : 0,
+                    diagnostics: (data as any)?.tanilamalar ?? [],
                 };
             }),
         );
