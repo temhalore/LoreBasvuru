@@ -1,10 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { SweetAlertService } from 'app/base/services/sweet-alert.service';
 import { PageModel } from 'app/base/models/security/page/page.model';
@@ -13,9 +10,9 @@ import { TextInputComponent } from 'app/shared/components/form-controls';
 import { ActionButtonComponent } from 'app/shared/components/action-button/action-button.component';
 
 export interface PageFormDialogData {
-  pageModel?: PageModel | null; // Düzenlenecek sayfa modeli (null ise yeni ekleme)
-  isEditMode?: boolean; // Edit modu mu add modu mu
-  modalSize?: string; // Modal boyutu parametresi
+  pageModel?: PageModel | null;
+  isEditMode?: boolean;
+  modalSize?: string;
 }
 
 @Component({
@@ -30,60 +27,48 @@ export interface PageFormDialogData {
     MatDialogModule,
     TextInputComponent,
     ActionButtonComponent,
-    // MatButtonModule,
-    // MatFormFieldModule,
-    // MatInputModule,
   ],
   providers: [FormBuilder, PageService, SweetAlertService],
 })
 export class ModalFormComponent implements OnInit, AfterViewInit, OnDestroy {
   formGroup: FormGroup;
   pageDto$: BehaviorSubject<PageModel> = new BehaviorSubject<PageModel>(new PageModel());
-  modalSize: string = 'w-full'; // Modal size parametresi
-  isEditMode: boolean = false; // Edit modu kontrolü
-  modalTitle: string = 'Yeni Sayfa Ekle'; // Modal başlığı
+  modalSize: string = 'w-full';
+  isEditMode: boolean = false;
+  modalTitle: string = 'Yeni Sayfa Ekle';
 
   private subscriptions: Subscription[] = [];
+
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ModalFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PageFormDialogData,
     public pageService: PageService,
     private sweetAlertService: SweetAlertService,
-
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
-    // Modal size parametresini data'dan al
     if (this.data.modalSize) {
       this.modalSize = this.data.modalSize;
     }
-
-    // Edit mode kontrolü
     this.isEditMode = this.data.isEditMode || false;
-    this.modalTitle = this.isEditMode ? 'Sayfa Düzenle' : 'Yeni Sayfa Ekle';
+    this.modalTitle = this.isEditMode ? 'Sayfa Duzenle' : 'Yeni Sayfa Ekle';
 
-    // Eğer edit modundaysa, gelen veriyi form'a yükle
     if (this.isEditMode && this.data.pageModel) {
-      this.pageDto$.next({ ...this.data.pageModel });
+      this.pageDto$.next(Object.assign(new PageModel(), this.data.pageModel));
     }
-
     this.InitForm();
   }
+
   InitForm() {
-    const currentPageDto = this.pageDto$.getValue();
-    
+    const dto = this.pageDto$.getValue();
     this.formGroup = this.fb.group({
-      name: [currentPageDto.name || null, [Validators.required]],
-      routerLink: [currentPageDto.routerLink || null, [Validators.required]],
+      name: [dto.name || null, [Validators.required]],
+      routerLink: [dto.routerLink || null, [Validators.required]],
     });
   }
-  ngAfterViewInit(): void {
-    // View after init logic if needed
-  }
 
-
+  ngAfterViewInit(): void {}
 
   PrepareForm() {
     this.pageDto$.getValue().name = this.formGroup.get('name')?.value;
@@ -91,48 +76,35 @@ export class ModalFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   Save() {
-    // Form geçerli değilse işlemi durdur
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
       return;
     }
-
-    // Form'u hazırla
     this.PrepareForm();
-
     if (this.isEditMode) {
-      // Update işlemi
-      const sbUpdate = this.pageService.Set(this.pageDto$.getValue())
-        .subscribe((res: string) => {
-          if (res === 'success') {
-            this.sweetAlertService.showMessage('success', 'Sayfa başarıyla güncellendi!');
-            this.dialogRef.close("success");
-          } else {
-            this.sweetAlertService.showMessage('error', 'Sayfa güncelleme işlemi başarısız');
-          }
-        });
-      this.subscriptions.push(sbUpdate);
+      const sb = this.pageService.Set(this.pageDto$.getValue()).subscribe((res: string) => {
+        if (res === 'success') {
+          this.sweetAlertService.showMessage('success', 'Sayfa basariyla guncellendi!');
+          this.dialogRef.close('success');
+        }
+      });
+      this.subscriptions.push(sb);
     } else {
-      // Add işlemi
-      const sbAdd = this.pageService.Add(this.pageDto$.getValue())
-        .subscribe((res: string) => {
-          if (res === 'success') {
-            this.sweetAlertService.showMessage('success', 'Sayfa başarıyla eklendi!');
-            this.dialogRef.close("success");
-          } else {
-            this.sweetAlertService.showMessage('error', 'Sayfa ekleme işlemi başarısız');
-          }
-        });
-      this.subscriptions.push(sbAdd);
+      const sb = this.pageService.Add(this.pageDto$.getValue()).subscribe((res: string) => {
+        if (res === 'success') {
+          this.sweetAlertService.showMessage('success', 'Sayfa basariyla eklendi!');
+          this.dialogRef.close('success');
+        }
+      });
+      this.subscriptions.push(sb);
     }
   }
 
-  // Backward compatibility için Add metodu
   Add() {
     this.Save();
   }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(sb => sb.unsubscribe());
   }
-
 }

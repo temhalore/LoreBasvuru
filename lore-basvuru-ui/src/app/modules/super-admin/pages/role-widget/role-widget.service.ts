@@ -24,12 +24,7 @@ export class RoleWidgetService {
         this.isLoading$ = this.isLoadingSubject.asObservable();
     }
 
-    /**
-     * Rol-Widget ağacı (backend'de yok — boş döner, UI'da kaldıramazsak yorumla).
-     * Yakın eşdeğeri: Yetki/EkranWidgetlariniGetir ile birleşik çekilir.
-     */
     GetRoleWidgetTreeListForAdmin(_roleDto: RoleModel): Observable<RoleWidgetModel> {
-        // TODO: Backend widget tree endpoint eklendikten sonra burası güncellenmeli
         return of({} as RoleWidgetModel);
     }
 
@@ -37,14 +32,15 @@ export class RoleWidgetService {
         return of({} as RoleWidgetModel);
     }
 
-    /**
-     * Role widget yetkisi kaydet.
-     * POST api/Yetki/RolWidgetYetkisiKaydet  body: { rolId, idler }
-     */
-    Set(req: RolWidgetYetkisiReqDTO): Observable<RoleWidgetModel> {
+    Set(roleWidgetDto: RoleWidgetModel): Observable<RoleWidgetModel> {
         this.isLoadingSubject.next(true);
+        const widgetId = (roleWidgetDto as any)?.widgetDto?.id ?? 0;
+        const req: RolWidgetYetkisiReqDTO = {
+            rolId: (roleWidgetDto as any)?.roleDto?.id ?? 0,
+            idler: widgetId ? [widgetId] : [],
+        };
         return this.httpService.Post('Yetki/RolWidgetYetkisiKaydet', req).pipe(
-            switchMap((res: ServiceResponseModel) => of(res.data as RoleWidgetModel)),
+            switchMap((res: ServiceResponseModel) => of((res.data as RoleWidgetModel) ?? roleWidgetDto)),
             finalize(() => this.isLoadingSubject.next(false))
         );
     }

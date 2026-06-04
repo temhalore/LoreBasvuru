@@ -23,10 +23,6 @@ export class WidgetPermissionService {
         this.isLoading$ = this.isLoadingSubject.asObservable();
     }
 
-    /**
-     * Controller metodlarını getir (widget yetki atama için).
-     * GET api/Yetki/ControllerMethodleriGetir
-     */
     GetList(_widgetDto?: WidgetModel): Observable<any> {
         this.isLoadingSubject.next(true);
         return this.httpService.Get('Yetki/ControllerMethodleriGetir').pipe(
@@ -35,22 +31,20 @@ export class WidgetPermissionService {
         );
     }
 
-    /**
-     * Widget - Controller method bağla.
-     * POST api/Yetki/WidgetControllerMethodBagla  body: { widgetId, methodIds }
-     */
-    Set(req: WidgetMethodBaglaReqDTO): Observable<any> {
+    Set(widgetPermissionDto: any): Observable<any> {
         this.isLoadingSubject.next(true);
+        const req: WidgetMethodBaglaReqDTO = {
+            widgetId: (widgetPermissionDto as any)?.widgetDto?.id ?? 0,
+            methodIds: ((widgetPermissionDto as any)?.permissionListDto ?? [])
+                .filter((p: any) => p.isWidgetPermission)
+                .map((p: any) => p.id ?? 0),
+        };
         return this.httpService.Post('Yetki/WidgetControllerMethodBagla', req).pipe(
-            switchMap((res: ServiceResponseModel) => of(res.data)),
+            switchMap((res: ServiceResponseModel) => of(res.data ?? widgetPermissionDto)),
             finalize(() => this.isLoadingSubject.next(false))
         );
     }
 
-    /**
-     * Controller metodlarını tara ve DB'ye kaydet.
-     * POST api/Yetki/ControllerMethodleriTara
-     */
     Tara(): Observable<boolean> {
         this.isLoadingSubject.next(true);
         return this.httpService.Post('Yetki/ControllerMethodleriTara', {}).pipe(
