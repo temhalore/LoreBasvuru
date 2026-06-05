@@ -14,7 +14,7 @@ import { LoginResponseModel } from '../../../../base/models/security/auth/login-
 })
 export class LoginWithTokenComponent implements OnInit, OnDestroy {
   private subs: Subscription[] = [];
-  mesaj = 'Giriş işlemi yapılıyor...';
+  mesaj = 'Giris islemi yapiliyor...';
   hata = false;
 
   constructor(
@@ -28,7 +28,7 @@ export class LoginWithTokenComponent implements OnInit, OnDestroy {
     const tenantKod = this.route.snapshot.queryParamMap.get('tenant') ?? '';
 
     if (!token) {
-      this.mesaj = 'Token bulunamadı.';
+      this.mesaj = 'Token bulunamadi.';
       this.hata = true;
       return;
     }
@@ -38,18 +38,22 @@ export class LoginWithTokenComponent implements OnInit, OnDestroy {
         if (res?.kisiTokenDto?.isLogin) {
           this.router.navigate(['/dashboard']);
         } else {
-          this.mesaj = 'Giriş başarısız. Lütfen tekrar deneyin.';
+          this.mesaj = 'Giris basarisiz. Lutfen tekrar deneyin.';
           this.hata = true;
           setTimeout(() => this.router.navigate(['/auth/giris']), 3000);
         }
       },
       error: () => {
-        this.mesaj = 'Bir hata oluştu.';
+        this.mesaj = 'Bir hata olustu.';
         this.hata = true;
         setTimeout(() => this.router.navigate(['/auth/giris']), 2000);
       }
     });
     this.subs.push(sub);
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/auth/giris']);
   }
 
   ngOnDestroy(): void {

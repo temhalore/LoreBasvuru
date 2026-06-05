@@ -5,7 +5,7 @@ export const environment = {
   appVersion: 'v1.0',
   userDataKey: 'lorebasvuru-auth-k8x3m2q7',
   isMockEnabled: false,
-  apiUrl: 'http://localhost:5000/Api/',
+  apiUrl: 'https://localhost:53058/Api/',
   loginUrl: '/auth/giris',
   appName: 'LoreBaşvuru',
   version: '1.0.0',
