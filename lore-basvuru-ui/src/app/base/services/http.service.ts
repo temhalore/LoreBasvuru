@@ -26,10 +26,13 @@ export class HttpService {
     const loginResponse: LoginResponseModel = LocalStorageService.getDecodedLocalStorageObject();
     const appToken = loginResponse?.kisiTokenDto?.appToken ?? '';
     const headers: any = {
-      'appToken': appToken,
-      'Authorization': appToken ? `Bearer ${appToken}` : '',
       'language': this.language
     };
+    // Sadece token varsa ekle — bos Authorization header CORS preflight'i bozar
+    if (appToken) {
+      headers['appToken'] = appToken;
+      headers['Authorization'] = `Bearer ${appToken}`;
+    }
     if (isJson) {
       headers['Content-Type'] = 'application/json';
       headers['Accept'] = 'application/json';

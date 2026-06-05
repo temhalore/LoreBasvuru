@@ -26,10 +26,8 @@ using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── KONFİGÜRASYON ──────────────────────────────────────────────
 CoreConfig.Configure(builder.Configuration);
 
-// ── LOGGING ─────────────────────────────────────────────────────
 var logConfig = builder.Configuration
     .GetSection("AppLogConfig")
     .Get<AppLogConfig>() ?? new AppLogConfig
@@ -41,7 +39,6 @@ var appLogger = new AppLogger(logConfig);
 AppLog.Configure(appLogger);
 builder.Services.AddSingleton<IAppLogger>(appLogger);
 
-// ── CONTROLLER + FILTER ─────────────────────────────────────────
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<SecurityFilter>();
@@ -53,16 +50,10 @@ builder.Services.AddControllers(options =>
     options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
 });
 
-// ── HTTP CONTEXT ────────────────────────────────────────────────
 builder.Services.AddHttpContextAccessor();
-
-// ── AUTOMAPPER ──────────────────────────────────────────────────
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-// ── GENERIC REPOSITORY ──────────────────────────────────────────
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-// ── MANAGERS (BAL) ──────────────────────────────────────────────
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IYetkiManager, YetkiManager>();
 builder.Services.AddScoped<ITenantManager, TenantManager>();
@@ -74,10 +65,8 @@ builder.Services.AddScoped<IRaporManager, RaporManager>();
 builder.Services.AddScoped<IDosyaManager, DosyaManager>();
 builder.Services.AddScoped<IDisServisManager, DisServisManager>();
 
-// ── FILTER ──────────────────────────────────────────────────────
 builder.Services.AddScoped<SecurityFilter>();
 
-// ── MINIO ────────────────────────────────────────────────────────
 builder.Services.AddSingleton<IMinioClient>(_ =>
     new MinioClient()
         .WithEndpoint(CoreConfig.MinioEndpoint)
@@ -85,10 +74,8 @@ builder.Services.AddSingleton<IMinioClient>(_ =>
         .WithSSL(CoreConfig.MinioUseSsl)
         .Build());
 
-// ── HTTP CLIENT (Dış servis) ────────────────────────────────────
 builder.Services.AddHttpClient("DisServis");
 
-// ── SWAGGER ─────────────────────────────────────────────────────
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -111,25 +98,42 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// ── CORS ─────────────────────────────────────────────────────────
+// CORS — SetIsOriginAllowed kullanilmali; AllowAnyOrigin + AllowCredentials birlikte calismaz
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("AllowAngularDev", policy =>
+        policy
+            .WithOrigins(
+                "http://localhost:4200",
+                "https://localhost:4200",
+                "http://localhost:4201",
+                "https://localhost:4201")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+
     options.AddPolicy("AllowAll", policy =>
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader());
+        policy
+            .SetIsOriginAllowed(_ => true)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 
-// ════════════════════════════════════════════════════════════════
 var app = builder.Build();
 
-// HttpContextHelper statik yapılandırması
 var httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 HttpContextHelper.Configure(httpContextAccessor);
 
-// ── MIDDLEWARE ──────────────────────────────────────────────────
+// MIDDLEWARE SIRASI
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseHttpsRedirection();
 app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
+app.UseRouting();
+
+// CORS: UseRouting SONRASI, MapControllers ONCESI olmali
+app.UseCors(app.Environment.IsDevelopment() ? "AllowAngularDev" : "AllowAll");
 
 if (app.Environment.IsDevelopment())
 {
@@ -137,8 +141,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LoreBasvuru API v1"));
 }
 
-app.UseCors("AllowAll");
-app.UseRouting();
 app.MapControllers();
 
 app.Run();

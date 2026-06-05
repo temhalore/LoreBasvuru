@@ -5,16 +5,18 @@ export const environment = {
   appVersion: 'v1.0',
   userDataKey: 'lorebasvuru-auth-k8x3m2q7',
   isMockEnabled: false,
-  apiUrl: 'https://localhost:53058/Api/',
+  // apiUrl: 'https://localhost:7100/api/',
+    apiUrl: 'http://localhost:5100/api/',
+  
   loginUrl: '/auth/giris',
-  appName: 'LoreBaşvuru',
+  appName: 'LoreBasvuru',
   version: '1.0.0',
   enableLogging: true,
   mockApi: false,
-  debugMode: false,
+  debugMode: true,
   meta: {
-    title: 'LoreBaşvuru - Başvuru Yönetim Sistemi',
-    description: 'Dinamik Başvuru Yönetim Sistemi',
-    keywords: 'başvuru yönetim sistemi'
+    title: 'LoreBasvuru - Basvuru Yonetim Sistemi',
+    description: 'Dinamik Basvuru Yonetim Sistemi',
+    keywords: 'basvuru yonetim sistemi'
   }
 };
